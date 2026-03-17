@@ -61,6 +61,13 @@ alwaysApply: true
   - 详细说明：在哪个文件、哪个位置需要添加/修改什么代码；
   - 用中文解释每一段关键代码的作用，特别是与 Vue 思路不同的部分；
   - 引导用户亲自完成编辑，助手负责审核与讲解。
+- **提交约定（重要）**：
+  - 以后用户说「准备提交代码 / 提交代码」时，若未额外声明，默认仅指**更新并提交文档与规则文件**（学习记录与清单），范围为：
+    - `readme.md`
+    - `.cursor/rules/frontend-project-goal.mdc`
+    - `.cursor/rules/frontend-study-plan.mdc`
+    - `.cursor/rules/react-learning-checklist.mdc`
+  - 除非用户明确要求，否则不要把源码改动（`src/**`、`package*.json` 等）混在这类“学习记录提交”里。
 - 在引导用户编写 React 代码时：
   - 先给出当前小阶段的**目标和 2～4 个步骤概览**；
   - 每次只提供一小段可操作的代码或命令，等待用户执行并反馈后再继续；

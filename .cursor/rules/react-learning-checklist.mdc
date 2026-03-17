@@ -1,0 +1,48 @@
+---
+description: React 知识点清单（Vue 迁移视角）——按状态推进
+alwaysApply: true
+---
+
+> 说明：这里的“状态”用于控制学习节奏。每次学习结束，把本次涉及到的知识点从「未开始」改为「进行中/已完成」。
+
+## 状态标记
+
+- ✅ 已完成：能解释 + 能在当前项目里指出对应代码
+- 🔄 进行中：讲过/用过，但还需要更多练习巩固
+- ⏳ 未开始：还没引入
+
+---
+
+## React 专属知识点（重点）
+
+### 1) 渲染模型：组件函数会反复执行（Vue 与 React 最大差异之一）
+
+- 🔄 **组件渲染 = 执行函数**：每次 state 变化，函数组件会重新执行，JSX 会重新计算
+- 🔄 **不要在 render 里做副作用**：请求/订阅/定时器放到 `useEffect`（或交给 React Query）
+- ⏳ **闭包与“旧值”**：事件处理/定时器里读到旧 state 的常见原因与解决思路（依赖数组/函数式更新）
+
+### 2) Hooks 基础（对照 Vue Composition API）
+
+- ✅ **useState**：值 + setter；setter 触发重新渲染（对照 `ref`）
+- 🔄 **useEffect**：副作用与依赖数组（对照 `onMounted/watch`）
+- ⏳ **useMemo/useCallback**：性能优化与引用稳定（先理解再引入）
+
+### 3) JSX（对照 Vue template）
+
+- ✅ **条件渲染**：`&&`、三元（对照 `v-if/v-else`）
+- ✅ **列表渲染**：`map` + `key`（对照 `v-for :key`）
+- ✅ **事件绑定**：传函数 `onClick={() => ...}`（对照 `@click="..."`）
+- ✅ **受控输入**：`value` + `onChange`（对照 `v-model`）
+
+### 4) React Query（数据获取的“框架化”方式）
+
+- 🔄 **useQuery**：`data/isLoading/isError` 与 `queryKey`（缓存 key、共享、去重）
+- 🔄 **useMutation**：提交/删除等写操作；`mutate` 触发；成功后处理
+- 🔄 **invalidateQueries**：写成功后让读数据失效并重拉（保持一致性）
+- ⏳ **staleTime / refetchOnWindowFocus**：什么时候自动重拉、如何控制
+
+### 5) TypeScript（本项目实践）
+
+- 🔄 **API 返回结构与类型**：区分 “React Query 的 data” 与 “后端 envelope 的 data”
+- ⏳ **类型收敛**：把 `any/unknown` 收敛为明确类型（含错误类型）
+
