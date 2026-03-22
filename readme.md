@@ -12,19 +12,26 @@
 - **项目名称**：Agent 项目前端（React）
 - **项目位置**：`myproject/frontend`
 - **后端项目**：`myproject/backend`（Python + FastAPI），进度见 **backend/readme.md**
-- **当前状态**：✅ 已初始化前端工程（Vite + React + TypeScript）并开始接入后端 API（以代码与下方“最近一次学习”为准）
+- **当前状态**：✅ 已接入后端 API；✅ **阶段 2（组件拆分）已完成**；🔄 **下一步：阶段 3（请求层与错误体验）**（见下方与 `frontend-study-plan.mdc`）
 
 ---
 
 ## 后端 API 现状（联调参考）
 
+> 以后端源码 **`backend/src/api.py`** 为准；统一成功结构为 `{ "code": 0, "data": ..., "msg": "..." }`（`code !== 0` 视为业务失败，前端 `http.ts` 会抛 `HttpError`）。
+
 | 接口 | 方法 | 说明 |
 |------|------|------|
-| /health | GET | 健康检查，返回 `{"status": "ok"}` |
-| /tasks | POST | 创建任务，请求体 `{"description": "任务内容"}`，返回 `{"id": 1, "description": "..."}` |
+| /health | GET | 健康检查，返回 `code: 0` 等（**不是**旧版 `{status:"ok"}` 形态） |
+| /tasks | GET | 任务列表，`data` 为 `{task_id, task_name}[]` |
+| /tasks | POST | 创建任务，请求体 `{"description": "任务内容"}` |
+| /tasks/{task_id} | DELETE | 按 `task_id` 删除 |
+| /agent/run | POST | Agent 执行，请求体 `{"text": "命令文本"}`（如 `add xxx`） |
+| /agent/last-step | GET | 最近一次执行步骤（调试用），无记录时 `code !== 0` |
+| /agent/steps | GET | 查询参数 `limit`，返回最近若干条 `Step[]`（新记录在前） |
 
 - 后端与命令行共用任务列表，数据持久化在 backend 的 `tasks.json`。
-- 若后端已增加 **GET /tasks**（返回任务列表）和 **CORS**，前端可做「任务列表展示 + 添加任务」；否则可先做「健康检查 + 添加任务」。
+- **CORS**：后端已允许 `http://localhost:5173`（Vite 默认端口）。
 - 启动后端：在 **backend** 目录执行 `uvicorn src.api:app --reload`，默认 `http://127.0.0.1:8000`。
 
 ---
@@ -36,25 +43,29 @@
 - ✅ 前端工程从 JS 迁移到 TypeScript（`main.tsx`、`App.tsx`、types、API 封装等）
 - ✅ 建立基础请求封装 `src/lib/http.ts`（支持 query/body/headers，错误统一为 `HttpError`）
 - ✅ 接入 React Query：任务列表 `useQuery(["tasks"])`，添加/删除用 `useMutation`，成功后 `invalidateQueries(["tasks"])`
-- ✅ 健康检查：用 `useEffect` 在页面加载后请求一次 `GET /health`
+- ✅ 健康检查：用 `useEffect` 在页面加载后请求一次 `GET /health`（以 `res.code === 0` 判断成功，与后端 `{code,data,msg}` 一致）
+- ✅ **`src/api/agent.ts`**：`runAgent`、`getLastStep`、**`getStepList(limit)`** → `GET /agent/steps?limit=`
+- ✅ **`src/types/agent.ts`**：`Step` 与后端字段一致
+- ✅ **页面**：Agent 命令、最后一步、**操作历史**（`useQuery(["stepList", limit])` + 列表展示）
+- ✅ **阶段 2：组件拆分**：`App.tsx` 仅组合 **`HealthHeader`**、**`AgentCommand`**、**`LastStep`**、**`StepList`**、**`TaskSection`**（`src/components/`）；`AgentCommand` 成功回调 **`invalidateQueries`** **`["lastStep"]`** / **`["stepList"]`**；**`StepList`** 列表 **`key`** 使用 **`${index}-${item.timestamp}`**
 
 ---
 
 ## 下一次学习的起点（提醒未来的自己）
 
-1. **按学习计划推进（当前建议：阶段 1）**
+1. **阶段 3：请求层与错误体验（当前建议）**
    - 参考：`.cursor/rules/frontend-study-plan.mdc`
-   - 目标：把当前 `App.tsx` 里“健康检查 + 任务列表 + 添加/删除”理解到位（从 Vue 迁移视角）
+   - **`http.ts`**：错误分类（网络 / HTTP 状态 / 业务 envelope）；统一 **`message` / `notification`** 文案。
+   - **React Query**：对 `tasks`、`lastStep`、`stepList` 等展示 **`isError`** / **`error`**，必要时提供「重试」；可选 **`staleTime`**、**`refetchOnWindowFocus`**。
+   - 进阶可选：**AbortController**、请求超时。
 
-2. **对接后端**
-   - 确认后端是否已提供 **GET /tasks**（任务列表）与 CORS；若无，则前端先保留「健康检查 + 添加任务」最小闭环
-   - 若遇跨域，需后端在 FastAPI 中配置 CORS，或先通过代理访问后端。
+2. **阶段 4（随后）**：可扩展 UI（步骤时间线、日志结构预留），见 `frontend-study-plan.mdc`。
 
 3. **查阅**
-   - 前端规则与教学风格：`.cursor/rules/frontend-project-goal.mdc`
-   - 前端学习阶段：`.cursor/rules/frontend-study-plan.mdc`
-   - React 知识点清单与状态：`.cursor/rules/react-learning-checklist.mdc`
-   - 后端进度与 API 变更：**backend/readme.md**
+   - 前端规则：`.cursor/rules/frontend-project-goal.mdc`
+   - 前端阶段：`.cursor/rules/frontend-study-plan.mdc`
+   - React 清单：`.cursor/rules/react-learning-checklist.mdc`
+   - 后端进度：**backend/readme.md**
 
 ---
 

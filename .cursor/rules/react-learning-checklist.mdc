@@ -17,14 +17,14 @@ alwaysApply: true
 
 ### 1) 渲染模型：组件函数会反复执行（Vue 与 React 最大差异之一）
 
-- 🔄 **组件渲染 = 执行函数**：每次 state 变化，函数组件会重新执行，JSX 会重新计算
-- 🔄 **不要在 render 里做副作用**：请求/订阅/定时器放到 `useEffect`（或交给 React Query）
+- ✅ **组件渲染 = 执行函数**：每次 state 变化，函数组件会重新执行，JSX 会重新计算
+- ✅ **不要在 render 里做副作用**：请求/订阅/定时器放到 `useEffect`（或交给 React Query）
 - ⏳ **闭包与“旧值”**：事件处理/定时器里读到旧 state 的常见原因与解决思路（依赖数组/函数式更新）
 
 ### 2) Hooks 基础（对照 Vue Composition API）
 
 - ✅ **useState**：值 + setter；setter 触发重新渲染（对照 `ref`）
-- 🔄 **useEffect**：副作用与依赖数组（对照 `onMounted/watch`）
+- ✅ **useEffect**：副作用与依赖数组（对照 `onMounted/watch`；已用 `[]` 做挂载后一次请求）
 - ⏳ **useMemo/useCallback**：性能优化与引用稳定（先理解再引入）
 
 ### 3) JSX（对照 Vue template）
@@ -36,13 +36,24 @@ alwaysApply: true
 
 ### 4) React Query（数据获取的“框架化”方式）
 
-- 🔄 **useQuery**：`data/isLoading/isError` 与 `queryKey`（缓存 key、共享、去重）
-- 🔄 **useMutation**：提交/删除等写操作；`mutate` 触发；成功后处理
-- 🔄 **invalidateQueries**：写成功后让读数据失效并重拉（保持一致性）
+- ✅ **useQuery**：`data/isLoading/isError` 与 `queryKey`（缓存 key、共享、去重）
+- ✅ **useMutation**：提交/删除等写操作；`mutate` 触发；成功后处理
+- ✅ **invalidateQueries**：写成功后让读数据失效并重拉（保持一致性）
+- 🔄 **isError / error 在 UI 中展示**：阶段 3 目标（错误条、重试）
 - ⏳ **staleTime / refetchOnWindowFocus**：什么时候自动重拉、如何控制
 
 ### 5) TypeScript（本项目实践）
 
 - 🔄 **API 返回结构与类型**：区分 “React Query 的 data” 与 “后端 envelope 的 data”
 - ⏳ **类型收敛**：把 `any/unknown` 收敛为明确类型（含错误类型）
+
+---
+
+### 6) 后端 Agent 接口联调（与 `backend/src/api.py` 对齐）
+
+- ✅ **`POST /agent/run`**：请求体 `{ "text": string }`；`runAgent(text)` + `useMutation`
+- ✅ **`GET /agent/last-step`**：封装 `getLastStep()` + `useQuery`；无记录时关注后端 `code`/`msg`
+- ✅ **`GET /agent/steps?limit=`**：封装 `getStepList(limit)`；操作历史列表（`useQuery(["stepList", limit])` 等）
+- ✅ **UI**：命令输入 + 发送；展示 last-step；**操作历史**（`Step` 类型与后端字段一致）
+- ✅ **与 last-step / stepList 联动**：`runAgent` 成功后 **`invalidateQueries`** **`["lastStep"]`**、**`["stepList"]`**（见 `AgentCommand.tsx`）
 

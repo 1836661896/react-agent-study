@@ -17,22 +17,22 @@ alwaysApply: true
 | 顺序 | 阶段 | 难易 | 目标与产出（前端） | 状态 |
 |------|------|------|--------------------|------|
 | 0 | 阶段 0：工程与运行 | 易 | 能跑起来、能构建；环境变量/代理就绪 | ✅ 已完成 |
-| 1 | 阶段 1：React 基础与最小联调 | 易~中 | 理解函数组件/JSX/useState/useEffect；完成 health + tasks（查询/添加/删除）最小闭环 | 🔄 进行中 |
-| 2 | 阶段 2：组件拆分与数据模型 | 中 | 拆 `TaskList`/`TaskForm`/`HealthBadge`；统一 types；避免 App.tsx 过大 | ⏳ 待开始 |
-| 3 | 阶段 3：请求层与错误体验 | 中 | `http.ts` 错误分类、统一 toast/提示；Abort/超时；React Query 错误展示策略 | ⏳ 待开始 |
+| 1 | 阶段 1：React 基础与最小联调 | 易~中 | 理解函数组件/JSX/useState/useEffect；health + tasks；**Agent：`POST /agent/run`、`GET /agent/last-step`、`GET /agent/steps`（操作历史）** | ✅ 已完成 |
+| 2 | 阶段 2：组件拆分与数据模型 | 中 | 拆 `AgentPanel`/`TaskSection`/`HealthHeader`（或等价）；统一 types；避免 App.tsx 过大 | ✅ 已完成 |
+| 3 | 阶段 3：请求层与错误体验 | 中 | `http.ts` 错误分类、统一 toast/提示；Abort/超时；React Query 错误展示策略 | 🔄 **当前建议** |
 | 4 | 阶段 4：可扩展 UI（面向 Agent） | 较难 | 任务详情/步骤时间线/日志查看；为工具调用结果展示留结构 | ⏳ 待开始 |
 
 ---
 
 ## 当前建议（下一步怎么学）
 
-- **当前建议阶段**：阶段 1
+- **当前建议阶段**：**阶段 3**（阶段 2 已完成，见 `frontend/readme.md`）
 - **本阶段目标**：
-  - 能用“Vue 对照”解释：`useQuery`/`useMutation`/`invalidateQueries`、受控输入、JSX 条件渲染与列表渲染
-  - 能独立读懂 `App.tsx` 中的最小闭环
-- **本阶段结束标准**（满足即可进入阶段 2）：
-  - 知道 `queryKey` 是缓存 key，不是防抖
-  - 能解释 `useEffect(..., [])` 相当于 `onMounted`
-  - 能解释 `value + onChange` 相当于 `v-model`（受控组件）
-  - 能说清“mutation 成功后为什么 invalidate queries”
+  - **`src/lib/http.ts`**：区分错误类型（网络失败、非 2xx、解析失败）；对外暴露统一错误信息或 `HttpError` 子类/字段，便于 UI 展示。
+  - **全局/局部提示**：用 antd **`message`** 或 **`notification`** 统一错误文案风格；避免每个组件重复拼 `err.message`。
+  - **React Query**：在任务列表、last-step、step-list 等 **`useQuery`** 上处理 **`isError` / `error`**（Card 内错误条、**重试**按钮）；可选 **`staleTime`**、**`refetchOnWindowFocus`**。
+  - 进阶可选：**AbortController**、请求超时、Mutation 取消。
+- **本阶段结束标准**（满足即可进入阶段 4）：
+  - 主要请求均有可感知的错误态（非静默失败）；用户能区分「网络挂了」与「后端业务 code≠0」。
+  - 能口述：React Query 的 `error` 与 `HttpError.body` 如何配合展示。
 
