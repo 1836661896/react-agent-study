@@ -1,5 +1,5 @@
 import { runAgent } from "@/api/agent"
-import { HttpError } from "@/lib/http"
+import { toUserErrorMessage } from "@/lib/http"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button, Card, Form, Input, message } from "antd"
 import { useState } from "react"
@@ -22,19 +22,7 @@ export default function AgentCommand() {
       }
     },
     onError: err => {
-      if (err instanceof HttpError) {
-        const body = err.body
-        const text =
-          typeof body === "object" &&
-            body !== null &&
-            "msg" in body &&
-            typeof (body as { msg: unknown }).msg === "string"
-            ? (body as { msg: string }).msg
-            : err.message
-        message.warning(text)
-      } else {
-        message.warning(err.message)
-      }
+      message.error(toUserErrorMessage(err))
     }
   })
   return (

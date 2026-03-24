@@ -1,4 +1,5 @@
 import { addTasks, deleteTask, getTasks } from "@/api/tasks";
+import { toUserErrorMessage } from "@/lib/http";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Alert, Button, Card, Empty, Form, Input, List, message, Spin } from "antd";
 import { useState } from "react";
@@ -16,7 +17,7 @@ export function TaskSection() {
       queryClient.invalidateQueries({ queryKey: ["tasks"] })
     },
     onError: err => {
-      message.error(err.message)
+      message.error(toUserErrorMessage(err))
     }
   })
 
@@ -28,7 +29,7 @@ export function TaskSection() {
       queryClient.invalidateQueries({ queryKey: ["tasks"] })
     },
     onError: err => {
-      message.error(err.message)
+      message.error(toUserErrorMessage(err))
     }
   })
 
@@ -74,7 +75,7 @@ export function TaskSection() {
 
       <Spin spinning={taskQuery.isLoading}>
         {taskQuery.isError && (
-          <Alert type='error' title="任务列表加载失败" showIcon />
+          <Alert type='error' title="任务列表加载失败" showIcon description={toUserErrorMessage(taskQuery.error)} />
         )}
         {!taskQuery.isLoading && !taskQuery.isError && taskList.length === 0 && (
           <Empty description="暂无任务" />
