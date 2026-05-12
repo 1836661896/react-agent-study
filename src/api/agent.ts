@@ -1,6 +1,6 @@
 import { http } from "@/lib/http"
 import type { response } from "@/types/common"
-import type { Step } from "@/types/agent"
+import type { Step, AgentResult } from "@/types/agent"
 
 // 调用agent
 export function runAgent(text: string) {
@@ -21,6 +21,26 @@ export function getStepList(limit: number) {
     method: "get",
     query: {
       limit
+    }
+  })
+}
+
+// 直接调用大模型
+export function chatWithLocalModel(message: string) {
+  return http<response<string>>("chat", {
+    method: "post",
+    body: {
+      message
+    }
+  })
+}
+
+// 调用本地大模型
+export function runNlCommand(text: string) {
+  return http<response<AgentResult>>("agent/nl-run", {
+    method: "post",
+    body: {
+      text
     }
   })
 }

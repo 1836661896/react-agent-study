@@ -1,8 +1,9 @@
-import { addTasks, deleteTask, getTasks } from "@/api/tasks";
+import { useState } from "react";
+import { notifyApiError } from "@/lib/error";
 import { toUserErrorMessage } from "@/lib/http";
+import { addTasks, deleteTask, getTasks } from "@/api/tasks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Alert, Button, Card, Empty, Form, Input, List, message, Spin } from "antd";
-import { useState } from "react";
 
 export function TaskSection() {
   const [newTaskName, setNewTaskName] = useState("")
@@ -17,7 +18,7 @@ export function TaskSection() {
       queryClient.invalidateQueries({ queryKey: ["tasks"] })
     },
     onError: err => {
-      message.error(toUserErrorMessage(err))
+      notifyApiError(err, "添加任务失败")
     }
   })
 
@@ -29,7 +30,7 @@ export function TaskSection() {
       queryClient.invalidateQueries({ queryKey: ["tasks"] })
     },
     onError: err => {
-      message.error(toUserErrorMessage(err))
+      notifyApiError(err, "删除任务失败")
     }
   })
 

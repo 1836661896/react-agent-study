@@ -1,7 +1,7 @@
 import { getStepList } from "@/api/agent";
 import { toUserErrorMessage } from "@/lib/http";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Alert, Button, Card, Descriptions, Empty, Space, Spin } from "antd";
+import { Alert, Button, Card, Descriptions, Empty, Space, Spin, Timeline } from "antd";
 
 export default function StepList() {
   const limit = 10
@@ -18,6 +18,18 @@ export default function StepList() {
   })
 
   const stepList = stepListQuery.data?.data ?? []
+
+  const items = stepList.map((s, i) => ({
+    key: `${i}-${s.timestamp}`,
+    color: s.ok_flag ? "green" : "red",
+    content: (
+      <div>
+        <div><strong>{s.tool_name}</strong> · {s.input_text}</div>
+        <div style={{ opacity: 0.75 }}>{s.msg}</div>
+        <div style={{ fontSize: 12, opacity: 0.6 }}>{s.timestamp}</div>
+      </div>
+    )
+  }))
 
   return (
     <Card title="操作历史">
@@ -47,15 +59,7 @@ export default function StepList() {
         <Empty description="暂无操作记录" />
       )}
       {!stepListQuery.isError && !stepListQuery.isLoading && stepList.length > 0 && (
-        stepList.map((item, index) => (
-          <Descriptions key={`${index}-${item.timestamp}`} title={`记录${index + 1}`} bordered column={1} size='small'>
-            <Descriptions.Item label="操作内容">{item.tool_name}</Descriptions.Item>
-            <Descriptions.Item label="输入命令">{item.input_text}</Descriptions.Item>
-            <Descriptions.Item label="调用是否成功">{item.ok_flag ? "成功" : "失败"}</Descriptions.Item>
-            <Descriptions.Item label="提示消息">{item.msg}</Descriptions.Item>
-            <Descriptions.Item label="调用时间">{item.timestamp}</Descriptions.Item>
-          </Descriptions>
-        ))
+        <Timeline mode="start" items={items} />
       )}
     </Card>
   )

@@ -1,5 +1,5 @@
 import { runAgent } from "@/api/agent"
-import { toUserErrorMessage } from "@/lib/http"
+import { notifyApiError } from "@/lib/error"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button, Card, Form, Input, message } from "antd"
 import { useState } from "react"
@@ -22,7 +22,7 @@ export default function AgentCommand() {
       }
     },
     onError: err => {
-      message.error(toUserErrorMessage(err))
+      notifyApiError(err, "执行Agent命令失败")
     }
   })
   return (

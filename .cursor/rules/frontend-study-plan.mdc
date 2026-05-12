@@ -19,8 +19,8 @@ alwaysApply: true
 | 0 | 阶段 0：工程与运行 | 易 | 能跑起来、能构建；环境变量/代理就绪 | ✅ 已完成 |
 | 1 | 阶段 1：React 基础与最小联调 | 易~中 | 理解函数组件/JSX/useState/useEffect；health + tasks；**Agent：`POST /agent/run`、`GET /agent/last-step`、`GET /agent/steps`（操作历史）** | ✅ 已完成 |
 | 2 | 阶段 2：组件拆分与数据模型 | 中 | 拆 `AgentPanel`/`TaskSection`/`HealthHeader`（或等价）；统一 types；避免 App.tsx 过大 | ✅ 已完成 |
-| 3 | 阶段 3：请求层与错误体验 | 中 | `http.ts` 错误分类、统一 toast/提示；Abort/超时；React Query 错误展示策略 | 🔄 **当前建议** |
-| 4 | 阶段 4：可扩展 UI（面向 Agent） | 较难 | 任务详情/步骤时间线/日志查看；为工具调用结果展示留结构 | ⏳ 待开始 |
+| 3 | 阶段 3：请求层与错误体验 | 中 | `http.ts` 错误分类、统一 toast/提示；Abort/超时；React Query 错误展示策略；**含 `ChatPanel` mutation 错误** | 🔄 **当前建议** |
+| 4 | 阶段 4：可扩展 UI（面向 Agent） | 较难 | 任务详情/步骤时间线/日志查看；**与后端统一 activity 类型（聊天/任务/工具）**；**流式 SSE 消费**（依赖后端契约） | ⏳ 待开始 |
 
 ---
 
@@ -35,4 +35,9 @@ alwaysApply: true
 - **本阶段结束标准**（满足即可进入阶段 4）：
   - 主要请求均有可感知的错误态（非静默失败）；用户能区分「网络挂了」与「后端业务 code≠0」。
   - 能口述：React Query 的 `error` 与 `HttpError.body` 如何配合展示。
+
+## 与后端近期共识（2026-04-09，详见 `readme.md`）
+
+- **布局**：左栏（历史、任务、Agent）+ 右栏聊天；后端将提供 **流式** 与 **统一操作记录**，前端阶段 4 对接 **事件类型**（非仅纯文本）。
+- **教学时**：阶段 3 仍可独立完成；提及流式时指向 **backend/readme.md「产品/架构共识」**。
 

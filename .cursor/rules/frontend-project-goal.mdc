@@ -34,15 +34,17 @@ alwaysApply: true
 
 - **后端项目位置**：`myproject/backend`；进度以 **backend/readme.md** 为准。
 - **统一响应信封**：业务接口普遍返回 **`{ code, data, msg }`**（与前端 `HttpError` / 页面判断 `res.code === 0` 对齐）；具体 `data` 形状见各路由。
-- **当前后端 API（与 `backend/src/api.py` 对齐，随项目演进更新）**：
+- **当前后端 API（与 `backend/src/api.py` 及 routers 对齐，随项目演进更新）**：
   - **GET /health**：健康检查。
-  - **GET /tasks**、**POST /tasks**、**DELETE /tasks/{task_id}**：任务列表与增删；任务持久化 `tasks.json`。
+  - **GET /tasks**、**POST /tasks**、**DELETE /tasks/{task_id}**：任务列表与增删；持久化以 **backend** 为准（当前多为 **数据库**，详见 **backend/readme.md**）。
   - **POST /agent/run**：请求体 `{ "text": string }`，执行 Agent 工具链。
+  - **POST /agent/nl-run**：自然语言经 LLM 映射到白名单命令后执行（见 backend readme）。
+  - **POST /chat**：大模型对话（当前多为非流式 JSON 信封；**流式 SSE 为规划项**）。
   - **GET /agent/last-step**：最近一次 `Step`（无记录时按后端约定返回 `code`/`msg`）。
-  - **GET /agent/steps?limit=**：操作历史（最近若干条 `Step`，供前端「操作历史」展示）。
-- **联调注意**：后端进程重启后内存中的步骤历史会清空；调试历史接口前需先 **POST /agent/run** 产生步骤。
+  - **GET /agent/steps?limit=**：操作历史（最近若干条 `Step`，供前端「操作历史」展示；落库后以 DB 为准）。
+- **联调注意**：步骤历史若已落库，不以「进程重启即清空」为前提；以 **backend/readme** 与迁移状态为准。调试前可先 **POST /agent/run** 或 **nl-run** 产生步骤。
 - **启动后端**：在 `backend` 目录执行 `uvicorn src.api:app --reload`，默认 `http://127.0.0.1:8000`；前端需后端开启 **CORS**。
-- **当前前端学习阶段（与 `frontend/readme.md` 同步）**：阶段 1～2 已完成（API 联调、组件拆分）；**建议下一步：阶段 3**（`http` 错误分类、React Query 错误态与统一提示）。
+- **当前前端学习阶段（与 `frontend/readme.md` 同步）**：阶段 1～2 已完成；已增加 **左栏 + 右栏 `ChatPanel`** 及 **`/chat`、`/agent/nl-run`** 联调。**建议下一步：阶段 3**（`http` 错误分类、React Query 错误态、**含聊天 mutation**）；随后阶段 4 对接后端 **流式与统一 activity 类型**（见 backend readme「产品/架构共识」）。
 
 ## 前后端整体目标对齐
 
