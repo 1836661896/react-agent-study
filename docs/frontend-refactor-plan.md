@@ -1,0 +1,98 @@
+# 前端重构执行计划（与现行 `myproject/backend` 对齐）
+
+> **用途**：落地「**会话列表 + 消息历史 + 流式聊天**」+ 左栏占位；本仓库**当前选定策略**为：**不考虑保留现有 `src/` 实现，整目录移除后完全重写**。  
+> **权威契约**：**`docs/frontend-backend-contract.md`**；字段级约定：**`myproject/backend/docs/chat-stream-api.md`**、**`myproject/backend/docs/conversations-api.md`**。  
+> **产品构想**：**`docs/product-roadmap.md`**。  
+> **代码修改**：按 **`.cursor/rules/frontend-project-goal.mdc`**。删除或重建 **`src/`**、修改 **`index.html`** 等，须用户当条消息含**一字不差**的 **`本次允许修改`**；否则仅口述步骤或由用户本地操作。
+
+---
+
+## 选定方案：移除整个 `src/` 后重写
+
+### 含义
+
+- **不迁移**旧组件（`AgentCommand`、`TaskSection`、`ChatPanel` 等）；旧实现仅以 **git 历史**可查。
+- **重新建立**最小 Vite + React + TS 入口，再按契约逐文件增加 **`lib/http`**、**`api/*`**、**`types/*`**、布局与业务组件。
+- **仓库根**保留：**`package.json`**、**`vite.config.*`**、**`tsconfig*.json`**、**`eslint.config.*`**、**`.env.*`**、**`index.html`**（内容可能需与新的 `main.tsx` 路径对齐）、**`docs/`**、**`readme.md`**。
+
+### 与「在旧 `src` 上删改」相比
+
+| 项 | 整目录重写 | 在旧代码上修补 |
+|----|------------|----------------|
+| 心智负担 | 低（无历史包袱） | 需追踪遗留引用 |
+| 风险 | 须一次搭好入口与别名；**`index.html` 脚本路径**易错 | 易漏删 **`@/api/agent`** 等引用 |
+| 权限 | 删 **`src/`** 属工具改源码，须 **`本次允许修改`** | 同上 |
+
+### 已知工程细节（执行时检查）
+
+- 根目录 **`index.html`** 当前若仍指向 **`/src/main.jsx`**，而实际入口为 **`main.tsx`**，重写时应改为 **`/src/main.tsx`**（或与 Vite 模板一致），避免白屏。
+
+---
+
+## 0. 目标与非目标
+
+### 目标
+
+- **主区**：会话列表 + 当前会话消息列表 + 输入区发送；**`POST /chat/stream`**，消费 **`delta` / `error` / `done`**，使用 **`done.conversation_id` / `turn_id`** 与会话状态同步。
+- **布局**：左侧**仅占位**（无后端请求）；中为会话列表；右为聊天（列宽以最终实现为准，并同步 **`readme.md`** §2）。
+- **不保留**对已下线路由的任何调用（见 **`frontend-backend-contract.md`** §3）。
+
+### 非目标
+
+- 左侧真实活动流、**`routing=plan|mcp`** 产品化、富消息块等——仍按原 **`docs/product-roadmap.md`** 与上文「非目标」处理。
+
+---
+
+## 1. 基线与验收（重写前后都需要）
+
+- [ ] **1.1** **`myproject/backend`** 可启动；**`VITE_API_BASE_URL`** 正确；页面 **`GET /health`** 成功展示（重写后由新 **`HealthHeader`** 或等价组件承担）。  
+  - *历史记录*：见文末「执行记录」。
+- [x] **1.2** 已阅读 **`frontend-backend-contract.md`**；选定整目录重写后，**首次新 `src` 合入**时须重写该文件 **§5**（从「空白实现」描述差距，而非旧代码）。
+
+---
+
+## R. 整目录重写阶段（主路径）
+
+> 下列步骤在 **`本次允许修改`** 授权下可由助手代做；否则请用户按顺序本地操作。
+
+- [ ] **R0**（建议）：**`git checkout -b`** 新分支，或至少 **`git commit -am "chore: snapshot before src wipe"`**，便于回滚。
+- [ ] **R1**：删除整个 **`src/`** 目录（及仅被旧代码使用的 **`src` 外**残留，若有）。
+- [ ] **R2** **最小可运行骨架**  
+  - **`src/main.tsx`**：挂载根组件；**`QueryClientProvider`**（若继续用 React Query）。  
+  - **`src/App.tsx`** + 全局样式入口（可简化为单文件或 `App.css` / `index.css`）。  
+  - **`src/config/env.ts`**：**`VITE_API_BASE_URL`**。  
+  - **`src/lib/http.ts`**：与 **`{ code, data, msg }`** 对齐（可从旧提交 **拷贝思路**，不必拷贝旧业务组件）。  
+  - 修正 **`index.html`** → **`/src/main.tsx`**（或与实际入口一致）。  
+  - 验证 **`npm run dev`** 能出空白页、控制台无致命错误。
+- [ ] **R3** **类型与 API**  
+  - **`src/types/conversation.ts`**（及 SSE 所需类型）：与 backend schema 对齐。  
+  - **`src/api/conversation.ts`**：**`GET /conversation/list`**、**`GET /conversation/{id}/messages`**。  
+  - **`src/api/chatStream.ts`**：**`POST /chat/stream`**，请求体 **`message` + `conversation_id?` + `routing?`**；**`done`** 解析 **`conversation_id`、`turn_id`** 并交给调用方。
+- [ ] **R4** **UI 与布局**  
+  - Ant Design 布局：**左占位** | **会话列表** | **聊天**（三栏 **`Row`/`Col`** 或等价）。  
+  - 会话列表：**`useQuery`** + 选中 **`conversationId`**。  
+  - 聊天区：消息 **`useQuery`** + 流式发送 + **`invalidateQueries`**；新会话由首次 **`done`** 得 id。  
+  - 轻量 **`HealthHeader`**（或合并进顶栏）。
+- [ ] **R5** **收尾**  
+  - **`npm run lint`**；冒烟联调。  
+  - 更新 **`readme.md`** §2～§3、**`frontend-backend-contract.md`** §5、**`changelog.md`**。
+
+---
+
+## 6. 后续迭代
+
+- 快捷 **`routing`**、SSE 富类型、左侧活动流等——仍见 **`docs/product-roadmap.md`** 与后续计划。
+
+---
+
+## 执行记录（滚动）
+
+| 日期 | 内容 |
+|------|------|
+| 2026-05-14 | 完成 §**1.2**（旧代码）契约复核；**`frontend-backend-contract.md`** §5 曾对照旧 `src`。 |
+| 2026-05-14 | **策略变更**：改为**整目录删除 `src/` 后全文重写**；本文件结构改为 **§R** 主路径。 |
+| 待定 | **R1～R5** 须在含 **`本次允许修改`** 的对话中执行，或用户自行删除 **`src/`** 后让助手仅补文档/片段。 |
+
+---
+
+*修订：2026-05-14 起以「移除 `src/` 全文重写」为默认执行路径。*

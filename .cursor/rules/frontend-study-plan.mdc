@@ -5,39 +5,40 @@ alwaysApply: true
 
 ## 使用方式（给助手）
 
-- 新对话/换设备：先读 `frontend/readme.md` 与本文件，再读 `react-learning-checklist.mdc`。
+- 新对话/换设备：先读本仓库根目录 **`readme.md`** + **`docs/documentation-index.md`**，再读本文件与 **`react-learning-checklist.mdc`**。
+- **路径约定**：**`myproject/frontend`** / **`myproject/backend`** 为文档中的约定路径；不在此记录本机实际克隆目录。
 - 教学节奏：按阶段小步推进；每次只引入少量知识点，优先讲“与 Vue 不同的地方”和“为什么这样设计”。
 
 ---
 
 ## 项目推进计划（按难易：易 → 中 → 较难）
 
-> 目标是尽快形成“最小闭环”，再逐步做结构化与可扩展 UI。
+> **近期目标**：与 **`myproject/backend`** 当前能力形成闭环——**会话列表 + 消息历史 + 流式发送**；再迭代快捷路由与富消息展示。
 
 | 顺序 | 阶段 | 难易 | 目标与产出（前端） | 状态 |
 |------|------|------|--------------------|------|
 | 0 | 阶段 0：工程与运行 | 易 | 能跑起来、能构建；环境变量/代理就绪 | ✅ 已完成 |
-| 1 | 阶段 1：React 基础与最小联调 | 易~中 | 理解函数组件/JSX/useState/useEffect；health + tasks；**Agent：`POST /agent/run`、`GET /agent/last-step`、`GET /agent/steps`（操作历史）** | ✅ 已完成 |
-| 2 | 阶段 2：组件拆分与数据模型 | 中 | 拆 `AgentPanel`/`TaskSection`/`HealthHeader`（或等价）；统一 types；避免 App.tsx 过大 | ✅ 已完成 |
-| 3 | 阶段 3：请求层与错误体验 | 中 | `http.ts` 错误分类、统一 toast/提示；Abort/超时；React Query 错误展示策略；**含 `ChatPanel` mutation 错误** | 🔄 **当前建议** |
-| 4 | 阶段 4：可扩展 UI（面向 Agent） | 较难 | 任务详情/步骤时间线/日志查看；**与后端统一 activity 类型（聊天/任务/工具）**；**流式 SSE 消费**（依赖后端契约） | ⏳ 待开始 |
+| 1 | 阶段 1：React 基础与最小联调 | 易~中 | 函数组件/JSX/useState/useEffect；**GET /health**；曾练习 tasks/agent 等（**现行后端已移除对应路由**，仅作学习史） | ✅ 已完成 |
+| 2 | 阶段 2：组件拆分与数据模型 | 中 | 拆组件、统一 types；避免单文件过大 | ✅ 已完成 |
+| 3 | 阶段 3：请求层与错误体验 + 对齐现行 API | 中 | **`http.ts`** 错误分类与统一提示；React Query **`isError`/重试**；覆盖 **会话列表、消息列表** 的 JSON 请求与 **`ChatPanel` 流式失败路径**；可选 Abort/超时 | 🔄 **当前建议** |
+| 4 | 阶段 4：可扩展聊天 UI | 较难 | 快捷 **`routing`/skill/MCP 入口**（与后端契约对齐）；SSE **事件类型扩展**（工具确认、代码块、卡片等）；左侧活动流若后端有统一模型再对接 | ⏳ 待开始 |
 
 ---
 
 ## 当前建议（下一步怎么学）
 
-- **当前建议阶段**：**阶段 3**（阶段 2 已完成，见 `frontend/readme.md`）
+- **当前建议阶段**：**阶段 3**（与根目录 **`readme.md`**、**`docs/frontend-refactor-plan.md`** 同步）
 - **本阶段目标**：
-  - **`src/lib/http.ts`**：区分错误类型（网络失败、非 2xx、解析失败）；对外暴露统一错误信息或 `HttpError` 子类/字段，便于 UI 展示。
-  - **全局/局部提示**：用 antd **`message`** 或 **`notification`** 统一错误文案风格；避免每个组件重复拼 `err.message`。
-  - **React Query**：在任务列表、last-step、step-list 等 **`useQuery`** 上处理 **`isError` / `error`**（Card 内错误条、**重试**按钮）；可选 **`staleTime`**、**`refetchOnWindowFocus`**。
-  - 进阶可选：**AbortController**、请求超时、Mutation 取消。
+  - **`src/lib/http.ts`**：区分网络失败、非 2xx、JSON 解析失败、业务 **`code !== 0`**；与 **SSE** 读失败 / 中断区分对待。
+  - **全局/局部提示**：antd **`message`** / **`notification`** 等统一错误文案。
+  - **React Query**：**`GET /conversation/list`**、**`GET /conversation/{id}/messages`** 的 **`useQuery`** 上处理 **`isError` / `error`**（错误条、重试）；发送流式后依赖 **`invalidateQueries`** 或本地状态更新刷新历史。
+  - **流式**：**`POST /chat/stream`** 消费 **`delta` / `error` / `done`**（见 **`myproject/backend/docs/chat-stream-api.md`**）。
+  - 进阶可选：**AbortController**、超时、停止生成。
 - **本阶段结束标准**（满足即可进入阶段 4）：
-  - 主要请求均有可感知的错误态（非静默失败）；用户能区分「网络挂了」与「后端业务 code≠0」。
-  - 能口述：React Query 的 `error` 与 `HttpError.body` 如何配合展示。
+  - 会话相关 JSON 请求与聊天发送的主要失败路径均有可感知 UI。
+  - 能口述：**JSON 信封** 与 **SSE 行** 分别如何判错、如何与 React Query / 本地流式 state 配合。
 
-## 与后端近期共识（2026-04-09，详见 `readme.md`）
+## 与后端近期共识
 
-- **布局**：左栏（历史、任务、Agent）+ 右栏聊天；后端将提供 **流式** 与 **统一操作记录**，前端阶段 4 对接 **事件类型**（非仅纯文本）。
-- **教学时**：阶段 3 仍可独立完成；提及流式时指向 **backend/readme.md「产品/架构共识」**。
-
+- **权威文档**：**`myproject/backend/readme.md`**；流式 **`myproject/backend/docs/chat-stream-api.md`**；会话 **`myproject/backend/docs/conversations-api.md`**。
+- **布局**：主聊天区 + 输入区附近「快捷能力」按钮为近期产品方向；左侧历史/活动流为可选占位，以后端演进为准。

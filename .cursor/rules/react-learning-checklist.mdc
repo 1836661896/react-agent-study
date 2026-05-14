@@ -49,11 +49,14 @@ alwaysApply: true
 
 ---
 
-### 6) 后端 Agent 接口联调（与 `backend/src/api.py` 对齐）
+### 6) 后端联调（与 **`myproject/backend`** 当前 `src/` 及 readme、docs 对齐）
 
-- ✅ **`POST /agent/run`**：请求体 `{ "text": string }`；`runAgent(text)` + `useMutation`
-- ✅ **`GET /agent/last-step`**：封装 `getLastStep()` + `useQuery`；无记录时关注后端 `code`/`msg`
-- ✅ **`GET /agent/steps?limit=`**：封装 `getStepList(limit)`；操作历史列表（`useQuery(["stepList", limit])` 等）
-- ✅ **UI**：命令输入 + 发送；展示 last-step；**操作历史**（`Step` 类型与后端字段一致）
-- ✅ **与 last-step / stepList 联动**：`runAgent` 成功后 **`invalidateQueries`** **`["lastStep"]`**、**`["stepList"]`**（见 `AgentCommand.tsx`）
+> **路径约定**：**`myproject/backend`** 为文档中的规范仓库位置；接口以 **`myproject/backend/readme.md`** 及 **`myproject/backend/docs/chat-stream-api.md`**、**`myproject/backend/docs/conversations-api.md`** 为准。  
+> **本仓库文档索引**：**`docs/documentation-index.md`**。
 
+- ✅ **历史练习（旧挂载路由，后端重构后已移除）**：曾联调 **`POST /agent/run`**、**`GET /agent/last-step`**、**`GET /agent/steps`**、任务相关接口、非流式 **`POST /chat`** 等；可作为 React Query / 表单练习参考，**不再代表现行后端**。
+- 🔄 **现行后端挂载（前端待对齐）**：
+  - **GET /health**
+  - **GET /conversation/list**、**GET /conversation/{conversation_id}/messages**（分页与 **`ListResult`**，见 **`myproject/backend/docs/conversations-api.md`**）
+  - **POST /chat/stream**（SSE：**`delta` / `error` / `done`**，见 **`myproject/backend/docs/chat-stream-api.md`**）
+- ⏳ **近期 UI**：会话列表 + 消息历史 + 流式输入；**`done`** 中 **`conversation_id` / `turn_id`**；快捷 **`routing`** 与后续工具/代码块展示随阶段 4 引入

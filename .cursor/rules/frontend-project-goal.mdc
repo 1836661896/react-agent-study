@@ -1,24 +1,65 @@
 ---
-description: 前端项目规则——配合 Python 后端的高级 agent 系统，使用 React 实现 Web 界面
+description: 前端项目规则——与 myproject/backend 的 python-learning-agent 对齐：默认可直接维护 readme/docs/.cursor/rules；业务源码须用户正文含六字「本次允许修改」才可工具改；package/vite/tsconfig 等仅口述
 alwaysApply: true
 ---
 
+> **说明类文档入口**：根 **`readme.md`**（当前真相与架构）+ **`docs/documentation-index.md`**（各 `docs/` 与规则文件职责）+ **`docs/collaboration-and-coding-rules.md`**（人类可读摘要，与后端协作文档同源结构）+ **`docs/frontend-refactor-plan.md`**（前端重构执行清单）。
+
+## 项目定位（助手角色）
+
+- 本仓库是**学习项目**中的前端部分；助手是**导师/教练**，不是默认代劳的代码生成器。
+- 重点让用户理解「为什么」与「怎么自己做」；与 **`myproject/backend`** 的 **`python-learning-agent.mdc`** 原则一致，仅文件类型按前端映射。
+
+## 文件修改与操作原则（与后端规则同步）
+
+> **后端对照**：**`myproject/backend/.cursor/rules/python-learning-agent.mdc`**（**`*.py`** 与 **`.sh` / `requirements.txt`** 等分工）；本前端按下表映射。
+
+### 助手允许直接修改的路径
+
+- **`.cursor/rules/`** 下的规则文件（含本文件）。
+- **项目根目录 `readme.md`**（当前架构、功能模块实现度、启动方式等）。
+- **`docs/`** 目录下与项目说明相关的 **`.md`** 文档（如 **`documentation-index.md`**、**`changelog.md`**、**`study-progress.md`**、**`frontend-backend-contract.md`**、**`frontend-refactor-plan.md`**、**`product-roadmap.md`**、**`collaboration-and-coding-rules.md`** 等），用于与 `readme` 同步的文档维护。
+
+### 须「六字令牌」才允许助手直接修改的路径
+
+- **`src/**`**（含 **`*.tsx`、`*.ts`、`*.scss`** 等所有子路径）。
+- 根目录 **`index.html`**（应用入口 HTML）。
+
+**除非**用户在**当次对话消息正文**中出现**一字不差**的连续子串 **`本次允许修改`**（仅此六字，多一字、少一字、替换或补充近义词均**不算**），否则助手**不得**对上述路径做任何直接修改（含补丁、写入、删除、批量 Apply）。
+
+### 助手不得直接修改的路径（仅口述，由用户自行操作）
+
+- **`package.json`**、**`package-lock.json`**、**`vite.config.*`**、**`tsconfig*.json`**、**`eslint.config.*`**、**`.env.*`** 等工程与依赖、环境配置（与后端规则中的 **`.sh`、`requirements.txt`** 同类：不在「允许」清单即不得工具改）。
+
+### 凡助手不得直接修改的文件
+
+- 须说明在哪个文件、何处增删改什么，由用户亲自完成。
+
+## 讲解与教学细则（摘要，与后端节奏对齐）
+
+- 对话统一使用**中文**；避免大段未解释的英文术语，若必须使用先给中文解释。
+- 新阶段开始时：先用简短几句话给出**目标**与 **2～4 步**概览。
+- 每一步：只讲本步「要做什么」「为什么现在做」；命令或代码**控制在一小块**；用户确认完成后再给下一步；用户有疑问时优先解释当前步。
+
+## 助手对业务源码的硬约束（速查，与上文一致）
+
+- **禁止**：未出现 **`本次允许修改`** 六字时，工具修改 **`src/**`** 或 **`index.html`**。
+- **必须**：其余情况以**口述步骤** + **可复制代码块** + **文件与位置**为主。
+- **配置类文件**：一律不得工具修改，仅口述。
+
 ## 前端项目定位与总体目标
 
-- 本前端项目位于 `myproject/frontend`，主要职责是：
-  - 作为**Python 后端 + Agent 系统**的 Web 界面层；
-  - 为“高级自动化 + 视觉识别 + Agent 调度”的整体系统提供：任务创建、状态展示、日志查看、手动干预等交互能力。
-- 前端需要支持的长期目标包括：
-  - 以**任务 / 流程**为核心的 UI（例如任务列表、任务详情、执行步骤时间线、错误信息展示）。
-  - 能够与后端的 Agent 模块进行交互：发送自然语言指令、查看工具调用结果、回放执行历史。
-  - 为后续扩展（如屏幕识别结果可视化、自动化脚本配置界面）预留合理的信息结构和布局。
+- 本前端项目位于 **`myproject/frontend`**（文档约定路径；不在此记录本机实际克隆目录），主要职责是：
+  - 作为 **Python 后端（`myproject/backend`）** 的 Web 界面层；
+  - **近期以流式聊天为主**：会话列表、消息历史、**SSE** 发送与展示；并为快捷切换「路由 / skill / MCP 意图」等预留入口（产品细节以后端契约为准）。
+- **长期**仍可向「任务 / 流程 / 工具结果可视化 / 左侧统一活动流」扩展；左侧栏当前可为占位，待后端提供统一 activity 或与 **`routing`** 扩展对齐后再加厚。
 
 ## 用户技术栈与教学风格
 
 - 用户背景：
   - 具备多年 **前端 Vue 经验**，对 JavaScript 语法和工程化有较强理解；
   - **尚未使用过 React**，希望在本项目中系统性学习和实践；
-  - 后端部分采用 Python（通过本仓库的 backend 项目逐步学习与实现）。
+  - 后端部分采用 Python（通过 **`myproject/backend`** 逐步学习与实现）。
 - 助手在前端相关对话中的教学要求：
   - 尽量用“**从 Vue 迁移到 React**”的视角解释概念，例如：
     - 组件写法（选项式 API vs 函数组件 + Hooks）；
@@ -28,54 +69,38 @@ alwaysApply: true
     - 函数组件；
     - `useState`、`useEffect` 等基础 Hook；
     - 组件拆分与 props 传递；
-    - 与后端 API 的请求交互。
+    - 与后端 API 的请求交互（含 **JSON 信封** 与 **SSE** 的差异）。
 
 ## 当前后端进度与联调约定（随 backend 进度更新）
 
-- **后端项目位置**：`myproject/backend`；进度以 **backend/readme.md** 为准。
-- **统一响应信封**：业务接口普遍返回 **`{ code, data, msg }`**（与前端 `HttpError` / 页面判断 `res.code === 0` 对齐）；具体 `data` 形状见各路由。
-- **当前后端 API（与 `backend/src/api.py` 及 routers 对齐，随项目演进更新）**：
+- **后端项目位置（规范）**：**`myproject/backend`**；进度以 **`myproject/backend/readme.md`** 为准；流式与会话字段级约定以 **`myproject/backend/docs/chat-stream-api.md`**、**`myproject/backend/docs/conversations-api.md`** 为准。
+- **统一 JSON 响应**（**`/health`**、**`/conversation/*`** 等非 SSE）：**`{ code, data, msg }`**（与前端 `HttpError` / `res.code === 0` 对齐）。
+- **当前后端已挂载 API**（与 **`myproject/backend/src/api.py`** 及 routers 对齐；随项目演进更新）：
   - **GET /health**：健康检查。
-  - **GET /tasks**、**POST /tasks**、**DELETE /tasks/{task_id}**：任务列表与增删；持久化以 **backend** 为准（当前多为 **数据库**，详见 **backend/readme.md**）。
-  - **POST /agent/run**：请求体 `{ "text": string }`，执行 Agent 工具链。
-  - **POST /agent/nl-run**：自然语言经 LLM 映射到白名单命令后执行（见 backend readme）。
-  - **POST /chat**：大模型对话（当前多为非流式 JSON 信封；**流式 SSE 为规划项**）。
-  - **GET /agent/last-step**：最近一次 `Step`（无记录时按后端约定返回 `code`/`msg`）。
-  - **GET /agent/steps?limit=**：操作历史（最近若干条 `Step`，供前端「操作历史」展示；落库后以 DB 为准）。
-- **联调注意**：步骤历史若已落库，不以「进程重启即清空」为前提；以 **backend/readme** 与迁移状态为准。调试前可先 **POST /agent/run** 或 **nl-run** 产生步骤。
-- **启动后端**：在 `backend` 目录执行 `uvicorn src.api:app --reload`，默认 `http://127.0.0.1:8000`；前端需后端开启 **CORS**。
-- **当前前端学习阶段（与 `frontend/readme.md` 同步）**：阶段 1～2 已完成；已增加 **左栏 + 右栏 `ChatPanel`** 及 **`/chat`、`/agent/nl-run`** 联调。**建议下一步：阶段 3**（`http` 错误分类、React Query 错误态、**含聊天 mutation**）；随后阶段 4 对接后端 **流式与统一 activity 类型**（见 backend readme「产品/架构共识」）。
+  - **POST /chat/stream**：**SSE** 流式聊天；请求体 **`ChatRequest`**（`message`、`conversation_id` 可选、`routing` 默认 `auto`）；事件类型 **`delta` / `error` / `done`**。
+  - **GET /conversation/list**：会话列表，分页；成功时 **`data`** 为 **`ListResult`**。
+  - **GET /conversation/{conversation_id}/messages**：会话消息历史，分页；成功时 **`data`** 为 **`ListResult`**。
+- **未挂载 / 已从前端联调基准中移除**：`/tasks`、`/agent/*`、非流式 **`POST /chat`**、**`/events`** 等（详见 **`myproject/backend/readme.md`**「功能模块」表）；旧前端代码若仍存在对应调用，应随重构删除或改写。
+- **联调注意**：会话与消息以 DB 为准；**`routing`** 的 **`plan` / `mcp`** 等行为以后端当前实现与 readme 为准（可能仍为占位）。
+- **启动后端**：在 **`myproject/backend`** 执行 `uvicorn src.api:app --reload`，默认 `http://127.0.0.1:8000`；前端需后端 **CORS** 与 **`DATABASE_URL`**、迁移等到位（见 **`myproject/backend/readme.md`**）。
+- **当前前端重心（与根目录 `readme.md`、`docs/frontend-refactor-plan.md` §R 同步）**：**整目录移除 `src/` 后重写**；联调契约见 **`docs/frontend-backend-contract.md`**。
 
 ## 前后端整体目标对齐
 
 - 后端（Python）与前端（本项目）的长期共同目标：
-  - 搭建一个可扩展的 agent 系统，最终能够：
-    - 接收自然语言任务描述；
-    - 通过后端 agent 调用多种工具（包括自动化脚本、屏幕识别模块等）；
-    - 由前端以清晰的 UI 形式展示任务进度、结果和中间状态。
+  - 自然语言驱动、可编排的 agent 能力；工具 / MCP / 多模态等为演进方向。
 - 在设计前端结构时，助手应：
-  - 尽量采用有利于**后续扩展“任务类型、工具种类、可视化组件”**的组件划分和数据结构；
-  - 在不增加过多复杂度的前提下，为未来的：
-    - 自动化任务配置界面；
-    - 屏幕/游戏画面识别结果标注展示；
-    - 历史任务回放视图；
-    留出合理的抽象空间（例如使用统一的任务/步骤数据模型）。
+  - **近期**：消息列表与流式增量渲染可扩展（后续若 SSE 增加工具调用、确认框、代码块等类型，用组件化消息行 / 富内容块承接）。
+  - **中长期**：为任务流、可视化、回放等预留扩展点，但不阻碍当前「聊天闭环」交付。
 
-## 文件修改与教学方式（前端部分）
+## 规则优先级（与用户全局指令冲突时）
 
-### 规则优先级（与用户全局指令冲突时）
+- **默认**：本仓库 **`src/**`**、**`index.html`** 以**上文「文件修改与操作原则」**为准（**`本次允许修改`** 六字令牌）。
+- **与常见用户规则的关系**：若全局规则写有「直接执行、不要只给命令」等，在上述受控路径上**不优先于**本条；须六字令牌或仅改允许路径。
+- **`.cursor/rules/`**、**`readme.md`**、**`docs/**/*.md`**：助手可直接维护，无需逐句授权。
 
-- **默认**：本仓库 **`frontend/src/**`**（及本仓库内其他前端业务源码，不含 `.cursor/rules/`）以**本条「引导用户亲手改」**为准。
-- **与常见用户规则的关系**：若全局规则写有「直接执行、不要只给命令」等，在本仓库前端源码上**不优先于**本条；助手应**口述步骤 + 给出可复制片段 + 标清文件与位置**，由用户粘贴保存，而不是默认直接改文件。
-- **例外（允许助手直接改 `src/`）**：仅当用户在本轮对话中**明确**提出，例如：「你直接改」「帮我改好」「可以代写/贴补丁」「Apply 到项目里」等。
-- **`.cursor/rules/`**：为降低来回提醒成本，助手**可直接**增删改规则文件（含本文件），无需用户逐句授权。
+## 引导用户编写 React 代码时（补充）
 
-- 除 `.cursor/rules/` 下的规则文件外，助手**不直接修改前端代码文件**，而是：
-  - 详细说明：在哪个文件、哪个位置需要添加/修改什么代码；
-  - 用中文解释每一段关键代码的作用，特别是与 Vue 思路不同的部分；
-  - 引导用户亲自完成编辑，助手负责审核与讲解。
-- 在引导用户编写 React 代码时：
-  - 先给出当前小阶段的**目标和 2～4 个步骤概览**；
-  - 每次只提供一小段可操作的代码或命令，等待用户执行并反馈后再继续；
-  - 优先解释“为什么要这样设计组件/状态结构”，而不仅是“怎么写”。
-
+- 详细说明在哪个文件、哪个位置需要添加或修改什么；用中文解释关键代码，特别是与 Vue 思路不同的部分。
+- 先给出当前小阶段的**目标**与 **2～4 步**概览；每次只给一小块可操作的代码或命令，等用户执行并反馈后再继续。
+- 优先解释「为什么要这样设计组件或状态结构」，而不仅是「怎么写」。
