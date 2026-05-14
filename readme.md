@@ -16,45 +16,58 @@
 ## 1. 项目是做什么的
 
 - **定位**：**`myproject/backend`**（Python + FastAPI）的 **Web 界面**；技术栈为 **React + TypeScript + Vite**，UI 库 **Ant Design**，数据请求 **TanStack React Query**（部分模块）。
-- **当前阶段**：后端已重构为**会话 + 流式聊天**；前端计划为**移除现有 `src/` 目录后从零重写**（不保留当前组件实现），执行清单见 **`docs/frontend-refactor-plan.md`** §**R**；旧界面仅以 git 历史可查。
+- **当前阶段**：后端为**会话 + 流式聊天**；前端已按 **`docs/frontend-refactor-plan.md`** §**R** 完成 **R1（删旧 `src`）** 与 **R2 最小骨架**（可 `npm run dev`）；**R3～R5**（会话 API、流式、三栏 UI、健康检查联调等）未做。执行清单与勾选见 **`docs/frontend-refactor-plan.md`**。
 
 ---
 
 ## 2. 目录与架构（摘要）
 
-> **说明**：计划**删除现有 `src/` 后按 **`docs/frontend-refactor-plan.md`** §**R** 重建**。下表为**目标结构**（与现行磁盘可能不一致，直至 **R5** 完成）。
+> **说明**：以下为**当前磁盘上 `src/` 真实结构**（2026-05-15）；**目标能力**仍以 **`docs/frontend-refactor-plan.md`** §**R3～R4** 为准。
 
 ```
 .
-├── docs/                    # 说明类文档
+├── docs/                    # 说明类文档（职责见 documentation-index.md）
 ├── src/
-│   ├── api/                 # conversation、chatStream、common(health) 等
-│   ├── components/          # 布局与业务区块（左占位、会话列表、聊天等）
-│   ├── config/              # env（VITE_API_BASE_URL）
-│   ├── lib/                 # http、错误类型
-│   ├── types/               # 与后端契约对齐的类型
-│   ├── App.tsx              # 三栏主布局
-│   └── main.tsx             # 入口；React Query Provider 等
-├── index.html               # 入口 script 须指向实际 main（如 /src/main.tsx）
-├── vite.config.js
+│   ├── config/
+│   │   └── env.ts           # VITE_API_BASE_URL
+│   ├── types/
+│   │   └── common.ts        # ApiResponse 等与 JSON 信封对齐的类型
+│   ├── utils/
+│   │   └── request.ts       # HttpError、request()：JSON fetch + 业务 code 判断
+│   ├── styles/
+│   │   ├── main.scss        # 全局 reset
+│   │   └── App.scss         # App 布局样式
+│   ├── App.tsx              # 当前为 R2 占位页（Ant Design Layout）
+│   ├── main.tsx             # 入口；QueryClientProvider、antd ConfigProvider（zhCN）
+│   └── vite-env.d.ts        # Vite / import.meta.env 类型
+├── index.html               # /src/main.tsx（已与入口一致）
+├── vite.config.js           # @ → ./src
+├── tsconfig.json
 └── package.json
 ```
 
-**架构约定（目标）**
+**架构约定（当前 → 目标）**
 
-- **JSON**：**`src/lib/http.ts`** + **`{ code, data, msg }`**。
-- **SSE**：**`src/api/chatStream.ts`**，`fetch` + ReadableStream；**`done`** 含 **`conversation_id` / `turn_id`**。
+- **JSON**：当前由 **`src/utils/request.ts`** 的 **`request()`** 对接 **`{ code, data, msg }`**（与计划中的 **`lib/http.ts`** 角色相同；是否改名为 `lib/http` 由后续重构决定）。
+- **SSE**：**`src/api/chatStream.ts`** 尚未建立（**R3**）。
+- **会话 HTTP**：**`src/api/conversation.ts`** 尚未建立（**R3**）。
 - **环境**：**`src/config/env.ts`** → **`VITE_API_BASE_URL`**。
 
 ---
 
 ## 3. 功能模块与实现程度
 
-> **约定**：整 **`src/`** 重写完成前，不逐文件维护旧表；以 **`docs/frontend-refactor-plan.md`** §**R** 勾选为准。完成后在此恢复「模块 ↔ 路径 ↔ 实现程度」细表。
+> **约定**：与 **`docs/frontend-refactor-plan.md`** §**R** 同步；细项随代码更新。
 
 | 模块 | 主要路径 | 实现程度 | 说明 |
 |------|-----------|-----------|------|
-| 全栈前端（相对后端契约） | `src/`（待建） | **待重写** | 执行 **`frontend-refactor-plan.md`** **R0～R5**；旧 `src` 不保留 |
+| 应用入口与全局壳 | `main.tsx`、`App.tsx` | 已完成（R2） | React Query + antd 中文；占位文案指向 R3/R4 |
+| 环境变量 | `config/env.ts` | 已完成（R2） | 缺少 `VITE_API_BASE_URL` 时抛错 |
+| JSON 请求封装 | `utils/request.ts` | 已完成（R2） | `HttpError`、`request`；注意 **`exactOptionalPropertyTypes`** 下 **`fetch` init** 勿显式传 `body: undefined` |
+| 类型（通用信封） | `types/common.ts` | 已完成（R2） | `ApiResponse` |
+| 健康检查 UI | — | 未实现 | **R4**：`GET /health` 展示；**§1.1** 依赖后端可连 |
+| 会话列表 / 消息 / 流式 | — | 未实现 | **R3～R4** |
+| 已下线路由封装 | — | **无** | 当前 `src` 无 **`api/agent|tasks|events`**（与 **`frontend-backend-contract.md`** §3 一致） |
 
 ---
 
@@ -63,13 +76,13 @@
 - **Node.js**：与 **`package.json`** 中 Vite / TypeScript 版本兼容的当前 LTS 即可。
 - **安装依赖**：在项目根目录执行 `npm install`。
 - **本地开发**：`npm run dev`（Vite 默认 **`http://localhost:5173`**）。
-- **API 基址**：配置 **`.env.development`** / **`.env.production`** 中的 **`VITE_API_BASE_URL`**（指向 **`myproject/backend`** 服务根 URL，无尾斜杠亦可，由 `http.ts`/`chatStream` 拼接路径）。
+- **API 基址**：配置 **`.env.development`** / **`.env.production`** 中的 **`VITE_API_BASE_URL`**（指向 **`myproject/backend`** 服务根 URL，无尾斜杠亦可，由 **`utils/request.ts`** 等拼接路径）。
 
 ---
 
 ## 5. API 约定备忘
 
-- **JSON**：**`{ code, data, msg }`**；**`code !== 0`** 业务失败（实现位置：**`src/lib/http.ts`**，待 **R3** 落地）。
+- **JSON**：**`{ code, data, msg }`**；**`code !== 0`** 业务失败（实现位置：**`src/utils/request.ts`** 的 **`request()`**）。
 - **SSE**：**`/chat/stream`**；事件形态与 **`ChatRequest`** 字段见 **`myproject/backend/docs/chat-stream-api.md`**。
 - **会话分页**：见 **`myproject/backend/docs/conversations-api.md`**。
 - **完整接口表与遗留说明**：**`docs/frontend-backend-contract.md`**。

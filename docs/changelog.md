@@ -4,6 +4,13 @@
 
 ---
 
+## 2026-05-15
+
+- **R2 骨架落地**：新 **`src/`** 含 **`utils/request.ts`**、**`config/env.ts`**、**`types/common.ts`**、**`main.tsx` / `App.tsx`**、**`styles/`**、**`vite-env.d.ts`**；**`index.html`** 指向 **`/src/main.tsx`**。**当前无**对已下线路由（`/tasks`、`/agent/*` 等）的封装。
+- **文档同步**：**`readme.md`** §1～§3、§5；**`docs/frontend-backend-contract.md`** §3～§5；**`docs/frontend-refactor-plan.md`** 勾选 **R1/R2** 并记执行记录。
+
+---
+
 ## 2026-05-14
 
 - **前端重构计划**：新增 **`docs/frontend-refactor-plan.md`**，作为与 **`myproject/backend`** 对齐的**重新开始**的执行清单（布局、API、组件、清理、验收）；**`readme.md`** 文首、**`documentation-index.md`**、**`study-progress.md`** 已指向该文件。

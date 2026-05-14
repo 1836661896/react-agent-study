@@ -12,7 +12,7 @@
 ### 含义
 
 - **不迁移**旧组件（`AgentCommand`、`TaskSection`、`ChatPanel` 等）；旧实现仅以 **git 历史**可查。
-- **重新建立**最小 Vite + React + TS 入口，再按契约逐文件增加 **`lib/http`**、**`api/*`**、**`types/*`**、布局与业务组件。
+- **重新建立**最小 Vite + React + TS 入口，再按契约逐文件增加 **`api/*`**、**会话/流式类型**、HTTP 封装（当前为 **`utils/request.ts`**，与计划示例 **`lib/http.ts`** 等价可选）、布局与业务组件。
 - **仓库根**保留：**`package.json`**、**`vite.config.*`**、**`tsconfig*.json`**、**`eslint.config.*`**、**`.env.*`**、**`index.html`**（内容可能需与新的 `main.tsx` 路径对齐）、**`docs/`**、**`readme.md`**。
 
 ### 与「在旧 `src` 上删改」相比
@@ -56,14 +56,14 @@
 > 下列步骤在 **`本次允许修改`** 授权下可由助手代做；否则请用户按顺序本地操作。
 
 - [ ] **R0**（建议）：**`git checkout -b`** 新分支，或至少 **`git commit -am "chore: snapshot before src wipe"`**，便于回滚。
-- [ ] **R1**：删除整个 **`src/`** 目录（及仅被旧代码使用的 **`src` 外**残留，若有）。
-- [ ] **R2** **最小可运行骨架**  
-  - **`src/main.tsx`**：挂载根组件；**`QueryClientProvider`**（若继续用 React Query）。  
-  - **`src/App.tsx`** + 全局样式入口（可简化为单文件或 `App.css` / `index.css`）。  
+- [x] **R1**：删除整个 **`src/`** 目录（及仅被旧代码使用的 **`src` 外**残留，若有）。
+- [x] **R2** **最小可运行骨架**  
+  - **`src/main.tsx`**：挂载根组件；**`QueryClientProvider`**；**`antd` `ConfigProvider`（zhCN）**。  
+  - **`src/App.tsx`** + **`src/styles/*.scss`**。  
   - **`src/config/env.ts`**：**`VITE_API_BASE_URL`**。  
-  - **`src/lib/http.ts`**：与 **`{ code, data, msg }`** 对齐（可从旧提交 **拷贝思路**，不必拷贝旧业务组件）。  
-  - 修正 **`index.html`** → **`/src/main.tsx`**（或与实际入口一致）。  
-  - 验证 **`npm run dev`** 能出空白页、控制台无致命错误。
+  - **JSON 封装**：已实现为 **`src/utils/request.ts`**（**`request` + `HttpError`**），与计划中的 **`src/lib/http.ts`** 职责等价（可后续再统一到 `lib/` 命名）。  
+  - **`index.html`** → **`/src/main.tsx`**（已对齐）。  
+  - **`npm run dev`** 可打开 R2 占位页。
 - [ ] **R3** **类型与 API**  
   - **`src/types/conversation.ts`**（及 SSE 所需类型）：与 backend schema 对齐。  
   - **`src/api/conversation.ts`**：**`GET /conversation/list`**、**`GET /conversation/{id}/messages`**。  
@@ -90,8 +90,9 @@
 | 日期 | 内容 |
 |------|------|
 | 2026-05-14 | 完成 §**1.2**（旧代码）契约复核；**`frontend-backend-contract.md`** §5 曾对照旧 `src`。 |
+| 2026-05-15 | **R1/R2** 落地：新 **`src`** 含 **`utils/request.ts`**、**`config/env`**、**`types/common`**、**`main`/`App`**、样式；**`readme`**/**`frontend-backend-contract`** 已同步当前架构。下一步 **R3**。 |
 | 2026-05-14 | **策略变更**：改为**整目录删除 `src/` 后全文重写**；本文件结构改为 **§R** 主路径。 |
-| 待定 | **R1～R5** 须在含 **`本次允许修改`** 的对话中执行，或用户自行删除 **`src/`** 后让助手仅补文档/片段。 |
+| 待定 | **R3～R5** 及 **`src/`** 改动：须用户本地编辑，或当条消息含 **`本次允许修改`** 并写清范围后助手方可代写。 |
 
 ---
 
