@@ -4,6 +4,15 @@
 
 ---
 
+## 最近一次学习（2026-05-16）
+
+- **路由与会话列表**：**`react-router-dom`**（**`BrowserRouter`**）；**`App`** 下 **`HomePage` / `ChatPage` / `NotFoundPage`**；**`ChatPage`** 挂载 **`ConversationList`**。
+- **API 与类型**：**`src/api/conversations.ts`**（**`list`**、**`delete`**，删除为 **`POST` + body `{ ids }`**）；**`types/common.ts`**（**`ListResult`** 等）、**`types/conversations.ts`**。
+- **列表交互**：**`useQuery`** 分页；**`useMutation`** 单删/批删；**`invalidateQueries`**；多选、全选本页；翻页清空多选。
+- **文档**：更新 **`readme.md`**、**`changelog.md`**、**`frontend-backend-contract.md`**、**`frontend-refactor-plan.md`**、本文件。
+
+---
+
 ## 最近一次学习（2026-05-15）
 
 - **R1/R2**：用户删除旧 **`src/`** 后自建最小骨架——**`utils/request.ts`**（JSON **`request` + `HttpError`**）、**`config/env.ts`**、**`types/common.ts`**、**`main.tsx` / `App.tsx`**、**`styles/`**、**`vite-env.d.ts`**；**`index.html`** → **`main.tsx`**。
@@ -15,9 +24,9 @@
 
 > 顺序以 **`docs/frontend-refactor-plan.md`** §**R** 为准。
 
-1. **R3**：新增 **`src/types/conversation.ts`**（及流式所需类型）、**`src/api/conversation.ts`**、**`src/api/chatStream.ts`**（**`done` 含 `conversation_id` / `turn_id`**）；由你本地改 **`src/`**，或同条消息含 **`本次允许修改`** 并写明范围后请助手代写。
-2. **R4**：三栏布局（左占位 | 会话列表 | 聊天）、**`useQuery`**、**`GET /health`** 展示（完成 **§1.1** 勾选）。
-3. **R5**：**`npm run lint`**、联调、再扫一遍 **`readme` / `frontend-backend-contract` §5**。
+1. **R3（续）**：**`POST /conversation/create`** 与 **`GET /conversation/{id}/messages`** 的类型 + **`api/conversations.ts`** 封装；消息列表 **`useQuery`**（**`enabled`** 依赖选中会话 id）；**`src/api/chatStream.ts`** 与 **`done` 中 `conversation_id` / `turn_id`**。
+2. **R4**：三栏布局（左占位 | 会话列表 | 聊天区）或先扩 **`ChatPage`**；**`GET /health`** 展示（完成 **§1.1** 勾选）。
+3. **R5**：**`npm run lint`**、联调、再扫 **`readme` / `frontend-backend-contract` §5**。
 
 ---
 

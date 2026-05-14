@@ -58,21 +58,19 @@
 - [ ] **R0**（建议）：**`git checkout -b`** 新分支，或至少 **`git commit -am "chore: snapshot before src wipe"`**，便于回滚。
 - [x] **R1**：删除整个 **`src/`** 目录（及仅被旧代码使用的 **`src` 外**残留，若有）。
 - [x] **R2** **最小可运行骨架**  
-  - **`src/main.tsx`**：挂载根组件；**`QueryClientProvider`**；**`antd` `ConfigProvider`（zhCN）**。  
-  - **`src/App.tsx`** + **`src/styles/*.scss`**。  
+  - **`src/main.tsx`**：挂载根组件；**`BrowserRouter`**；**`QueryClientProvider`**；**`antd` `ConfigProvider`（zhCN）**。  
+  - **`src/App.tsx`** + **`src/styles/*.scss`**；**`App`**：**`Routes`**（**`/`**、**`/chat`**、**`*`**）与顶栏导航。  
   - **`src/config/env.ts`**：**`VITE_API_BASE_URL`**。  
   - **JSON 封装**：已实现为 **`src/utils/request.ts`**（**`request` + `HttpError`**），与计划中的 **`src/lib/http.ts`** 职责等价（可后续再统一到 `lib/` 命名）。  
   - **`index.html`** → **`/src/main.tsx`**（已对齐）。  
   - **`npm run dev`** 可打开 R2 占位页。
 - [ ] **R3** **类型与 API**  
-  - **`src/types/conversation.ts`**（及 SSE 所需类型）：与 backend schema 对齐。  
-  - **`src/api/conversation.ts`**：**`GET /conversation/list`**、**`GET /conversation/{id}/messages`**。  
-  - **`src/api/chatStream.ts`**：**`POST /chat/stream`**，请求体 **`message` + `conversation_id?` + `routing?`**；**`done`** 解析 **`conversation_id`、`turn_id`** 并交给调用方。
+  - **已完成（部分）**：**`src/types/conversations.ts`**（列表项、删除 body、列表 query 等）；**`src/types/common.ts`**（**`ListResult`** 等）；**`src/api/conversations.ts`**：**`GET /conversation/list`**、**`POST /conversation/delete`**。  
+  - **待完成**：**`POST /conversation/create`**、**`GET /conversation/{id}/messages`** 的类型与封装；**`src/api/chatStream.ts`**：**`POST /chat/stream`**，请求体 **`message` + `conversation_id?` + `routing?`**；**`done`** 解析 **`conversation_id`、`turn_id`** 并交给调用方。  
+  - *计划文件名曾写作 `conversation.ts`（单数）；实际仓库为 **`conversations.ts`**。*
 - [ ] **R4** **UI 与布局**  
-  - Ant Design 布局：**左占位** | **会话列表** | **聊天**（三栏 **`Row`/`Col`** 或等价）。  
-  - 会话列表：**`useQuery`** + 选中 **`conversationId`**。  
-  - 聊天区：消息 **`useQuery`** + 流式发送 + **`invalidateQueries`**；新会话由首次 **`done`** 得 id。  
-  - 轻量 **`HealthHeader`**（或合并进顶栏）。
+  - **进行中（部分）**：**`react-router-dom`** 多页；**`/chat`** 下 **`ConversationList`**（分页、单选、多选、单删/批删）。  
+  - **待完成**：Ant Design **三栏**（左占位 | 会话列表 | 聊天）或等价；**消息区** **`useQuery`** + 流式发送 + **`invalidateQueries`**；新会话由 **`create`** 或首次流式 **`done`** 得 id；轻量 **`HealthHeader`**（或合并进顶栏）。
 - [ ] **R5** **收尾**  
   - **`npm run lint`**；冒烟联调。  
   - 更新 **`readme.md`** §2～§3、**`frontend-backend-contract.md`** §5、**`changelog.md`**。
@@ -90,6 +88,7 @@
 | 日期 | 内容 |
 |------|------|
 | 2026-05-14 | 完成 §**1.2**（旧代码）契约复核；**`frontend-backend-contract.md`** §5 曾对照旧 `src`。 |
+| 2026-05-16 | **R3/R4 部分推进**：会话 **list/delete** API 与类型；**`ConversationList`**；**`react-router-dom`** 与 **`pages/*`**。详见 **`docs/changelog.md`**。 |
 | 2026-05-15 | **R1/R2** 落地：新 **`src`** 含 **`utils/request.ts`**、**`config/env`**、**`types/common`**、**`main`/`App`**、样式；**`readme`**/**`frontend-backend-contract`** 已同步当前架构。下一步 **R3**。 |
 | 2026-05-14 | **策略变更**：改为**整目录删除 `src/` 后全文重写**；本文件结构改为 **§R** 主路径。 |
 | 待定 | **R3～R5** 及 **`src/`** 改动：须用户本地编辑，或当条消息含 **`本次允许修改`** 并写清范围后助手方可代写。 |

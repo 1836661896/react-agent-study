@@ -4,6 +4,15 @@
 
 ---
 
+## 2026-05-16
+
+- **路由**：引入 **`react-router-dom`**；**`main.tsx`** 包裹 **`BrowserRouter`**；**`App.tsx`** 使用 **`Routes` / `Route`**，页面 **`src/pages/HomePage`**（`/`）、**`ChatPage`**（`/chat`）、**`NotFoundPage`**（`*`）；顶栏 **`Link`** 导航。
+- **会话类型与 API**：**`src/types/common.ts`**（**`ApiResponse`、`ListResult`、`ListQuery`** 等）、**`src/types/conversations.ts`**；**`src/api/conversations.ts`** 封装 **`GET conversation/list`**、**`POST conversation/delete`**（JSON body **`{ ids: number[] }`**）。
+- **会话列表 UI**：**`src/components/ConversationList.tsx`** — **`useQuery`** 分页列表；单选当前会话 id；多选、全选本页、单条删除与批量删除（**`useMutation`** + **`invalidateQueries`**）；翻页时清空多选。
+- **文档**：同步 **`readme.md`**、**`docs/frontend-backend-contract.md`**、**`docs/study-progress.md`**、**`docs/frontend-refactor-plan.md`** 执行记录与本节。
+
+---
+
 ## 2026-05-15
 
 - **R2 骨架落地**：新 **`src/`** 含 **`utils/request.ts`**、**`config/env.ts`**、**`types/common.ts`**、**`main.tsx` / `App.tsx`**、**`styles/`**、**`vite-env.d.ts`**；**`index.html`** 指向 **`/src/main.tsx`**。**当前无**对已下线路由（`/tasks`、`/agent/*` 等）的封装。

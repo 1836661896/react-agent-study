@@ -5,6 +5,7 @@ import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import App from "./App"
 import "./styles/main.scss"
+import { BrowserRouter } from "react-router-dom"
 
 const queryClient = new QueryClient()
 
@@ -15,10 +16,12 @@ if (!rootEl) {
 
 createRoot(rootEl).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <ConfigProvider locale={zhCN}>
-        <App />
-      </ConfigProvider>
-    </QueryClientProvider>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <ConfigProvider locale={zhCN}>
+          <App />
+        </ConfigProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
   </StrictMode>,
 )
