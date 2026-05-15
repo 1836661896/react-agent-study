@@ -55,8 +55,8 @@ alwaysApply: true
 > **本仓库文档索引**：**`docs/documentation-index.md`**。
 
 - ✅ **历史练习（旧挂载路由，后端重构后已移除）**：曾联调 **`POST /agent/run`**、**`GET /agent/last-step`**、**`GET /agent/steps`**、任务相关接口、非流式 **`POST /chat`** 等；可作为 React Query / 表单练习参考，**不再代表现行后端**。
-- 🔄 **现行后端挂载（前端待对齐）**：
-  - **GET /health**
-  - **GET /conversation/list**、**GET /conversation/{conversation_id}/messages**（分页与 **`ListResult`**，见 **`myproject/backend/docs/conversations-api.md`**）
-  - **POST /chat/stream**（SSE：**`delta` / `error` / `done`**，见 **`myproject/backend/docs/chat-stream-api.md`**）
-- ⏳ **近期 UI**：会话列表 + 消息历史 + 流式输入；**`done`** 中 **`conversation_id` / `turn_id`**；快捷 **`routing`** 与后续工具/代码块展示随阶段 4 引入
+- 🔄 **现行后端挂载（前端对齐进度）**：
+  - **GET /health**（前端 UI 待接）
+  - **GET /conversation/list**、**POST /conversation/delete**、**POST /conversation/create**、**GET /conversation/{conversation_id}/messages**（列表 + 消息历史 + 新建已接；流式发送待接）
+  - **POST /chat/stream**（SSE：**`delta` / `error` / `done`**，见 **`myproject/backend/docs/chat-stream-api.md`**）— **下一步**
+- ⏳ **近期 UI**：流式输入 + **`done`** 中 **`conversation_id` / `turn_id`** 与 **`invalidateQueries`**；快捷 **`routing`** 与后续工具/代码块展示随阶段 4 引入

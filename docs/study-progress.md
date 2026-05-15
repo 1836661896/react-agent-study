@@ -4,6 +4,15 @@
 
 ---
 
+## 最近一次学习（2026-05-17）
+
+- **页面目录**：聊天相关组件放在 **`src/pages/chat/components/`**，由 **`ChatPage`** 组合左右栏。
+- **会话 HTTP 闭环（读 + 建）**：**`getConversationMessages`**、**`createConversation`**；右侧 **`ChatThreadPanel`**：**`useQuery`**、`enabled` 依赖选中项；列表与消息 **`queryKey`** 分离；写操作后 **`invalidateQueries`**（含 **`messages`**）。
+- **状态上提**：**`ChatPage`** 持有 **`ConversationListItem | null`**，列表点击传整行快照，避免翻页后标题丢失。
+- **下一步**：**`POST /chat/stream`**（SSE **`delta` / `error` / `done`**）、输入区、发送成功后刷新 **`messages`**（或本地拼接流式增量）；可选 **`GET /health`** 小部件。
+
+---
+
 ## 最近一次学习（2026-05-16）
 
 - **路由与会话列表**：**`react-router-dom`**（**`BrowserRouter`**）；**`App`** 下 **`HomePage` / `ChatPage` / `NotFoundPage`**；**`ChatPage`** 挂载 **`ConversationList`**。
@@ -24,8 +33,8 @@
 
 > 顺序以 **`docs/frontend-refactor-plan.md`** §**R** 为准。
 
-1. **R3（续）**：**`POST /conversation/create`** 与 **`GET /conversation/{id}/messages`** 的类型 + **`api/conversations.ts`** 封装；消息列表 **`useQuery`**（**`enabled`** 依赖选中会话 id）；**`src/api/chatStream.ts`** 与 **`done` 中 `conversation_id` / `turn_id`**。
-2. **R4**：三栏布局（左占位 | 会话列表 | 聊天区）或先扩 **`ChatPage`**；**`GET /health`** 展示（完成 **§1.1** 勾选）。
+1. **R3（续）——流式聊天**：新增 **`src/api/chatStream.ts`**（或等价模块）消费 **`POST /chat/stream`**；解析 **`delta` / `error` / `done`**；**`done`** 中取 **`conversation_id` / `turn_id`**；UI 输入框 + 发送中状态；成功后 **`invalidateQueries`**（**`messages`**）或合并展示本轮 assistant 文本。
+2. **R4**：**`GET /health`** 展示（完成 **`frontend-refactor-plan`** §**1.1**）；可选 **三栏**（左占位 | 列表 | 主聊天）。
 3. **R5**：**`npm run lint`**、联调、再扫 **`readme` / `frontend-backend-contract` §5**。
 
 ---

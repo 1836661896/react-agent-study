@@ -65,12 +65,12 @@
   - **`index.html`** → **`/src/main.tsx`**（已对齐）。  
   - **`npm run dev`** 可打开 R2 占位页。
 - [ ] **R3** **类型与 API**  
-  - **已完成（部分）**：**`src/types/conversations.ts`**（列表项、删除 body、列表 query 等）；**`src/types/common.ts`**（**`ListResult`** 等）；**`src/api/conversations.ts`**：**`GET /conversation/list`**、**`POST /conversation/delete`**。  
-  - **待完成**：**`POST /conversation/create`**、**`GET /conversation/{id}/messages`** 的类型与封装；**`src/api/chatStream.ts`**：**`POST /chat/stream`**，请求体 **`message` + `conversation_id?` + `routing?`**；**`done`** 解析 **`conversation_id`、`turn_id`** 并交给调用方。  
+  - **已完成（会话 JSON）**：**`src/types/conversations.ts`**（列表、删除、**新建**、**消息 query/项** 等）；**`src/types/common.ts`**；**`src/api/conversations.ts`**：**`GET conversation/list`**、**`POST conversation/delete`**、**`POST conversation/create`**、**`GET conversation/{id}/messages`**。  
+  - **待完成（流式）**：**`src/api/chatStream.ts`**（或等价）：**`POST /chat/stream`**，请求体 **`message` + `conversation_id?` + `routing?`**；消费 **`delta` / `error` / `done`**；**`done`** 解析 **`conversation_id`、`turn_id`** 交给 UI / 缓存失效。  
   - *计划文件名曾写作 `conversation.ts`（单数）；实际仓库为 **`conversations.ts`**。*
 - [ ] **R4** **UI 与布局**  
-  - **进行中（部分）**：**`react-router-dom`** 多页；**`/chat`** 下 **`ConversationList`**（分页、单选、多选、单删/批删）。  
-  - **待完成**：Ant Design **三栏**（左占位 | 会话列表 | 聊天）或等价；**消息区** **`useQuery`** + 流式发送 + **`invalidateQueries`**；新会话由 **`create`** 或首次流式 **`done`** 得 id；轻量 **`HealthHeader`**（或合并进顶栏）。
+  - **已完成（部分）**：**`/chat`** **双栏**（**`pages/chat/ChatPage.tsx`**）；**`ConversationList`**（分页、单选、多选、单删/批删、**新建会话**）；**`ChatThreadPanel`**（消息 **`useQuery`**、错误条与重试、气泡列表；首版 **每会话 `limit` 固定**，长会话分页待加）。  
+  - **待完成**：流式 **输入区** 与 **SSE** 消费；**`invalidateQueries(messages)`** 与流式收尾的配合；Ant Design **三栏**（左占位 | 会话列表 | 聊天）或维持双栏；轻量 **`GET /health`**（顶栏或独立块）。
 - [ ] **R5** **收尾**  
   - **`npm run lint`**；冒烟联调。  
   - 更新 **`readme.md`** §2～§3、**`frontend-backend-contract.md`** §5、**`changelog.md`**。
@@ -88,6 +88,7 @@
 | 日期 | 内容 |
 |------|------|
 | 2026-05-14 | 完成 §**1.2**（旧代码）契约复核；**`frontend-backend-contract.md`** §5 曾对照旧 `src`。 |
+| 2026-05-17 | **R3/R4 续**：会话 **create/messages** API 与类型；**`/chat`** 双栏 + **`ChatThreadPanel`**；文档与清单同步。下一步 **SSE `/chat/stream`**。 |
 | 2026-05-16 | **R3/R4 部分推进**：会话 **list/delete** API 与类型；**`ConversationList`**；**`react-router-dom`** 与 **`pages/*`**。详见 **`docs/changelog.md`**。 |
 | 2026-05-15 | **R1/R2** 落地：新 **`src`** 含 **`utils/request.ts`**、**`config/env`**、**`types/common`**、**`main`/`App`**、样式；**`readme`**/**`frontend-backend-contract`** 已同步当前架构。下一步 **R3**。 |
 | 2026-05-14 | **策略变更**：改为**整目录删除 `src/` 后全文重写**；本文件结构改为 **§R** 主路径。 |

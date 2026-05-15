@@ -25,7 +25,7 @@
 
 ## 3. 已从后端移除的接口（本仓库可能仍有遗留调用）
 
-以下**不应再作为现网联调目标**；旧版曾在 **`src/api/*.ts`** 中封装；**当前仓库**仅保留 **`src/api/conversations.ts`**（会话 list/delete），**不得**再引入下列路径的封装。
+以下**不应再作为现网联调目标**；旧版曾在 **`src/api/*.ts`** 中封装；**当前仓库**会话相关封装在 **`src/api/conversations.ts`**（**list / delete / create / messages**），**不得**再引入下列路径的封装。
 
 - `/tasks`（GET/POST）、`/tasks/{task_id}`（DELETE）
 - `/agent/run`、`/agent/last-step`、`/agent/steps`、`/agent/nl-run`
@@ -45,11 +45,11 @@
 
 > **策略说明**：前端已**整目录移除旧 `src/` 后重写**（见 **`docs/frontend-refactor-plan.md`**）。**§5「重写前」**为 git 对照；**「当前实现」**随阶段更新。
 
-### 当前实现（2026-05-16）
+### 当前实现（2026-05-17）
 
-- **已有**：**`src/utils/request.ts`**（**`request` + `HttpError`**）、**`src/config/env.ts`**、**`src/types/common.ts`**、**`src/types/conversations.ts`**、**`src/api/conversations.ts`**（**`GET conversation/list`**、**`POST conversation/delete`**）、**`src/components/ConversationList.tsx`**、**`src/pages/*`**、**`main.tsx`**（**`BrowserRouter`**）、**`App.tsx`**（路由 + Layout）、样式、**`vite-env.d.ts`**；**`index.html`** → **`/src/main.tsx`**。
-- **未有 / 待接**：**`POST /conversation/create`**、**`GET /conversation/{id}/messages`** 的 API 与 UI；**`src/api/chatStream.ts`** 与流式聊天 UI；**`GET /health`** 页面；计划中的 **三栏布局**（当前 **`/chat`** 以会话列表为主）。
-- **与契约**：已对接 **`/conversation/list`**、**`/conversation/delete`**；**`/conversation/create`**、**`/conversation/.../messages`**、**`/chat/stream`** 仍待 **R3～R4** 补齐。
+- **已有**：**`src/utils/request.ts`**、**`src/config/env.ts`**、**`src/types/common.ts`**、**`src/types/conversations.ts`**、**`src/api/conversations.ts`**（**`GET conversation/list`**、**`POST conversation/delete`**、**`POST conversation/create`**、**`GET conversation/{id}/messages`**）、**`src/pages/chat/ChatPage.tsx`**（左右分栏 + 选中 **`ConversationListItem`**）、**`src/pages/chat/components/ConversationList.tsx`**、**`src/pages/chat/components/ChatThreadPanel.tsx`**（消息 **`useQuery`**、错误展示与重试、气泡列表）；**`main.tsx`**（**`BrowserRouter`**）、**`App.tsx`**、样式、**`vite-env.d.ts`**；**`index.html`** → **`/src/main.tsx`**。
+- **未有 / 待接**：**`POST /chat/stream`** 的 API 与 UI（SSE）；**`GET /health`** 页面；计划中的 **三栏左占位**（当前为 **双栏**）。
+- **与契约**：已对接 **`/conversation/list`**、**`/conversation/delete`**、**`/conversation/create`**、**`/conversation/{id}/messages`**；**`/chat/stream`** 仍待 **R3（流式）～R4** 补齐。
 
 ### 重写前（历史快照，git 对照）
 
@@ -60,6 +60,7 @@
 ### 复核记录
 
 - **2026-05-15**：新 **`src`** 已落地 R2；本节增加「**当前实现**」与 §3 脚注。
+- **2026-05-17**：已接 **create/messages** 与 **`pages/chat`** 双栏 + **`ChatThreadPanel`**；§5 更新「当前实现」；§3 脚注与 **`conversations.ts`** 实际导出一致。
 - **2026-05-16**：已接 **`conversation/list`**、**`conversation/delete`** 与列表 UI；§2 增补 **create/delete**；§5「当前实现」更新。
 
 ## 6. 环境与 CORS

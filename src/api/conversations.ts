@@ -1,8 +1,11 @@
 import type { ApiResponse, ListResult } from "@/types/common"
 import type {
+  ConversationCreateBody,
   ConversationDeleteBody,
   ConversationListItem,
   ConversationListQuery,
+  ConversationMessageItem,
+  ConversationMessagesQuery,
 } from "@/types/conversations"
 import { request } from "@/utils/request"
 
@@ -32,5 +35,32 @@ export function deleteConversationItems(
     body: {
       ids: body.ids,
     },
+  })
+}
+
+// 获取会话消息
+export function getConversationMessages(
+  query: ConversationMessagesQuery,
+): Promise<ApiResponse<ListResult<ConversationMessageItem>>> {
+  return request<ApiResponse<ListResult<ConversationMessageItem>>>(
+    `conversation/${query.conversation_id}/messages`,
+    {
+      method: "get",
+      query: {
+        page: query.page,
+        limit: query.limit,
+        role: query.role,
+      },
+    },
+  )
+}
+
+//
+export function createConversation(
+  body?: ConversationCreateBody,
+): Promise<ApiResponse<{ id: number }>> {
+  return request("conversation/create", {
+    method: "post",
+    body: body ?? {},
   })
 }

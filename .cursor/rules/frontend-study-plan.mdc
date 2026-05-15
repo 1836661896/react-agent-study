@@ -28,10 +28,9 @@ alwaysApply: true
 ## 当前建议（下一步怎么学）
 
 - **当前建议阶段**：**阶段 3**（与根目录 **`readme.md`**、**`docs/frontend-refactor-plan.md`** 同步）
-- **本阶段目标**：
-  - **`src/lib/http.ts`**：区分网络失败、非 2xx、JSON 解析失败、业务 **`code !== 0`**；与 **SSE** 读失败 / 中断区分对待。
-  - **全局/局部提示**：antd **`message`** / **`notification`** 等统一错误文案。
-  - **React Query**：**`GET /conversation/list`**、**`GET /conversation/{id}/messages`** 的 **`useQuery`** 上处理 **`isError` / `error`**（错误条、重试）；发送流式后依赖 **`invalidateQueries`** 或本地状态更新刷新历史。
+- **本阶段目标**（与代码现状：**HTTP 用 `src/utils/request.ts`**，与计划中 **`lib/http.ts`** 同职责）：
+  - 错误分类与可感知 UI（列表 / 消息区已部分实践；流式失败路径待接）。
+  - **React Query**：**`GET /conversation/list`**、**`GET /conversation/{id}/messages`** 已用 **`useQuery`**；**写操作**后 **`invalidateQueries`**。**下一步**：**`POST /chat/stream`** 与发完后刷新 **`messages`**（或本地合并流式文本）。
   - **流式**：**`POST /chat/stream`** 消费 **`delta` / `error` / `done`**（见 **`myproject/backend/docs/chat-stream-api.md`**）。
   - 进阶可选：**AbortController**、超时、停止生成。
 - **本阶段结束标准**（满足即可进入阶段 4）：

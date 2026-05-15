@@ -16,25 +16,36 @@ import {
 } from "antd"
 import { useMemo, useState } from "react"
 import {
+  createConversation,
   deleteConversationItems,
   getConversationList,
 } from "@/api/conversations"
-import { HttpError } from "@/utils/request"
+import type {
+  ConversationCreateBody,
+  ConversationListItem,
+} from "@/types/conversations"
+import { errorDescription } from "@/utils/common"
 
-function errorDescription(err: unknown): string {
-  if (err instanceof HttpError) return err.userMessage
-  if (err instanceof Error) return err.message || "请求失败"
-  return "请求失败"
+// 会话列表属性
+type ConversationListProps = {
+  selectedId: number | null
+  onSelectConversation: (item: ConversationListItem | null) => void
 }
 
-export default function ConversationList() {
+// 会话列表
+export default function ConversationList({
+  selectedId,
+  onSelectConversation,
+}: ConversationListProps) {
+  // 分页参数
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
-  const [selectedId, setSelectedId] = useState<number | null>(null)
   const [batchIds, setBatchIds] = useState<number[]>([])
 
+  // 查询客户端
   const queryClient = useQueryClient()
 
+  // 会话列表查询
   const listQuery = useQuery({
     queryKey: ["conversations", "list", page, limit] as const,
     queryFn: () => getConversationList({ page, limit }),
@@ -42,14 +53,16 @@ export default function ConversationList() {
     refetchOnWindowFocus: false,
   })
 
+  // 会话列表删除
   const deleteMutation = useMutation({
     mutationFn: (ids: number[]) => deleteConversationItems({ ids }),
     onSuccess: (res, deletedIds) => {
       message.success(res.msg)
       queryClient.invalidateQueries({ queryKey: ["conversations", "list"] })
+      queryClient.invalidateQueries({ queryKey: ["conversations", "messages"] })
       setBatchIds([])
       if (selectedId != null && deletedIds.includes(selectedId)) {
-        setSelectedId(null)
+        onSelectConversation(null)
       }
     },
     onError: (err) => {
@@ -57,25 +70,55 @@ export default function ConversationList() {
     },
   })
 
+  const createMutation = useMutation({
+    mutationFn: (body?: ConversationCreateBody) => createConversation(body),
+    onSuccess: (res, variables) => {
+      message.success(res.msg)
+      const id = res.data.id
+      if (id === null) {
+        message.warning("创建成功但未返回会话 id")
+        return
+      }
+      queryClient.invalidateQueries({ queryKey: ["conversations", "list"] })
+      queryClient.invalidateQueries({ queryKey: ["conversations", "messages"] })
+      setPage(1)
+      setBatchIds([])
+      onSelectConversation({
+        id,
+        kind: variables?.kind ?? "chat",
+        memory_title: "",
+        memory_updated_at: null,
+      })
+    },
+    onError: (err) => {
+      message.error(errorDescription(err))
+    },
+  })
+
+  // 会话列表数据
   const envelope = listQuery.data
   const listResult = envelope?.data
   const records = listResult?.records ?? []
   const total = listResult?.total ?? 0
 
+  // 初始化加载状态
   const showInitialSpinner = useMemo(
     () => listQuery.isPending && !listQuery.isFetched,
     [listQuery.isPending, listQuery.isFetched],
   )
 
+  // 全选本页
   const allPageSelected =
     records.length > 0 && records.every((r) => batchIds.includes(r.id))
 
+  // 切换勾选
   function toggleBatchId(id: number) {
     setBatchIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     )
   }
 
+  // 切换全选本页
   function toggleSelectAllOnPage() {
     const pageIds = records.map((r) => r.id)
     if (allPageSelected) {
@@ -85,6 +128,7 @@ export default function ConversationList() {
     }
   }
 
+  // 批量删除匹配
   function batchDeletingMatches(ids: number[]) {
     const v = deleteMutation.variables
     if (!deleteMutation.isPending || !v) return false
@@ -107,13 +151,20 @@ export default function ConversationList() {
         )
       }
     >
-      <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+      <Space orientation="vertical" size="middle" style={{ width: "100%" }}>
         <Space>
           <Button
             onClick={() => listQuery.refetch()}
             disabled={listQuery.isFetching}
           >
             刷新
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => createMutation.mutate(undefined)}
+            loading={createMutation.isPending}
+          >
+            新建会话
           </Button>
           {listQuery.isError ? (
             <Button onClick={() => listQuery.refetch()}>重试</Button>
@@ -167,7 +218,15 @@ export default function ConversationList() {
 
         <Spin spinning={showInitialSpinner || listQuery.isRefetching}>
           {!listQuery.isError && !showInitialSpinner && records.length === 0 ? (
-            <Empty description="暂无会话" />
+            <Empty description="暂无会话">
+              <Button
+                type="primary"
+                onClick={() => createMutation.mutate(undefined)}
+                loading={createMutation.isPending}
+              >
+                新建会话
+              </Button>
+            </Empty>
           ) : null}
 
           {!listQuery.isError && records.length > 0 ? (
@@ -183,7 +242,7 @@ export default function ConversationList() {
                   deleteMutation.variables[0] === item.id
                 return (
                   <List.Item
-                    onClick={() => setSelectedId(item.id)}
+                    onClick={() => onSelectConversation(item)}
                     style={{
                       cursor: "pointer",
                       background: active

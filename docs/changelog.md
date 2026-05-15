@@ -4,6 +4,15 @@
 
 ---
 
+## 2026-05-17
+
+- **聊天页结构**：会话相关 UI 收拢至 **`src/pages/chat/`**（**`ChatPage.tsx`** + **`components/ConversationList.tsx`**、**`ChatThreadPanel.tsx`**）；**`/chat`** 为**左右分栏**（列表 | 消息区）。
+- **会话 API（续）**：**`src/api/conversations.ts`** 增补 **`getConversationMessages`**、**`createConversation`**；**`src/types/conversations.ts`** 增补消息与新建 body 等类型。
+- **交互**：列表单选传递 **`ConversationListItem`** 快照（标题用 **`memory_title`**，空则默认文案）；**`ChatThreadPanel`** 对选中会话 **`useQuery`** 拉消息、**时间正序**展示；**新建会话**（**`useMutation`**）后 **`invalidateQueries`**、跳第一页并选中新建 id。
+- **文档**：同步 **`readme.md`**、**`docs/frontend-backend-contract.md`** §5、**`docs/frontend-refactor-plan.md`**、**`docs/study-progress.md`**、**`.cursor/rules/react-learning-checklist.mdc`**；**下一步**文档口径统一为 **接入 `POST /chat/stream`（SSE）**。
+
+---
+
 ## 2026-05-16
 
 - **路由**：引入 **`react-router-dom`**；**`main.tsx`** 包裹 **`BrowserRouter`**；**`App.tsx`** 使用 **`Routes` / `Route`**，页面 **`src/pages/HomePage`**（`/`）、**`ChatPage`**（`/chat`）、**`NotFoundPage`**（`*`）；顶栏 **`Link`** 导航。

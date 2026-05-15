@@ -16,7 +16,7 @@
 ## 1. 项目是做什么的
 
 - **定位**：**`myproject/backend`**（Python + FastAPI）的 **Web 界面**；技术栈为 **React + TypeScript + Vite**，UI 库 **Ant Design**，数据请求 **TanStack React Query**（部分模块）。
-- **当前阶段**：后端为**会话 + 流式聊天**；前端已按 **`docs/frontend-refactor-plan.md`** §**R** 完成 **R1（删旧 `src`）**、**R2 最小骨架**，并已落地 **多页路由**（`react-router-dom`）、**会话列表**（`GET /conversation/list`）、**会话批量/单条删除**（`POST /conversation/delete`）。**R3～R5** 仍在进行：**消息历史**（`GET /conversation/{id}/messages`）、**新建会话**（`POST /conversation/create`）、**`/chat/stream` SSE**、**三栏布局**、**`GET /health` UI** 等见执行清单。执行清单与勾选见 **`docs/frontend-refactor-plan.md`**。
+- **当前阶段**：后端为**会话 + 流式聊天**；前端已按 **`docs/frontend-refactor-plan.md`** §**R** 完成 **R1/R2**，并已落地 **多页路由**、**`/chat` 双栏**：左侧 **会话列表**（`GET /conversation/list`、**`POST /conversation/delete`**、**`POST /conversation/create`**），右侧 **消息历史**（`GET /conversation/{id}/messages`，选中会话 **`useQuery`**，时间正序展示）。**下一步（R3～R4）**：**`POST /chat/stream` SSE**（输入区、`delta`/`error`/`done`、发完后 **`invalidateQueries` 刷新消息**）、**`GET /health` UI**、可选 **三栏左占位** 等见 **`docs/frontend-refactor-plan.md`**。
 
 ---
 
@@ -29,20 +29,23 @@
 ├── docs/                    # 说明类文档（职责见 documentation-index.md）
 ├── src/
 │   ├── api/
-│   │   └── conversations.ts # GET /conversation/list、POST /conversation/delete
-│   ├── components/
-│   │   └── ConversationList.tsx  # 会话列表：分页、单选、多选、单删/批删
+│   │   └── conversations.ts # list / delete / create / messages（现行会话 HTTP）
 │   ├── config/
 │   │   └── env.ts           # VITE_API_BASE_URL
 │   ├── pages/
+│   │   ├── chat/
+│   │   │   ├── ChatPage.tsx # 路由 /chat：左右分栏 + 选中会话状态
+│   │   │   └── components/
+│   │   │       ├── ConversationList.tsx  # 列表、分页、新建、多选、单删/批删
+│   │   │       └── ChatThreadPanel.tsx   # 消息历史 useQuery、气泡展示
 │   │   ├── HomePage.tsx     # 路由 /
-│   │   ├── ChatPage.tsx     # 路由 /chat（挂载 ConversationList）
 │   │   └── NotFoundPage.tsx # 路由 *
 │   ├── types/
 │   │   ├── common.ts        # ApiResponse、ListResult、ListQuery 等
-│   │   └── conversations.ts # 会话列表/删除请求体等与后端对齐的类型
+│   │   └── conversations.ts # 会话/消息类型与后端对齐
 │   ├── utils/
-│   │   └── request.ts       # HttpError、request()：JSON fetch + 业务 code 判断
+│   │   ├── request.ts       # HttpError、request()：JSON fetch + 业务 code 判断
+│   │   └── common.ts        # 共用文案（如 errorDescription）
 │   ├── styles/
 │   │   ├── main.scss        # 全局 reset
 │   │   └── App.scss         # App 布局样式
@@ -59,8 +62,8 @@
 
 - **JSON**：当前由 **`src/utils/request.ts`** 的 **`request()`** 对接 **`{ code, data, msg }`**（与计划中的 **`lib/http.ts`** 角色相同；是否改名为 `lib/http` 由后续重构决定）。
 - **路由**：**`react-router-dom`** 的 **`BrowserRouter`** 在 **`main.tsx`**；页面在 **`src/pages/`**。
-- **会话 HTTP（部分）**：**`src/api/conversations.ts`** 已封装 **`list`**、**`delete`**；**`create`**、**`messages`** 待接（见 **`docs/frontend-backend-contract.md`**）。
-- **SSE**：**`src/api/chatStream.ts`** 尚未建立（**R3**）。
+- **会话 HTTP**：**`src/api/conversations.ts`** 已封装 **`list`**、**`delete`**、**`create`**、**`messages`**（见 **`docs/frontend-backend-contract.md`**）。
+- **SSE**：**`POST /chat/stream`** 尚未封装（计划 **`src/api/chatStream.ts`** 或等价模块，**R3～R4**）。
 - **环境**：**`src/config/env.ts`** → **`VITE_API_BASE_URL`**。
 
 ---
@@ -74,11 +77,11 @@
 | 应用入口与全局壳 | `main.tsx`、`App.tsx` | 进行中 | **`BrowserRouter`** + React Query + antd 中文；**`App`**：`Layout`、顶栏 **`Link`**、**`Routes`**（`/`、`/chat`、`*`） |
 | 环境变量 | `config/env.ts` | 已完成（R2） | 缺少 `VITE_API_BASE_URL` 时抛错 |
 | JSON 请求封装 | `utils/request.ts` | 已完成（R2） | `HttpError`、`request`；注意 **`exactOptionalPropertyTypes`** 下 **`fetch` init** 勿显式传 `body: undefined` |
-| 类型（信封与会话） | `types/common.ts`、`types/conversations.ts` | 部分完成 | **`ApiResponse`、`ListResult`**；会话列表项、删除 **`body`** 等与后端对齐 |
-| 会话 API | `api/conversations.ts` | 部分完成 | **`getConversationList`**、**`deleteConversationItems`**；**`create` / `messages`** 待加 |
-| 会话列表 UI | `components/ConversationList.tsx`、`pages/ChatPage.tsx` | 部分完成 | **`useQuery`** 列表；分页；单选查看 id；多选、全选本页、**`useMutation`** 单删/批删；成功后 **`invalidateQueries`** |
+| 类型（信封与会话） | `types/common.ts`、`types/conversations.ts` | 进行中 | **`ApiResponse`、`ListResult`**；列表项、删除、**`create` body**、**消息项与 messages query** 等与后端对齐 |
+| 会话 API | `api/conversations.ts` | 进行中 | **`getConversationList`**、**`deleteConversationItems`**、**`createConversation`**、**`getConversationMessages`** |
+| 聊天页 UI | `pages/chat/ChatPage.tsx` 及 `components/*` | 进行中 | 双栏布局；列表 **`useQuery`/`useMutation`**（含新建会话）；右侧 **`ChatThreadPanel`**：**`messages` `useQuery`**、错误提示与重试、气泡列表（首版 limit 固定） |
 | 健康检查 UI | — | 未实现 | **R4**：`GET /health` 展示 |
-| 消息历史 / 流式聊天 | — | 未实现 | **`GET .../messages`**、**`POST /chat/stream`** 等 **R3～R4** |
+| 流式发送 | — | 未实现 | **`POST /chat/stream`**、**`delta`/`error`/`done`**、输入区、发送后刷新消息或合并 **`turn_id`**（**R3～R4**） |
 | 已下线路由封装 | — | **无** | 当前 `src` 无 **`/tasks`、`/agent/*`、`/events`** 等封装（与 **`frontend-backend-contract.md`** §3 一致） |
 
 ---
