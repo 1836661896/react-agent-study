@@ -16,7 +16,7 @@
 ## 1. 项目是做什么的
 
 - **定位**：**`myproject/backend`**（Python + FastAPI）的 **Web 界面**；技术栈为 **React + TypeScript + Vite**，UI 库 **Ant Design**，数据请求 **TanStack React Query**（部分模块）。
-- **当前阶段**：后端为**会话 + 流式聊天**；前端已按 **`docs/frontend-refactor-plan.md`** §**R** 完成 **R1/R2**，并已落地 **多页路由**、**`/chat` 双栏**：左侧 **会话列表**（`GET /conversation/list`、**`POST /conversation/delete`**、**`POST /conversation/create`**），右侧 **消息历史**（`GET /conversation/{id}/messages`，选中会话 **`useQuery`**，时间正序展示）。**下一步（R3～R4）**：**`POST /chat/stream` SSE**（输入区、`delta`/`error`/`done`、发完后 **`invalidateQueries` 刷新消息**）、**`GET /health` UI**、可选 **三栏左占位** 等见 **`docs/frontend-refactor-plan.md`**。
+- **当前阶段**：后端为**会话 + 流式聊天**；前端已按 **`docs/frontend-refactor-plan.md`** §**R** 完成 **R1/R2**，并已落地 **多页路由**、**`/chat` 双栏**（**一屏内左右列各自滚动**，见 **`styles/App.scss`** / **`main.scss`**）：左侧 **会话列表**（`GET /conversation/list`、**`POST /conversation/delete`**、**`POST /conversation/create`**），右侧 **消息历史**（**`useInfiniteQuery`** + **`GET /conversation/{id}/messages`**）与 **SSE 发送**（**`src/api/chatStream.ts`** → **`POST /chat/stream`**，**`delta` / `error` / `done`**，成功后 **`invalidateQueries`**）。**下一步（R4～R5）**：**`GET /health` UI**、**`npm run lint`** 与文档收尾；可选 **三栏左占位** 等见 **`docs/frontend-refactor-plan.md`**。
 
 ---
 
@@ -29,41 +29,48 @@
 ├── docs/                    # 说明类文档（职责见 documentation-index.md）
 ├── src/
 │   ├── api/
-│   │   └── conversations.ts # list / delete / create / messages（现行会话 HTTP）
+│   │   ├── conversations.ts # list / delete / create / messages
+│   │   └── chatStream.ts    # POST /chat/stream（SSE 行解析）
 │   ├── config/
 │   │   └── env.ts           # VITE_API_BASE_URL
 │   ├── pages/
 │   │   ├── chat/
-│   │   │   ├── ChatPage.tsx # 路由 /chat：左右分栏 + 选中会话状态
-│   │   │   └── components/
-│   │   │       ├── ConversationList.tsx  # 列表、分页、新建、多选、单删/批删
-│   │   │       └── ChatThreadPanel.tsx   # 消息历史 useQuery、气泡展示
+│   │   │   ├── index.tsx    # 路由 /chat：左右分栏 + 选中会话与缓存同步
+│   │   │   ├── index.scss
+│   │   │   ├── ConversationList/
+│   │   │   │   ├── index.tsx   # 列表、分页（含删空末页夹紧 page）、新建、多选、删
+│   │   │   │   └── index.scss
+│   │   │   └── ChatThreadPanel/
+│   │   │       ├── index.tsx   # 消息 infinite、SSE 发送、输入区、乐观气泡
+│   │   │       └── index.scss
 │   │   ├── HomePage.tsx     # 路由 /
 │   │   └── NotFoundPage.tsx # 路由 *
 │   ├── types/
 │   │   ├── common.ts        # ApiResponse、ListResult、ListQuery 等
-│   │   └── conversations.ts # 会话/消息类型与后端对齐
+│   │   ├── conversations.ts # 会话/消息类型与后端对齐
+│   │   └── chatStream.ts    # SSE 事件与请求体类型
 │   ├── utils/
-│   │   ├── request.ts       # HttpError、request()：JSON fetch + 业务 code 判断
-│   │   └── common.ts        # 共用文案（如 errorDescription）
+│   │   ├── request.ts       # HttpError、request()
+│   │   ├── common.ts        # errorDescription 等
+│   │   └── datetime.ts      # formatDisplayDateTime（列表与消息时间）
 │   ├── styles/
-│   │   ├── main.scss        # 全局 reset
-│   │   └── App.scss         # App 布局样式
-│   ├── App.tsx              # Layout + 顶栏导航 + Routes
+│   │   ├── main.scss        # 全局 reset、#root 高度链
+│   │   └── App.scss         # Layout 一屏 flex、主区不溢出
+│   ├── App.tsx
 │   ├── main.tsx             # BrowserRouter、QueryClientProvider、antd zhCN
-│   └── vite-env.d.ts        # Vite / import.meta.env 类型
-├── index.html               # /src/main.tsx（已与入口一致）
+│   └── vite-env.d.ts
+├── index.html               # /src/main.tsx
 ├── vite.config.js           # @ → ./src
 ├── tsconfig.json
-└── package.json             # 含 react-router-dom、@tanstack/react-query、antd 等
+└── package.json
 ```
 
 **架构约定（当前 → 目标）**
 
 - **JSON**：当前由 **`src/utils/request.ts`** 的 **`request()`** 对接 **`{ code, data, msg }`**（与计划中的 **`lib/http.ts`** 角色相同；是否改名为 `lib/http` 由后续重构决定）。
-- **路由**：**`react-router-dom`** 的 **`BrowserRouter`** 在 **`main.tsx`**；页面在 **`src/pages/`**。
+- **路由**：**`react-router-dom`** 的 **`BrowserRouter`** 在 **`main.tsx`**；**`/chat`** 页面在 **`src/pages/chat/index.tsx`**（经 **`App.tsx`** **`import ChatPage from "./pages/chat"`**）。
 - **会话 HTTP**：**`src/api/conversations.ts`** 已封装 **`list`**、**`delete`**、**`create`**、**`messages`**（见 **`docs/frontend-backend-contract.md`**）。
-- **SSE**：**`POST /chat/stream`** 尚未封装（计划 **`src/api/chatStream.ts`** 或等价模块，**R3～R4**）。
+- **SSE**：**`src/api/chatStream.ts`**，**`POST /chat/stream`**，与 **`src/types/chatStream.ts`** 对齐后端 **`docs/chat-stream-api.md`**。
 - **环境**：**`src/config/env.ts`** → **`VITE_API_BASE_URL`**。
 
 ---
@@ -77,11 +84,11 @@
 | 应用入口与全局壳 | `main.tsx`、`App.tsx` | 进行中 | **`BrowserRouter`** + React Query + antd 中文；**`App`**：`Layout`、顶栏 **`Link`**、**`Routes`**（`/`、`/chat`、`*`） |
 | 环境变量 | `config/env.ts` | 已完成（R2） | 缺少 `VITE_API_BASE_URL` 时抛错 |
 | JSON 请求封装 | `utils/request.ts` | 已完成（R2） | `HttpError`、`request`；注意 **`exactOptionalPropertyTypes`** 下 **`fetch` init** 勿显式传 `body: undefined` |
-| 类型（信封与会话） | `types/common.ts`、`types/conversations.ts` | 进行中 | **`ApiResponse`、`ListResult`**；列表项、删除、**`create` body**、**消息项与 messages query** 等与后端对齐 |
-| 会话 API | `api/conversations.ts` | 进行中 | **`getConversationList`**、**`deleteConversationItems`**、**`createConversation`**、**`getConversationMessages`** |
-| 聊天页 UI | `pages/chat/ChatPage.tsx` 及 `components/*` | 进行中 | 双栏布局；列表 **`useQuery`/`useMutation`**（含新建会话）；右侧 **`ChatThreadPanel`**：**`messages` `useQuery`**、错误提示与重试、气泡列表（首版 limit 固定） |
+| 类型（信封与会话 / 流式） | `types/common.ts`、`types/conversations.ts`、`types/chatStream.ts` | 进行中 | **`ApiResponse`、`ListResult`**；会话与消息项；**SSE 事件联合类型** |
+| 会话 API | `api/conversations.ts`、`api/chatStream.ts` | 进行中 | JSON：**list / delete / create / messages**；SSE：**postChatStream** |
+| 聊天页 UI | `pages/chat/index.tsx`、`ConversationList/*`、`ChatThreadPanel/*` | 进行中 | **一屏双栏**（列内滚动）；列表 **`useQuery`/`useMutation`**；**删空末页 `page` 夹紧**；**`ChatPage` 订阅 query 缓存**合并选中行标题；右侧 **`useInfiniteQuery`** 消息、**SSE 发送**、输入区、乐观气泡、**`formatDisplayDateTime`** |
 | 健康检查 UI | — | 未实现 | **R4**：`GET /health` 展示 |
-| 流式发送 | — | 未实现 | **`POST /chat/stream`**、**`delta`/`error`/`done`**、输入区、发送后刷新消息或合并 **`turn_id`**（**R3～R4**） |
+| 流式发送 | `api/chatStream.ts`、`ChatThreadPanel` | 进行中（主路径已接） | **`POST /chat/stream`**、**`delta`/`error`/`done`**、**`invalidateQueries`**；可选 **Abort**、**`routing`** UI |
 | 已下线路由封装 | — | **无** | 当前 `src` 无 **`/tasks`、`/agent/*`、`/events`** 等封装（与 **`frontend-backend-contract.md`** §3 一致） |
 
 ---

@@ -1,3 +1,7 @@
+/**
+ * 左侧会话列表：分页查询、单选、批量勾选删除、新建会话。
+ * 样式见同目录 index.scss，避免 TSX 内大块 style 对象。
+ */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   Alert,
@@ -14,7 +18,7 @@ import {
   Tag,
   Typography,
 } from "antd"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
   createConversation,
   deleteConversationItems,
@@ -25,27 +29,25 @@ import type {
   ConversationListItem,
 } from "@/types/conversations"
 import { errorDescription } from "@/utils/common"
+import { formatDisplayDateTime } from "@/utils/datetime"
+import "./index.scss"
 
-// 会话列表属性
 type ConversationListProps = {
   selectedId: number | null
   onSelectConversation: (item: ConversationListItem | null) => void
 }
 
-// 会话列表
 export default function ConversationList({
   selectedId,
   onSelectConversation,
 }: ConversationListProps) {
-  // 分页参数
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
+  /** 批量删除：跨页勾选在本组件内用 id 数组维护 */
   const [batchIds, setBatchIds] = useState<number[]>([])
 
-  // 查询客户端
   const queryClient = useQueryClient()
 
-  // 会话列表查询
   const listQuery = useQuery({
     queryKey: ["conversations", "list", page, limit] as const,
     queryFn: () => getConversationList({ page, limit }),
@@ -53,7 +55,6 @@ export default function ConversationList({
     refetchOnWindowFocus: false,
   })
 
-  // 会话列表删除
   const deleteMutation = useMutation({
     mutationFn: (ids: number[]) => deleteConversationItems({ ids }),
     onSuccess: (res, deletedIds) => {
@@ -83,6 +84,7 @@ export default function ConversationList({
       queryClient.invalidateQueries({ queryKey: ["conversations", "messages"] })
       setPage(1)
       setBatchIds([])
+      // 新建后立即选中：右侧线程区可发首条消息
       onSelectConversation({
         id,
         kind: variables?.kind ?? "chat",
@@ -95,30 +97,44 @@ export default function ConversationList({
     },
   })
 
-  // 会话列表数据
   const envelope = listQuery.data
   const listResult = envelope?.data
   const records = listResult?.records ?? []
   const total = listResult?.total ?? 0
 
-  // 初始化加载状态
+  /** 仅首屏无缓存时展示全页 Spin，避免与空列表闪烁冲突 */
   const showInitialSpinner = useMemo(
     () => listQuery.isPending && !listQuery.isFetched,
     [listQuery.isPending, listQuery.isFetched],
   )
 
-  // 全选本页
+  /** 删除等导致 total 变小后，当前 page 可能超出最大页，接口会返回空 records；夹紧页码避免「空列表假象」 */
+  useEffect(() => {
+    if (listQuery.isPending || listQuery.isError) return
+    const data = listQuery.data?.data
+    if (data == null) return
+
+    const totalCount = data.total
+    if (totalCount <= 0) {
+      if (page !== 1) setPage(1)
+      return
+    }
+
+    const maxPage = Math.max(1, Math.ceil(totalCount / limit))
+    if (page > maxPage) {
+      setPage(maxPage)
+    }
+  }, [listQuery.isPending, listQuery.isError, listQuery.data, page, limit])
+
   const allPageSelected =
     records.length > 0 && records.every((r) => batchIds.includes(r.id))
 
-  // 切换勾选
   function toggleBatchId(id: number) {
     setBatchIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     )
   }
 
-  // 切换全选本页
   function toggleSelectAllOnPage() {
     const pageIds = records.map((r) => r.id)
     if (allPageSelected) {
@@ -128,7 +144,7 @@ export default function ConversationList({
     }
   }
 
-  // 批量删除匹配
+  /** 批量删除按钮 loading：仅当正在删除且变量与当前勾选集合一致时亮 */
   function batchDeletingMatches(ids: number[]) {
     const v = deleteMutation.variables
     if (!deleteMutation.isPending || !v) return false
@@ -140,6 +156,7 @@ export default function ConversationList({
 
   return (
     <Card
+      className="conversation-list"
       title="会话列表"
       extra={
         selectedId != null ? (
@@ -151,7 +168,12 @@ export default function ConversationList({
         )
       }
     >
-      <Space orientation="vertical" size="middle" style={{ width: "100%" }}>
+      <Space
+        orientation="vertical"
+        size="middle"
+        className="conversation-list__stack"
+      >
+        {/* 工具条：刷新 / 新建；失败时出现重试 */}
         <Space>
           <Button
             onClick={() => listQuery.refetch()}
@@ -171,6 +193,7 @@ export default function ConversationList({
           ) : null}
         </Space>
 
+        {/* 有数据时才展示批量操作，避免空页出现无意义勾选 */}
         {!listQuery.isError && records.length > 0 ? (
           <>
             <Checkbox
@@ -243,12 +266,11 @@ export default function ConversationList({
                 return (
                   <List.Item
                     onClick={() => onSelectConversation(item)}
-                    style={{
-                      cursor: "pointer",
-                      background: active
-                        ? "var(--accent-bg, rgba(170, 59, 255, 0.08))"
-                        : undefined,
-                    }}
+                    className={
+                      active
+                        ? "conversation-list__item conversation-list__item--active"
+                        : "conversation-list__item"
+                    }
                     actions={[
                       <Popconfirm
                         key="delete"
@@ -271,8 +293,8 @@ export default function ConversationList({
                   >
                     <Space
                       align="start"
+                      className="conversation-list__checkbox-cell"
                       onClick={(e) => e.stopPropagation()}
-                      style={{ marginRight: 8 }}
                     >
                       <Checkbox
                         checked={checked}
@@ -290,11 +312,12 @@ export default function ConversationList({
                       description={
                         <Typography.Text
                           type="secondary"
-                          style={{ fontSize: 12 }}
+                          className="conversation-list__meta-small"
                         >
-                          id: {item.id} · 创建 {item.created_at}
+                          id: {item.id} · 创建{" "}
+                          {formatDisplayDateTime(item.created_at)}
                           {item.memory_updated_at
-                            ? ` · 更新 ${item.memory_updated_at}`
+                            ? ` · 更新 ${formatDisplayDateTime(item.memory_updated_at)}`
                             : ""}
                         </Typography.Text>
                       }

@@ -64,13 +64,13 @@
   - **JSON 封装**：已实现为 **`src/utils/request.ts`**（**`request` + `HttpError`**），与计划中的 **`src/lib/http.ts`** 职责等价（可后续再统一到 `lib/` 命名）。  
   - **`index.html`** → **`/src/main.tsx`**（已对齐）。  
   - **`npm run dev`** 可打开 R2 占位页。
-- [ ] **R3** **类型与 API**  
-  - **已完成（会话 JSON）**：**`src/types/conversations.ts`**（列表、删除、**新建**、**消息 query/项** 等）；**`src/types/common.ts`**；**`src/api/conversations.ts`**：**`GET conversation/list`**、**`POST conversation/delete`**、**`POST conversation/create`**、**`GET conversation/{id}/messages`**。  
-  - **待完成（流式）**：**`src/api/chatStream.ts`**（或等价）：**`POST /chat/stream`**，请求体 **`message` + `conversation_id?` + `routing?`**；消费 **`delta` / `error` / `done`**；**`done`** 解析 **`conversation_id`、`turn_id`** 交给 UI / 缓存失效。  
+- [x] **R3** **类型与 API**  
+  - **已完成（会话 JSON）**：**`src/types/conversations.ts`**、**`src/types/common.ts`**；**`src/api/conversations.ts`**：**`GET conversation/list`**、**`POST conversation/delete`**、**`POST conversation/create`**、**`GET conversation/{id}/messages`**。  
+  - **已完成（流式）**：**`src/types/chatStream.ts`**、**`src/api/chatStream.ts`**：**`POST /chat/stream`**，请求体 **`message` + `conversation_id?` + `routing?`**；消费 **`delta` / `error` / `done`**；**`done`** 后 UI **`invalidateQueries`**（**`messages` infinite**、**`list`** 等）。  
   - *计划文件名曾写作 `conversation.ts`（单数）；实际仓库为 **`conversations.ts`**。*
 - [ ] **R4** **UI 与布局**  
-  - **已完成（部分）**：**`/chat`** **双栏**（**`pages/chat/ChatPage.tsx`**）；**`ConversationList`**（分页、单选、多选、单删/批删、**新建会话**）；**`ChatThreadPanel`**（消息 **`useQuery`**、错误条与重试、气泡列表；首版 **每会话 `limit` 固定**，长会话分页待加）。  
-  - **待完成**：流式 **输入区** 与 **SSE** 消费；**`invalidateQueries(messages)`** 与流式收尾的配合；Ant Design **三栏**（左占位 | 会话列表 | 聊天）或维持双栏；轻量 **`GET /health`**（顶栏或独立块）。
+  - **已完成（部分）**：**`/chat`** **双栏**（**`pages/chat/index.tsx`** + **`ConversationList/`**、**`ChatThreadPanel/`**）；**一屏内列滚动**（**`App.scss` / `main.scss`**）；**`ConversationList`**（分页、**删空末页 page 夹紧**、单选、多选、删、**新建**）；**`ChatThreadPanel`**（消息 **`useInfiniteQuery`**、SSE、输入区、乐观气泡、**`formatDisplayDateTime`**）；**`ChatPage` 选中行与列表缓存同步**（标题等）。  
+  - **待完成**：Ant Design **三栏**（左占位 | 会话列表 | 聊天）或维持双栏；轻量 **`GET /health`**（顶栏或独立块）；流式 **Abort**、**`routing`** 快捷等可选。
 - [ ] **R5** **收尾**  
   - **`npm run lint`**；冒烟联调。  
   - 更新 **`readme.md`** §2～§3、**`frontend-backend-contract.md`** §5、**`changelog.md`**。
@@ -88,7 +88,8 @@
 | 日期 | 内容 |
 |------|------|
 | 2026-05-14 | 完成 §**1.2**（旧代码）契约复核；**`frontend-backend-contract.md`** §5 曾对照旧 `src`。 |
-| 2026-05-17 | **R3/R4 续**：会话 **create/messages** API 与类型；**`/chat`** 双栏 + **`ChatThreadPanel`**；文档与清单同步。下一步 **SSE `/chat/stream`**。 |
+| 2026-05-17 | **R3/R4 续**：会话 **create/messages** API 与类型；**`/chat`** 双栏 + **`ChatThreadPanel`**。后续在同阶段继续 **SSE**、**infinite** 等，见 **2026-05-15（续）** 与 **`changelog`**。 |
+| 2026-05-15（续） | **SSE `chatStream`**、消息 **`useInfiniteQuery`**、**`/chat` 子目录**、**page 夹紧**、**选中行缓存同步**、**`datetime`**、**一屏 flex 布局**；§R 勾选与 **`readme`** 同步。下一步 **`GET /health`**、**`npm run lint`**。 |
 | 2026-05-16 | **R3/R4 部分推进**：会话 **list/delete** API 与类型；**`ConversationList`**；**`react-router-dom`** 与 **`pages/*`**。详见 **`docs/changelog.md`**。 |
 | 2026-05-15 | **R1/R2** 落地：新 **`src`** 含 **`utils/request.ts`**、**`config/env`**、**`types/common`**、**`main`/`App`**、样式；**`readme`**/**`frontend-backend-contract`** 已同步当前架构。下一步 **R3**。 |
 | 2026-05-14 | **策略变更**：改为**整目录删除 `src/` 后全文重写**；本文件结构改为 **§R** 主路径。 |

@@ -4,6 +4,18 @@
 
 ---
 
+## 2026-05-15（聊天与工程体验）
+
+- **目录**：**`/chat`** 实现迁至 **`src/pages/chat/index.tsx`**；**`ConversationList/`**、**`ChatThreadPanel/`**（各含 **`index.scss`**）；路由仍由 **`App.tsx`** 指向 **`./pages/chat`**（或等价懒加载路径以仓库为准）。
+- **SSE**：新增 **`src/api/chatStream.ts`**、**`src/types/chatStream.ts`**；**`POST /chat/stream`** 按行解析 **`data:`** 后 **`delta` / `error` / `done`**；发送成功后 **`invalidateQueries`**（**`conversations/messages/infinite`**、**`list`** 等）。
+- **消息区**：**`useInfiniteQuery`** 拉历史、向前翻页与滚动锚点；输入区与流式预览、乐观用户气泡等（见 **`ChatThreadPanel`**）。
+- **列表**：删空最后一页后 **`page` 越界** 导致空 **`records`** 时，**`useEffect`** 将 **`page` 夹到 `maxPage`**；**`ChatPage`** 订阅 **`queryCache`**，从列表缓存合并选中会话 **`memory_title`** 等，避免右侧标题滞后。
+- **时间**：**`src/utils/datetime.ts`** — **`formatDisplayDateTime`**，列表与消息时间统一格式化。
+- **布局**：**`html, body, #root` 高度**与 **`App.scss`** 中 **`Layout` 主区 flex**，目标为聊天与列表**各自内部滚动**、整页不出现纵向条（以实际浏览器为准微调 padding）。
+- **文档**：本日收尾同步 **`readme.md`**、**`study-progress.md`**、**`frontend-backend-contract.md` §5**、**`frontend-refactor-plan.md`**、**`react-learning-checklist.mdc`**。
+
+---
+
 ## 2026-05-17
 
 - **聊天页结构**：会话相关 UI 收拢至 **`src/pages/chat/`**（**`ChatPage.tsx`** + **`components/ConversationList.tsx`**、**`ChatThreadPanel.tsx`**）；**`/chat`** 为**左右分栏**（列表 | 消息区）。

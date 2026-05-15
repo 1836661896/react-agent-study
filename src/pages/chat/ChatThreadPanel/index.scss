@@ -1,0 +1,111 @@
+/**
+ * 右侧消息 Card：根节点与 body 均参与 flex，保证中间滚动、底栏输入固定。
+ */
+.chat-thread-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
+  .ant-card-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+  }
+}
+
+/** 未选中会话时的占位 Card，布局要求低于主面板 */
+.chat-thread-panel--placeholder {
+  height: auto;
+}
+
+.chat-thread-panel__meta-small {
+  font-size: 12px;
+}
+
+.chat-thread-panel__main-column {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chat-thread-panel__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 8px;
+  background: var(--ant-color-fill-quaternary, #f5f5f5);
+  border-radius: 8px;
+}
+
+.chat-thread-panel__load-more-wrap {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.chat-thread-panel__msg-list {
+  width: 100%;
+}
+
+.chat-thread-panel__msg-row {
+  display: flex;
+}
+
+.chat-thread-panel__msg-row--user {
+  justify-content: flex-end;
+}
+
+/** 接在历史列表后的乐观气泡，与上方列表留出间距 */
+.chat-thread-panel__msg-row--spaced {
+  margin-top: 8px;
+}
+
+.chat-thread-panel__msg-row--assistant {
+  justify-content: flex-start;
+}
+
+.chat-thread-panel__bubble {
+  max-width: 85%;
+}
+
+.chat-thread-panel__bubble--user {
+  background: var(--ant-color-primary-bg, #e6f4ff);
+}
+
+.chat-thread-panel__bubble-inner {
+  width: 100%;
+}
+
+.chat-thread-panel__meta-time {
+  width: 100%;
+}
+
+.chat-thread-panel__msg-content {
+  margin-bottom: 0;
+  white-space: pre-wrap;
+}
+
+.chat-thread-panel__streaming-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 8px;
+}
+
+/** 首字到达前：与流式气泡同列，弱化提示 */
+.chat-thread-panel__typing-hint {
+  font-style: italic;
+}
+
+.chat-thread-panel__composer {
+  flex-shrink: 0;
+  border-top: 1px solid var(--ant-color-border-secondary, #f0f0f0);
+  padding-top: 8px;
+}
+
+.chat-thread-panel__composer-inner {
+  width: 100%;
+}

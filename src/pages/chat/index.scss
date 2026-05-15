@@ -1,0 +1,25 @@
+/**
+ * 聊天页布局：占满父级可用高度，左右两栏在 Col 内纵向撑满，
+ * 便于内部 Card 使用 flex + min-height:0 形成可滚动消息区。
+ */
+.chat-page {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-page__row {
+  flex: 1;
+  min-height: 0;
+  margin-inline: 0;
+  height: 100%;
+}
+
+.chat-page__col {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}

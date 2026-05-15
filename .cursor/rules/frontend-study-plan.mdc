@@ -20,21 +20,20 @@ alwaysApply: true
 | 0 | 阶段 0：工程与运行 | 易 | 能跑起来、能构建；环境变量/代理就绪 | ✅ 已完成 |
 | 1 | 阶段 1：React 基础与最小联调 | 易~中 | 函数组件/JSX/useState/useEffect；**GET /health**；曾练习 tasks/agent 等（**现行后端已移除对应路由**，仅作学习史） | ✅ 已完成 |
 | 2 | 阶段 2：组件拆分与数据模型 | 中 | 拆组件、统一 types；避免单文件过大 | ✅ 已完成 |
-| 3 | 阶段 3：请求层与错误体验 + 对齐现行 API | 中 | **`http.ts`** 错误分类与统一提示；React Query **`isError`/重试**；覆盖 **会话列表、消息列表** 的 JSON 请求与 **`ChatPanel` 流式失败路径**；可选 Abort/超时 | 🔄 **当前建议** |
+| 3 | 阶段 3：请求层与错误体验 + 对齐现行 API | 中 | **`request.ts`** 错误分类与统一提示；React Query 列表 / 消息 / **infinite**；**`POST /chat/stream` SSE** 与 **`invalidateQueries`**；可选 **Abort** | 🔄 **收尾中**（剩 **health UI**、**lint**、体验打磨） |
 | 4 | 阶段 4：可扩展聊天 UI | 较难 | 快捷 **`routing`/skill/MCP 入口**（与后端契约对齐）；SSE **事件类型扩展**（工具确认、代码块、卡片等）；左侧活动流若后端有统一模型再对接 | ⏳ 待开始 |
 
 ---
 
 ## 当前建议（下一步怎么学）
 
-- **当前建议阶段**：**阶段 3**（与根目录 **`readme.md`**、**`docs/frontend-refactor-plan.md`** 同步）
-- **本阶段目标**（与代码现状：**HTTP 用 `src/utils/request.ts`**，与计划中 **`lib/http.ts`** 同职责）：
-  - 错误分类与可感知 UI（列表 / 消息区已部分实践；流式失败路径待接）。
-  - **React Query**：**`GET /conversation/list`**、**`GET /conversation/{id}/messages`** 已用 **`useQuery`**；**写操作**后 **`invalidateQueries`**。**下一步**：**`POST /chat/stream`** 与发完后刷新 **`messages`**（或本地合并流式文本）。
-  - **流式**：**`POST /chat/stream`** 消费 **`delta` / `error` / `done`**（见 **`myproject/backend/docs/chat-stream-api.md`**）。
-  - 进阶可选：**AbortController**、超时、停止生成。
+- **当前建议阶段**：**阶段 3 收尾 → 阶段 4 入口**（与根目录 **`readme.md`**、**`docs/frontend-refactor-plan.md`** 同步）
+- **本阶段目标**（与代码现状：**HTTP 用 `src/utils/request.ts`**，流式用 **`src/api/chatStream.ts`**）：
+  - 错误分类与可感知 UI：列表 / 消息区 / 流式 **`onError`** 与 **`catch`** 已基本覆盖；可按需补强 **HTTP 非 2xx** 与 **`message.error`** 文案一致性。
+  - **React Query**：列表 **`useQuery`**；消息 **`useInfiniteQuery`**；写操作与 **`done`** 后 **`invalidateQueries`**（**`messages` infinite**、**`list`**）已接。
+  - **流式**：**`POST /chat/stream`** 已消费 **`delta` / `error` / `done`**（见 **`myproject/backend/docs/chat-stream-api.md`**）。进阶可选：**AbortController**、超时、停止生成。
 - **本阶段结束标准**（满足即可进入阶段 4）：
-  - 会话相关 JSON 请求与聊天发送的主要失败路径均有可感知 UI。
+  - **`GET /health`** 有可感知 UI；**`npm run lint`** 通过或仅剩可接受告警。
   - 能口述：**JSON 信封** 与 **SSE 行** 分别如何判错、如何与 React Query / 本地流式 state 配合。
 
 ## 与后端近期共识

@@ -1,7 +1,7 @@
 import { Layout, Space, Typography } from "antd"
 import "./styles/App.scss"
 import { Link, Route, Routes } from "react-router-dom"
-import ChatPage from "./pages/chat/ChatPage"
+import ChatPage from "./pages/chat"
 import HomePage from "./pages/HomePage"
 import NotFoundPage from "./pages/NotFoundPage"
 

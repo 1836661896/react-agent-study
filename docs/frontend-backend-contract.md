@@ -45,11 +45,11 @@
 
 > **策略说明**：前端已**整目录移除旧 `src/` 后重写**（见 **`docs/frontend-refactor-plan.md`**）。**§5「重写前」**为 git 对照；**「当前实现」**随阶段更新。
 
-### 当前实现（2026-05-17）
+### 当前实现（2026-05-15）
 
-- **已有**：**`src/utils/request.ts`**、**`src/config/env.ts`**、**`src/types/common.ts`**、**`src/types/conversations.ts`**、**`src/api/conversations.ts`**（**`GET conversation/list`**、**`POST conversation/delete`**、**`POST conversation/create`**、**`GET conversation/{id}/messages`**）、**`src/pages/chat/ChatPage.tsx`**（左右分栏 + 选中 **`ConversationListItem`**）、**`src/pages/chat/components/ConversationList.tsx`**、**`src/pages/chat/components/ChatThreadPanel.tsx`**（消息 **`useQuery`**、错误展示与重试、气泡列表）；**`main.tsx`**（**`BrowserRouter`**）、**`App.tsx`**、样式、**`vite-env.d.ts`**；**`index.html`** → **`/src/main.tsx`**。
-- **未有 / 待接**：**`POST /chat/stream`** 的 API 与 UI（SSE）；**`GET /health`** 页面；计划中的 **三栏左占位**（当前为 **双栏**）。
-- **与契约**：已对接 **`/conversation/list`**、**`/conversation/delete`**、**`/conversation/create`**、**`/conversation/{id}/messages`**；**`/chat/stream`** 仍待 **R3（流式）～R4** 补齐。
+- **已有**：**`src/utils/request.ts`**、**`src/config/env.ts`**、**`src/types/common.ts`**、**`src/types/conversations.ts`**、**`src/types/chatStream.ts`**；**`src/api/conversations.ts`**（**`GET conversation/list`**、**`POST conversation/delete`**、**`POST conversation/create`**、**`GET conversation/{id}/messages`**）；**`src/api/chatStream.ts`**（**`POST /chat/stream`**，**`fetch` + SSE 行解析**，**`delta` / `error` / `done`**）；**`src/pages/chat/index.tsx`**（左右分栏、**`queryCache` 订阅**合并选中 **`ConversationListItem`** 与列表刷新）；**`src/pages/chat/ConversationList/`**（分页、**删空末页 `page` 夹紧**、新建、多选、删除）；**`src/pages/chat/ChatThreadPanel/`**（消息 **`useInfiniteQuery`**、SSE 发送、输入区、乐观气泡、**`formatDisplayDateTime`**）；**`src/utils/datetime.ts`**；**`main.tsx`**、**`App.tsx`**、**`styles/*`**、**`vite-env.d.ts`**；**`index.html`** → **`/src/main.tsx`**。
+- **未有 / 待接**：**`GET /health`** 页面；计划中的 **三栏左占位**（当前为 **双栏**）；流式 **Abort**、**`routing`** 快捷等可选增强。
+- **与契约**：已对接 **`/conversation/list`**、**`/conversation/delete`**、**`/conversation/create`**、**`/conversation/{id}/messages`**、**`/chat/stream`（SSE）**；**`/health`** 仍待 **R4** 接 UI。
 
 ### 重写前（历史快照，git 对照）
 
@@ -59,7 +59,7 @@
 
 ### 复核记录
 
-- **2026-05-15**：新 **`src`** 已落地 R2；本节增加「**当前实现**」与 §3 脚注。
+- **2026-05-15**：新 **`src`** 已落地 R2；同日后半段 **`/chat`** 迁至 **`pages/chat/index.tsx`** + **`ConversationList/`**、**`ChatThreadPanel/`**；**`chatStream`**、**`useInfiniteQuery`** 消息、列表 **page 夹紧**、**选中行缓存同步**、**`datetime.ts`**、一屏布局等；§5「当前实现」与本节脚注随提交同步。
 - **2026-05-17**：已接 **create/messages** 与 **`pages/chat`** 双栏 + **`ChatThreadPanel`**；§5 更新「当前实现」；§3 脚注与 **`conversations.ts`** 实际导出一致。
 - **2026-05-16**：已接 **`conversation/list`**、**`conversation/delete`** 与列表 UI；§2 增补 **create/delete**；§5「当前实现」更新。
 
