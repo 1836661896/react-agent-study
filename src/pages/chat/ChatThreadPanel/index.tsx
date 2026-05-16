@@ -4,6 +4,7 @@
  *
  * 发送体验：用户消息乐观插入；在首段 delta 到达前展示「正在思考…」；发送与流式更新时贴底滚动。
  */
+import "./index.scss"
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query"
 import {
   Alert,
@@ -23,7 +24,6 @@ import { getConversationMessages } from "@/api/conversations"
 import type { ConversationListItem } from "@/types/conversations"
 import { errorDescription } from "@/utils/common"
 import { formatDisplayDateTime } from "@/utils/datetime"
-import "./index.scss"
 
 const MESSAGES_PAGE_SIZE = 50
 
@@ -166,7 +166,7 @@ export default function ChatThreadPanel({ conversation }: ChatThreadPanelProp) {
           },
           onDone: async () => {
             await queryClient.invalidateQueries({
-              queryKey: ["conversations", "messages", "infinite", convId!],
+              queryKey: ["conversations", "messages", "infinite", convId],
             })
             await queryClient.invalidateQueries({
               queryKey: ["conversations", "list"],

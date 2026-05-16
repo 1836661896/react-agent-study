@@ -2,6 +2,7 @@
  * 左侧会话列表：分页查询、单选、批量勾选删除、新建会话。
  * 样式见同目录 index.scss，避免 TSX 内大块 style 对象。
  */
+import "./index.scss"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   Alert,
@@ -30,7 +31,6 @@ import type {
 } from "@/types/conversations"
 import { errorDescription } from "@/utils/common"
 import { formatDisplayDateTime } from "@/utils/datetime"
-import "./index.scss"
 
 type ConversationListProps = {
   selectedId: number | null

@@ -2,14 +2,14 @@
  * /chat 路由页面：左栏会话列表 + 右栏消息与发送区。
  * 选中会话由本页 state 持有，避免列表分页后丢失当前选中行的展示上下文。
  */
-import { useQueryClient, type QueryClient } from "@tanstack/react-query"
+import "./index.scss"
+import { type QueryClient, useQueryClient } from "@tanstack/react-query"
 import { Col, Row } from "antd"
 import { useEffect, useState } from "react"
 import type { ApiResponse, ListResult } from "@/types/common"
 import type { ConversationListItem } from "@/types/conversations"
 import ChatThreadPanel from "./ChatThreadPanel/index"
 import ConversationList from "./ConversationList/index"
-import "./index.scss"
 
 function findConversationRowInListCache(
   queryClient: QueryClient,
@@ -50,7 +50,8 @@ export default function ChatPage() {
         if (!prev || prev.id !== id) return prev
         if (
           prev.memory_title === fresh.memory_title &&
-          (prev.memory_updated_at ?? null) === (fresh.memory_updated_at ?? null) &&
+          (prev.memory_updated_at ?? null) ===
+            (fresh.memory_updated_at ?? null) &&
           prev.kind === fresh.kind
         ) {
           return prev
@@ -63,7 +64,7 @@ export default function ChatPage() {
     return queryClient.getQueryCache().subscribe(() => {
       syncFromListCache()
     })
-  }, [queryClient, selectedItem?.id])
+  }, [queryClient, selectedItem?.id, selectedItem])
 
   return (
     <div className="chat-page">
