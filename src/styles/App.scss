@@ -16,6 +16,13 @@
   line-height: 64px;
 }
 
+.app-root__header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .app-root__content {
   flex: 1;
   min-height: 0;

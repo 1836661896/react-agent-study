@@ -14,26 +14,49 @@ function _parseSseDataLine(line: string): ChatStreamSseEvent | null {
   const raw = trimmed.slice("data:".length).trimStart()
   if (!raw) return null
   try {
-    return JSON.parse(raw) as ChatStreamSseEvent
+    const parsed = JSON.parse(raw) as { type?: string }
+    if (!parsed || typeof parsed.type !== "string") return null
+    return parsed as ChatStreamSseEvent
   } catch {
     return null
   }
 }
 
+export type ChatStreamHandlers = {
+  onDelta?: (text: string) => void
+  onToolCall?: (payload: {
+    tool: string
+    arguments: Record<string, unknown>
+  }) => void
+  onToolResult?: (payload: {
+    tool: string
+    text: string
+    is_error?: boolean
+  }) => void
+  onError?: (msg: string) => void
+  onDone?: (payload: {
+    conversation_id: number | null
+    turn_id: string
+  }) => void
+}
+
 function _dispatchEvent(
   ev: ChatStreamSseEvent,
-  _handlers: {
-    onDelta?: (text: string) => void
-    onError?: (msg: string) => void
-    onDone?: (payload: {
-      conversation_id: number | null
-      turn_id: string
-    }) => void
-  },
+  _handlers: ChatStreamHandlers,
 ): void {
   switch (ev.type) {
     case "delta":
       _handlers.onDelta?.(ev.text)
+      break
+    case "tool_call":
+      _handlers.onToolCall?.({ tool: ev.tool, arguments: ev.arguments })
+      break
+    case "tool_result":
+      _handlers.onToolResult?.({
+        tool: ev.tool,
+        text: ev.text,
+        ...(ev.is_error !== undefined ? { is_error: ev.is_error } : {}),
+      })
       break
     case "error":
       _handlers.onError?.(ev.msg)
@@ -54,22 +77,20 @@ function _dispatchEvent(
 
 export async function postChatStream(
   body: PostChatStreamBody,
-  _handlers: {
-    onDelta?: (text: string) => void
-    onError?: (msg: string) => void
-    onDone?: (payload: {
-      conversation_id: number | null
-      turn_id: string
-    }) => void
-  },
+  _handlers: ChatStreamHandlers,
   options?: { signal?: AbortSignal },
 ): Promise<void> {
+  const routing = body.routing ?? "auto"
   const payload: Record<string, unknown> = {
     message: body.message,
-    routing: body.routing ?? "auto",
+    routing,
   }
   if (body.conversation_id !== undefined && body.conversation_id !== null) {
     payload.conversation_id = body.conversation_id
+  }
+  if (routing === "mcp") {
+    if (body.mcp_tool) payload.mcp_tool = body.mcp_tool
+    payload.mcp_arguments = body.mcp_arguments ?? {}
   }
 
   const _res = await fetch(_buildAbsoluteUrl("/chat/stream"), {

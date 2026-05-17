@@ -45,7 +45,7 @@
 
 ## 1. 基线与验收（重写前后都需要）
 
-- [ ] **1.1** **`myproject/backend`** 可启动；**`VITE_API_BASE_URL`** 正确；页面 **`GET /health`** 成功展示（重写后由新 **`HealthHeader`** 或等价组件承担）。  
+- [x] **1.1** **`myproject/backend`** 可启动；**`VITE_API_BASE_URL`** 正确；顶栏 **`HealthBage`** 展示 **`GET /health`**（2026-05-17）。  
   - *历史记录*：见文末「执行记录」。
 - [x] **1.2** 已阅读 **`frontend-backend-contract.md`**；选定整目录重写后，**首次新 `src` 合入**时须重写该文件 **§5**（从「空白实现」描述差距，而非旧代码）。
 
@@ -66,14 +66,15 @@
   - **`npm run dev`** 可打开 R2 占位页。
 - [x] **R3** **类型与 API**  
   - **已完成（会话 JSON）**：**`src/types/conversations.ts`**、**`src/types/common.ts`**；**`src/api/conversations.ts`**：**`GET conversation/list`**、**`POST conversation/delete`**、**`POST conversation/create`**、**`GET conversation/{id}/messages`**。  
-  - **已完成（流式）**：**`src/types/chatStream.ts`**、**`src/api/chatStream.ts`**：**`POST /chat/stream`**，请求体 **`message` + `conversation_id?` + `routing?`**；消费 **`delta` / `error` / `done`**；**`done`** 后 UI **`invalidateQueries`**（**`messages` infinite**、**`list`** 等）。  
+  - **已完成（流式）**：**`src/types/chatStream.ts`**、**`src/api/chatStream.ts`**：**`POST /chat/stream`**；**`delta` / `tool_call` / `tool_result` / `error` / `done`**；**`done`** 后 **`invalidateQueries`**。  
   - *计划文件名曾写作 `conversation.ts`（单数）；实际仓库为 **`conversations.ts`**。*
-- [ ] **R4** **UI 与布局**  
-  - **已完成（部分）**：**`/chat`** **双栏**（**`pages/chat/index.tsx`** + **`ConversationList/`**、**`ChatThreadPanel/`**）；**一屏内列滚动**（**`App.scss` / `main.scss`**）；**`ConversationList`**（分页、**删空末页 page 夹紧**、单选、多选、删、**新建**）；**`ChatThreadPanel`**（消息 **`useInfiniteQuery`**、SSE、输入区、乐观气泡、**`formatDisplayDateTime`**）；**`ChatPage` 选中行与列表缓存同步**（标题等）。  
-  - **待完成**：Ant Design **三栏**（左占位 | 会话列表 | 聊天）或维持双栏；轻量 **`GET /health`**（顶栏或独立块）；流式 **Abort**、**`routing`** 快捷等可选。
+- [x] **R4** **UI 与布局**（主路径，2026-05-17）  
+  - **已完成**：双栏 **`/chat`**、**`ConversationList`**、**`ChatThreadPanel`**（infinite、SSE、**自动/对话** 模式、**toolTrace**、乐观气泡）；顶栏 **`HealthBage`** + **`api/health.ts`**。  
+  - **待完成 / 阶段 4**：三栏左占位；流式 **Abort**；composer **具名能力按钮**（非 MCP 模式切换）。
 - [ ] **R5** **收尾**  
-  - **`npm run lint`**；冒烟联调。  
-  - 更新 **`readme.md`** §2～§3、**`frontend-backend-contract.md`** §5、**`changelog.md`**。
+  - [x] **`npm run lint`**（2026-05-17 已通过，提交前建议再跑）。  
+  - [x] 文档：**`readme`**、**`frontend-backend-contract` §5**、**`changelog`**、**`study-progress`**（本批）。  
+  - [ ] 冒烟联调记录（可选写入 changelog）。
 
 ---
 
@@ -88,7 +89,8 @@
 | 日期 | 内容 |
 |------|------|
 | 2026-05-14 | 完成 §**1.2**（旧代码）契约复核；**`frontend-backend-contract.md`** §5 曾对照旧 `src`。 |
-| 2026-05-17 | **R3/R4 续**：会话 **create/messages** API 与类型；**`/chat`** 双栏 + **`ChatThreadPanel`**。后续在同阶段继续 **SSE**、**infinite** 等，见 **2026-05-15（续）** 与 **`changelog`**。 |
+| 2026-05-17 | **R4 收尾**：**health**、SSE **tool_***、模式 **auto/chat**；文档与 **lint** 同步。阶段 4：能力按钮、Abort。 |
+| 2026-05-17（早） | **R3/R4 续**：**create/messages**；双栏 + **`ChatThreadPanel`**。 |
 | 2026-05-15（续） | **SSE `chatStream`**、消息 **`useInfiniteQuery`**、**`/chat` 子目录**、**page 夹紧**、**选中行缓存同步**、**`datetime`**、**一屏 flex 布局**；§R 勾选与 **`readme`** 同步。下一步 **`GET /health`**、**`npm run lint`**。 |
 | 2026-05-16 | **R3/R4 部分推进**：会话 **list/delete** API 与类型；**`ConversationList`**；**`react-router-dom`** 与 **`pages/*`**。详见 **`docs/changelog.md`**。 |
 | 2026-05-15 | **R1/R2** 落地：新 **`src`** 含 **`utils/request.ts`**、**`config/env`**、**`types/common`**、**`main`/`App`**、样式；**`readme`**/**`frontend-backend-contract`** 已同步当前架构。下一步 **R3**。 |

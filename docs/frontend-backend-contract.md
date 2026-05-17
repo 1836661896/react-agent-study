@@ -15,17 +15,15 @@
 | 接口 | 方法 | 说明 |
 |------|------|------|
 | `/health` | GET | JSON 信封 **`{ code, data, msg }`** |
-| `/chat/stream` | POST | **SSE**（`text/event-stream`）；请求体 **`ChatRequest`**：`message`（必填）、`conversation_id`（可选）、`routing`（默认 `auto`） |
+| `/chat/stream` | POST | **SSE**；**`ChatRequest`**：`message`（必填）、`conversation_id`（可选）、`routing`（默认 **`auto`**）；显式 **`routing=mcp`** 时需 **`mcp_tool`**（前端日常发送走 **auto/chat**，能力按钮可日后传 **mcp**） |
 | `/conversation/list` | GET | 会话列表；成功 **`data`** 为 **`ListResult`** |
-| `/conversation/create` | POST | 新建空会话；成功 **`data`** 为 **`{ id }`**；body 可选 **`kind`**（见 backend **`conversations-api.md`**） |
-| `/conversation/delete` | POST | 批量删除会话；JSON body **`{ ids: number[] }`**（至少一个 id） |
-| `/conversation/{conversation_id}/messages` | GET | 消息历史；分页与筛选见 backend 文档 |
+| `/conversation/create` | POST | 新建空会话；成功 **`data`** 为 **`{ id }`** |
+| `/conversation/delete` | POST | 批量删除；body **`{ ids: number[] }`** |
+| `/conversation/{conversation_id}/messages` | GET | 消息历史；分页与 **`role`** 筛选见 backend 文档 |
 
 ---
 
-## 3. 已从后端移除的接口（本仓库可能仍有遗留调用）
-
-以下**不应再作为现网联调目标**；旧版曾在 **`src/api/*.ts`** 中封装；**当前仓库**会话相关封装在 **`src/api/conversations.ts`**（**list / delete / create / messages**），**不得**再引入下列路径的封装。
+## 3. 已从后端移除的接口（本仓库不得再封装）
 
 - `/tasks`（GET/POST）、`/tasks/{task_id}`（DELETE）
 - `/agent/run`、`/agent/last-step`、`/agent/steps`、`/agent/nl-run`
@@ -36,40 +34,52 @@
 
 ## 4. 响应形态约定
 
-- **JSON 接口**（如 `/health`、`/conversation/*`）：与后端一致，**`code !== 0`** 视为业务失败；前端 **`src/utils/request.ts`** 中 **`request()`** 抛 **`HttpError`**（与旧文档中的 **`http.ts`** 指同一职责时可替换表述）。
-- **SSE**（`/chat/stream`）：**不按** JSON 信封解析；按行解析 **`data:`** 后 JSON，事件类型 **`delta` / `error` / `done`** 等，详见 **backend `docs/chat-stream-api.md`**。
+- **JSON**（`/health`、`/conversation/*`）：**`code !== 0`** → **`request()`** 抛 **`HttpError`**。
+- **SSE**（`/chat/stream`）：按行 **`data:`** JSON；类型含 **`delta`**、**`error`**、**`done`**；**`mcp` / `auto→mcp`** 另有 **`tool_call`**、**`tool_result`**（见 backend **`docs/chat-stream-api.md`**）。
 
 ---
 
 ## 5. 本仓库实现与契约的差距
 
-> **策略说明**：前端已**整目录移除旧 `src/` 后重写**（见 **`docs/frontend-refactor-plan.md`**）。**§5「重写前」**为 git 对照；**「当前实现」**随阶段更新。
+### 当前实现（2026-05-17）
 
-### 当前实现（2026-05-15）
+- **JSON**：**`utils/request.ts`**；**`api/conversations.ts`**（list / delete / create / messages）；**`api/health.ts`**。
+- **SSE**：**`api/chatStream.ts`** 解析并分发 **`delta` / `tool_call` / `tool_result` / `error` / `done`**；类型 **`types/chatStream.ts`**。
+- **布局**：**`/chat`** 双栏；**`App`** 顶栏 **`HealthBage`**（**`components/HealthBage.tsx`**，文件名拼写以仓库为准）。
+- **聊天区**：**`ChatThreadPanel`** — **`useInfiniteQuery`** 消息；发送 **`routing`** 仅 UI 暴露 **`auto` | `chat`**（类型 **`ChatUiRoutingMode`**）；**`auto→mcp`** 时 **`toolTrace`** 展示工具过程；**`done`** 后 **`invalidateQueries`**（messages infinite、list）。
+- **未有 / 待做**：流式 **Abort**；composer **具名能力按钮**（内部可映射 **`routing=mcp` + mcp_tool**）；三栏左占位；**`routing=plan`** 产品化。
 
-- **已有**：**`src/utils/request.ts`**、**`src/config/env.ts`**、**`src/types/common.ts`**、**`src/types/conversations.ts`**、**`src/types/chatStream.ts`**；**`src/api/conversations.ts`**（**`GET conversation/list`**、**`POST conversation/delete`**、**`POST conversation/create`**、**`GET conversation/{id}/messages`**）；**`src/api/chatStream.ts`**（**`POST /chat/stream`**，**`fetch` + SSE 行解析**，**`delta` / `error` / `done`**）；**`src/pages/chat/index.tsx`**（左右分栏、**`queryCache` 订阅**合并选中 **`ConversationListItem`** 与列表刷新）；**`src/pages/chat/ConversationList/`**（分页、**删空末页 `page` 夹紧**、新建、多选、删除）；**`src/pages/chat/ChatThreadPanel/`**（消息 **`useInfiniteQuery`**、SSE 发送、输入区、乐观气泡、**`formatDisplayDateTime`**）；**`src/utils/datetime.ts`**；**`main.tsx`**、**`App.tsx`**、**`styles/*`**、**`vite-env.d.ts`**；**`index.html`** → **`/src/main.tsx`**。
-- **未有 / 待接**：**`GET /health`** 页面；计划中的 **三栏左占位**（当前为 **双栏**）；流式 **Abort**、**`routing`** 快捷等可选增强。
-- **与契约**：已对接 **`/conversation/list`**、**`/conversation/delete`**、**`/conversation/create`**、**`/conversation/{id}/messages`**、**`/chat/stream`（SSE）**；**`/health`** 仍待 **R4** 接 UI。
+### 与契约对齐情况
 
-### 重写前（历史快照，git 对照）
+| 能力 | 状态 |
+|------|------|
+| `/health` | ✅ 顶栏 |
+| `/conversation/*` | ✅ |
+| `/chat/stream` 基础事件 | ✅ |
+| MCP 工具 SSE 展示 | ✅（非用户可选模式） |
+| 用户选 MCP + 手写工具名 | ❌ 已按产品约定移除 |
+| 能力按钮 → `mcp_tool` | ⏳ 阶段 4 |
 
-- **`ChatPanel` + `chatWithLocalModelStream`**：请求体仅 **`message`**；**`done`** 未解析 **`conversation_id` / `turn_id`**。
-- **`chatStream.ts`**：`SsePayload` 的 **`done`** 类型与无参 **`onDone()``** 与 **`myproject/backend/docs/chat-stream-api.md`** 不一致。
-- **会话**：无 **`GET /conversation/*`** 的 API 封装与 UI。
+### 重写前（历史快照）
+
+- 无会话 API/UI；**`done`** 未用；SSE 类型与 backend 不一致。
 
 ### 复核记录
 
-- **2026-05-15**：新 **`src`** 已落地 R2；同日后半段 **`/chat`** 迁至 **`pages/chat/index.tsx`** + **`ConversationList/`**、**`ChatThreadPanel/`**；**`chatStream`**、**`useInfiniteQuery`** 消息、列表 **page 夹紧**、**选中行缓存同步**、**`datetime.ts`**、一屏布局等；§5「当前实现」与本节脚注随提交同步。
-- **2026-05-17**：已接 **create/messages** 与 **`pages/chat`** 双栏 + **`ChatThreadPanel`**；§5 更新「当前实现」；§3 脚注与 **`conversations.ts`** 实际导出一致。
-- **2026-05-16**：已接 **`conversation/list`**、**`conversation/delete`** 与列表 UI；§2 增补 **create/delete**；§5「当前实现」更新。
+- **2026-05-15**：R2 + `/chat` 子目录、infinite 消息、page 夹紧、缓存同步标题。
+- **2026-05-16**：list/delete + 路由页。
+- **2026-05-17（早）**：create/messages、双栏 ChatThreadPanel。
+- **2026-05-17（晚）**：health、SSE **tool_***、模式仅 auto/chat；§5 与本表同步。
+
+---
 
 ## 6. 环境与 CORS
 
-- 前端开发默认 **`http://localhost:5173`**；后端 CORS 示例允许该来源（以 **backend `src/api.py`** 为准）。
-- 前端 API 基址：**环境变量 `VITE_API_BASE_URL`**（见 **`src/config/env.ts`**），需指向 backend 根 URL（如 `http://127.0.0.1:8000`）。
+- 前端开发默认 **`http://localhost:5173`**；后端 CORS 允许该来源（以 **backend `src/api.py`** 为准）。
+- **`VITE_API_BASE_URL`** → backend 根 URL（如 `http://127.0.0.1:8000`）。
 
 ---
 
 ## 7. 启动后端（备忘）
 
-在 **`myproject/backend`** 目录：`uvicorn src.api:app --reload`（默认 `http://127.0.0.1:8000`）；数据库与迁移见 **backend `readme.md`**。
+在 **`myproject/backend`**：`uvicorn src.api:app --reload`；数据库与迁移见 backend **`readme.md`**。

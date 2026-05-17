@@ -4,6 +4,17 @@
 
 ---
 
+## 2026-05-17（健康检查、MCP 工具事件、对话模式）
+
+- **健康检查**：**`src/api/health.ts`**；**`src/components/HealthBage.tsx`**（顶栏 **`useQuery`**，30s 轮询）；**`App.tsx`** 顶栏右侧展示。
+- **SSE 扩展**：**`types/chatStream.ts`** 增加 **`tool_call` / `tool_result`**；**`PostChatStreamBody`** 中 **`mcp_tool?`** 可选（供后续能力按钮）；**`api/chatStream.ts`** 增加 **`onToolCall` / `onToolResult`** 分发。
+- **聊天区**：**`ChatThreadPanel`** — 流式 **工具条**（**`toolTrace`**）；发送模式 Segmented 仅 **「自动 / 对话」**（**`ChatUiRoutingMode`**），不在 UI 暴露 **MCP**；**`auto→mcp`** 仍展示工具过程。
+- **样式**：**`ChatThreadPanel/index.scss`** 工具参数与 composer 间距；**`App.scss`** 顶栏左右分布。
+- **质量**：**`npm run lint`** 通过（提交前建议再跑一遍）。
+- **文档**：**`readme.md`**、**`frontend-backend-contract.md` §5**、**`study-progress.md`**、**`frontend-refactor-plan.md`**、**`product-roadmap.md`**、**`documentation-index.md`**、规则 **`.cursor/rules/*`** 同步。
+
+---
+
 ## 2026-05-15（聊天与工程体验）
 
 - **目录**：**`/chat`** 实现迁至 **`src/pages/chat/index.tsx`**；**`ConversationList/`**、**`ChatThreadPanel/`**（各含 **`index.scss`**）；路由仍由 **`App.tsx`** 指向 **`./pages/chat`**（或等价懒加载路径以仓库为准）。

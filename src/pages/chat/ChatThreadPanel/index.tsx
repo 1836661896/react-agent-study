@@ -2,7 +2,8 @@
  * 右侧会话线程：消息历史（无限滚动向前翻页）、SSE 流式展示、发送区。
  * 与 antd Card 配套的 flex 样式在 index.scss，通过类名绑定。
  *
- * 发送体验：用户消息乐观插入；在首段 delta 到达前展示「正在思考…」；发送与流式更新时贴底滚动。
+ * 发送体验：用户消息乐观插入；模式仅「自动 / 对话」（MCP 由 auto 路由或后续能力按钮触发）；
+ * 工具调用过程用 toolTrace 展示；首段 delta 前展示「正在思考…」；流式时贴底滚动。
  */
 import "./index.scss"
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query"
@@ -13,6 +14,7 @@ import {
   Empty,
   Input,
   message,
+  Segmented,
   Space,
   Spin,
   Tag,
@@ -21,11 +23,20 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { postChatStream } from "@/api/chatStream"
 import { getConversationMessages } from "@/api/conversations"
+import type { RoutingMode } from "@/types/chatStream"
 import type { ConversationListItem } from "@/types/conversations"
 import { errorDescription } from "@/utils/common"
 import { formatDisplayDateTime } from "@/utils/datetime"
 
 const MESSAGES_PAGE_SIZE = 50
+
+/** 用户可选的对话模式；MCP 由 auto 或后续「能力按钮」触发，不在此暴露 */
+type ChatUiRoutingMode = Extract<RoutingMode, "auto" | "chat">
+
+const ROUTING_OPTIONS: { label: string; value: ChatUiRoutingMode }[] = [
+  { label: "自动", value: "auto" },
+  { label: "对话", value: "chat" },
+]
 
 type ChatThreadPanelProp = {
   conversation: ConversationListItem | null
@@ -37,6 +48,14 @@ type OptimisticUserBubble = {
   content: string
 }
 
+type ToolTrace = {
+  tool: string
+  phase: "calling" | "result"
+  arguments?: Record<string, unknown>
+  resultText?: string
+  isError?: boolean
+}
+
 function conversationPanelTitle(item: ConversationListItem): string {
   const t = item.memory_title?.trim()
   return t ? t : `会话 ${item.id}`
@@ -45,7 +64,7 @@ function conversationPanelTitle(item: ConversationListItem): string {
 export default function ChatThreadPanel({ conversation }: ChatThreadPanelProp) {
   const queryClient = useQueryClient()
   const scrollRef = useRef<HTMLDivElement>(null)
-  const convId = conversation?.id ?? null
+  const convId = conversation?.id ?? 0
 
   const messageQuery = useInfiniteQuery({
     queryKey: [
@@ -89,6 +108,8 @@ export default function ChatThreadPanel({ conversation }: ChatThreadPanelProp) {
   const [streamingText, setStreamingText] = useState("")
   const [optimisticUser, setOptimisticUser] =
     useState<OptimisticUserBubble | null>(null)
+  const [routing, setRouting] = useState<ChatUiRoutingMode>("auto")
+  const [toolTrace, setToolTrace] = useState<ToolTrace | null>(null)
 
   const scrollToBottom = useCallback(() => {
     const el = scrollRef.current
@@ -99,6 +120,7 @@ export default function ChatThreadPanel({ conversation }: ChatThreadPanelProp) {
   useEffect(() => {
     const el = scrollRef.current
     if (!el || conversation === null) return
+    setToolTrace(null)
     el.scrollTop = el.scrollHeight
   }, [conversation?.id, conversation])
 
@@ -145,23 +167,48 @@ export default function ChatThreadPanel({ conversation }: ChatThreadPanelProp) {
   async function handleSend() {
     const text = draft.trim()
     if (!conversation || !text || streaming) return
+
     setDraft("")
     setStreaming(true)
     setStreamingText("")
+    setToolTrace(null)
     setOptimisticUser({
       key: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
       content: text,
     })
     requestAnimationFrame(() => scrollToBottom())
+
     try {
       await postChatStream(
-        { message: text, conversation_id: convId, routing: "chat" },
         {
+          message: text,
+          conversation_id: convId,
+          routing,
+        },
+        {
+          onToolCall: ({ tool, arguments: args }) => {
+            setToolTrace({
+              tool,
+              phase: "calling",
+              arguments: args,
+            })
+            requestAnimationFrame(() => scrollToBottom())
+          },
+          onToolResult: ({ tool, text: resultText, is_error }) => {
+            setToolTrace({
+              tool,
+              phase: "result",
+              resultText,
+              ...(is_error !== undefined ? { isError: is_error } : {}),
+            })
+            requestAnimationFrame(() => scrollToBottom())
+          },
           onDelta: (t) => setStreamingText((s) => s + t),
           onError: (m) => {
             void message.error(m)
             setStreaming(false)
             setStreamingText("")
+            setToolTrace(null)
             setOptimisticUser(null)
           },
           onDone: async () => {
@@ -172,6 +219,7 @@ export default function ChatThreadPanel({ conversation }: ChatThreadPanelProp) {
               queryKey: ["conversations", "list"],
             })
             setStreamingText("")
+            setToolTrace(null)
             setStreaming(false)
             setOptimisticUser(null)
             requestAnimationFrame(() => scrollToBottom())
@@ -182,6 +230,7 @@ export default function ChatThreadPanel({ conversation }: ChatThreadPanelProp) {
       message.error(e instanceof Error ? e.message : "发送失败")
       setStreaming(false)
       setStreamingText("")
+      setToolTrace(null)
       setOptimisticUser(null)
     }
   }
@@ -190,7 +239,8 @@ export default function ChatThreadPanel({ conversation }: ChatThreadPanelProp) {
     ordered.length > 0 ||
     optimisticUser !== null ||
     streaming ||
-    streamingText !== ""
+    streamingText !== "" ||
+    toolTrace !== null
 
   const showEmptyHint =
     !messageQuery.isError &&
@@ -347,7 +397,34 @@ export default function ChatThreadPanel({ conversation }: ChatThreadPanelProp) {
                   </div>
                 ) : null}
 
-                {streaming && !streamingText ? (
+                {toolTrace ? (
+                  <div className="chat-thread-panel__streaming-row">
+                    <Alert
+                      type={toolTrace.isError ? "error" : "info"}
+                      showIcon
+                      title={
+                        toolTrace.phase === "calling"
+                          ? `正在调用工具：${toolTrace.tool}`
+                          : `工具返回：${toolTrace.tool}`
+                      }
+                      description={
+                        toolTrace.phase === "calling" ? (
+                          <Typography.Text
+                            type="secondary"
+                            className="chat-thread-panel__tool-args"
+                          >
+                            {JSON.stringify(toolTrace.arguments ?? {})}
+                          </Typography.Text>
+                        ) : (
+                          <Typography.Paragraph className="chat-thread-panel__msg-content">
+                            {toolTrace.resultText}
+                          </Typography.Paragraph>
+                        )
+                      }
+                    />
+                  </div>
+                ) : null}
+                {streaming && !streamingText && !toolTrace ? (
                   <div className="chat-thread-panel__streaming-row">
                     <Card size="small" className="chat-thread-panel__bubble">
                       <Space size="small" align="center">
@@ -379,6 +456,15 @@ export default function ChatThreadPanel({ conversation }: ChatThreadPanelProp) {
         </div>
 
         <div className="chat-thread-panel__composer">
+          <Space orientation="vertical" size="small" style={{ width: "100%" }}>
+            <Segmented
+              size="small"
+              options={ROUTING_OPTIONS}
+              value={routing}
+              onChange={(v) => setRouting(v as ChatUiRoutingMode)}
+              disabled={streaming}
+            />
+          </Space>
           <Space.Compact className="chat-thread-panel__composer-inner">
             <Input.TextArea
               value={draft}

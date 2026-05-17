@@ -40,4 +40,5 @@
 
 ---
 
-*建立：2026-05-14（与 `myproject/backend` 的 `docs/documentation-index.md` 分工方式对齐）。*
+*建立：2026-05-14（与 `myproject/backend` 的 `docs/documentation-index.md` 分工方式对齐）。*  
+*最近全库文档与 **2026-05-17** 代码同步：**`readme`**、**`frontend-backend-contract` §5**、**`changelog`**、**`study-progress`**、**`product-roadmap`**、**`frontend-refactor-plan`**、**`.cursor/rules/*`**。*

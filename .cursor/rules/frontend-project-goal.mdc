@@ -80,20 +80,19 @@ alwaysApply: true
 - **统一 JSON 响应**（**`/health`**、**`/conversation/*`** 等非 SSE）：**`{ code, data, msg }`**（与前端 `HttpError` / `res.code === 0` 对齐）。
 - **当前后端已挂载 API**（与 **`myproject/backend/src/api.py`** 及 routers 对齐；随项目演进更新）：
   - **GET /health**：健康检查。
-  - **POST /chat/stream**：**SSE** 流式聊天；请求体 **`ChatRequest`**（`message`、`conversation_id` 可选、`routing` 默认 `auto`）；事件类型 **`delta` / `error` / `done`**。
-  - **GET /conversation/list**：会话列表，分页；成功时 **`data`** 为 **`ListResult`**。
-  - **GET /conversation/{conversation_id}/messages**：会话消息历史，分页；成功时 **`data`** 为 **`ListResult`**。
-- **未挂载 / 已从前端联调基准中移除**：`/tasks`、`/agent/*`、非流式 **`POST /chat`**、**`/events`** 等（详见 **`myproject/backend/readme.md`**「功能模块」表）；旧前端代码若仍存在对应调用，应随重构删除或改写。
-- **联调注意**：会话与消息以 DB 为准；**`routing`** 的 **`plan` / `mcp`** 等行为以后端当前实现与 readme 为准（可能仍为占位）。
+  - **POST /chat/stream**：**SSE**；**`ChatRequest`**（`message`、`conversation_id?`、`routing` 默认 **`auto`**、`mcp_tool?`）；事件 **`delta` / `error` / `done`**；**`mcp` / `auto→mcp`** 另有 **`tool_call` / `tool_result`**（见 backend **`docs/chat-stream-api.md`**）。
+  - **GET /conversation/list**、**POST /conversation/delete**、**POST /conversation/create**、**GET /conversation/{id}/messages**：会话与消息（分页见 **`docs/conversations-api.md`**）。
+- **未挂载 / 前端不得再封装**：`/tasks`、`/agent/*`、非流式 **`POST /chat`**、**`/events`** 等；当前 **`src/`** 已无上述调用。
+- **联调注意**：**`routing=plan`** 后端仍为占位 **`error`**；**`mcp`** 需 **`mcp_tool`**（前端日常 UI 不暴露，由 **auto** 或未来能力按钮触发）。
 - **启动后端**：在 **`myproject/backend`** 执行 `uvicorn src.api:app --reload`，默认 `http://127.0.0.1:8000`；前端需后端 **CORS** 与 **`DATABASE_URL`**、迁移等到位（见 **`myproject/backend/readme.md`**）。
-- **当前前端重心（与根目录 `readme.md`、`docs/frontend-refactor-plan.md` §R 同步）**：**整目录移除 `src/` 后重写**；联调契约见 **`docs/frontend-backend-contract.md`**。
+- **当前前端重心（2026-05-17，与 `readme.md`、§R 同步）**：**R1～R4 主路径已落地**（会话双栏、SSE、health、**tool_*** 展示、模式 **auto/chat**）；**阶段 4**：具名能力按钮、Abort、富消息。契约见 **`docs/frontend-backend-contract.md`**。
 
 ## 前后端整体目标对齐
 
 - 后端（Python）与前端（本项目）的长期共同目标：
   - 自然语言驱动、可编排的 agent 能力；工具 / MCP / 多模态等为演进方向。
 - 在设计前端结构时，助手应：
-  - **近期**：消息列表与流式增量渲染可扩展（后续若 SSE 增加工具调用、确认框、代码块等类型，用组件化消息行 / 富内容块承接）。
+  - **近期**：流式 **工具条**已接；后续工具确认、代码块、卡片等用组件化消息行 / 富内容块承接。
   - **中长期**：为任务流、可视化、回放等预留扩展点，但不阻碍当前「聊天闭环」交付。
 
 ## 规则优先级（与用户全局指令冲突时）

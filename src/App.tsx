@@ -1,6 +1,7 @@
 import { Layout, Space, Typography } from "antd"
 import "./styles/App.scss"
 import { Link, Route, Routes } from "react-router-dom"
+import HealthBage from "./components/HealthBage"
 import ChatPage from "./pages/chat"
 import HomePage from "./pages/HomePage"
 import NotFoundPage from "./pages/NotFoundPage"
@@ -11,11 +12,14 @@ export default function App() {
   return (
     <Layout className="app-root">
       <Header className="app-root__header">
-        <Space>
-          <Typography.Text strong>Agent 前端</Typography.Text>
-          <Link to="/">首页</Link>
-          <Link to="/chat">聊天</Link>
-        </Space>
+        <div className="app-root__header-content">
+          <Space>
+            <Typography.Text strong>Agent 前端</Typography.Text>
+            <Link to="/">首页</Link>
+            <Link to="/chat">聊天</Link>
+          </Space>
+          <HealthBage />
+        </div>
       </Header>
       <Content className="app-root__content">
         <Routes>

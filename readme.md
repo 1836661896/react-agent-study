@@ -16,7 +16,7 @@
 ## 1. 项目是做什么的
 
 - **定位**：**`myproject/backend`**（Python + FastAPI）的 **Web 界面**；技术栈为 **React + TypeScript + Vite**，UI 库 **Ant Design**，数据请求 **TanStack React Query**（部分模块）。
-- **当前阶段**：后端为**会话 + 流式聊天**；前端已按 **`docs/frontend-refactor-plan.md`** §**R** 完成 **R1/R2**，并已落地 **多页路由**、**`/chat` 双栏**（**一屏内左右列各自滚动**，见 **`styles/App.scss`** / **`main.scss`**）：左侧 **会话列表**（`GET /conversation/list`、**`POST /conversation/delete`**、**`POST /conversation/create`**），右侧 **消息历史**（**`useInfiniteQuery`** + **`GET /conversation/{id}/messages`**）与 **SSE 发送**（**`src/api/chatStream.ts`** → **`POST /chat/stream`**，**`delta` / `error` / `done`**，成功后 **`invalidateQueries`**）。**下一步（R4～R5）**：**`GET /health` UI**、**`npm run lint`** 与文档收尾；可选 **三栏左占位** 等见 **`docs/frontend-refactor-plan.md`**。
+- **当前阶段**：后端为**会话 + 流式聊天**（含 **`routing=auto`** 与 MCP **`tool_call` / `tool_result`**）；前端 **R1～R4 主路径已落地**：**多页路由**、顶栏 **`GET /health`**（**`HealthBage`**）、**`/chat` 双栏**（列内滚动）：左侧会话列表，右侧消息 **`useInfiniteQuery`** + **SSE**（**`delta` / `error` / `done`** 及工具事件展示）。发送模式 UI 仅 **「自动 / 对话」**；MCP 由 **auto** 或后续「能力按钮」触发，不在模式切换中暴露。**下一步（R5 / 阶段 4）**：**`npm run lint` 纳入提交习惯**（当前已通过）、流式 **Abort**、具名能力按钮、三栏左占位等见 **`docs/frontend-refactor-plan.md`**。
 
 ---
 
@@ -30,7 +30,10 @@
 ├── src/
 │   ├── api/
 │   │   ├── conversations.ts # list / delete / create / messages
-│   │   └── chatStream.ts    # POST /chat/stream（SSE 行解析）
+│   │   ├── chatStream.ts    # POST /chat/stream（SSE 行解析）
+│   │   └── health.ts        # GET /health
+│   ├── components/
+│   │   └── HealthBage.tsx   # 顶栏健康状态（useQuery）
 │   ├── config/
 │   │   └── env.ts           # VITE_API_BASE_URL
 │   ├── pages/
@@ -41,7 +44,7 @@
 │   │   │   │   ├── index.tsx   # 列表、分页（含删空末页夹紧 page）、新建、多选、删
 │   │   │   │   └── index.scss
 │   │   │   └── ChatThreadPanel/
-│   │   │       ├── index.tsx   # 消息 infinite、SSE 发送、输入区、乐观气泡
+│   │   │       ├── index.tsx   # 消息 infinite、SSE、自动/对话模式、工具条、乐观气泡
 │   │   │       └── index.scss
 │   │   ├── HomePage.tsx     # 路由 /
 │   │   └── NotFoundPage.tsx # 路由 *
@@ -81,14 +84,14 @@
 
 | 模块 | 主要路径 | 实现程度 | 说明 |
 |------|-----------|-----------|------|
-| 应用入口与全局壳 | `main.tsx`、`App.tsx` | 进行中 | **`BrowserRouter`** + React Query + antd 中文；**`App`**：`Layout`、顶栏 **`Link`**、**`Routes`**（`/`、`/chat`、`*`） |
+| 应用入口与全局壳 | `main.tsx`、`App.tsx` | 已完成（R4） | **`BrowserRouter`** + React Query + antd 中文；顶栏 **`Link`** + **`HealthBage`**；**`Routes`**（`/`、`/chat`、`*`） |
 | 环境变量 | `config/env.ts` | 已完成（R2） | 缺少 `VITE_API_BASE_URL` 时抛错 |
 | JSON 请求封装 | `utils/request.ts` | 已完成（R2） | `HttpError`、`request`；注意 **`exactOptionalPropertyTypes`** 下 **`fetch` init** 勿显式传 `body: undefined` |
-| 类型（信封与会话 / 流式） | `types/common.ts`、`types/conversations.ts`、`types/chatStream.ts` | 进行中 | **`ApiResponse`、`ListResult`**；会话与消息项；**SSE 事件联合类型** |
-| 会话 API | `api/conversations.ts`、`api/chatStream.ts` | 进行中 | JSON：**list / delete / create / messages**；SSE：**postChatStream** |
-| 聊天页 UI | `pages/chat/index.tsx`、`ConversationList/*`、`ChatThreadPanel/*` | 进行中 | **一屏双栏**（列内滚动）；列表 **`useQuery`/`useMutation`**；**删空末页 `page` 夹紧**；**`ChatPage` 订阅 query 缓存**合并选中行标题；右侧 **`useInfiniteQuery`** 消息、**SSE 发送**、输入区、乐观气泡、**`formatDisplayDateTime`** |
-| 健康检查 UI | — | 未实现 | **R4**：`GET /health` 展示 |
-| 流式发送 | `api/chatStream.ts`、`ChatThreadPanel` | 进行中（主路径已接） | **`POST /chat/stream`**、**`delta`/`error`/`done`**、**`invalidateQueries`**；可选 **Abort**、**`routing`** UI |
+| 类型（信封与会话 / 流式） | `types/common.ts`、`types/conversations.ts`、`types/chatStream.ts` | 已完成（R3） | **`ApiResponse`、`ListResult`**；SSE 含 **`tool_call` / `tool_result`**；请求体 **`mcp_tool?`** 供后续能力按钮 |
+| 会话 API | `api/conversations.ts`、`api/chatStream.ts`、`api/health.ts` | 已完成（R3/R4） | JSON：**list / delete / create / messages / health**；SSE：**postChatStream** + 工具回调 |
+| 聊天页 UI | `pages/chat/index.tsx`、`ConversationList/*`、`ChatThreadPanel/*` | 进行中 | **一屏双栏**；列表分页/新建/删除；右侧 infinite 消息、**自动/对话** Segmented、**toolTrace** 工具条、乐观气泡 |
+| 健康检查 UI | `api/health.ts`、`components/HealthBage.tsx` | 已完成（R4） | 顶栏 Tag，30s **`refetchInterval`** |
+| 流式发送 | `api/chatStream.ts`、`ChatThreadPanel` | 进行中 | **`delta`/`error`/`done`** + **`tool_*`** 展示；**`invalidateQueries`**；待 **Abort**、具名能力按钮（阶段 4） |
 | 已下线路由封装 | — | **无** | 当前 `src` 无 **`/tasks`、`/agent/*`、`/events`** 等封装（与 **`frontend-backend-contract.md`** §3 一致） |
 
 ---
