@@ -38,12 +38,12 @@ export default function ChatPage() {
   const [selectedItem, setSelectedItem] = useState<ConversationListItem | null>(
     null,
   )
-  const [persetByConvId, setPresetByConvId] = useState<
+  const [presetByConvId, setPresetByConvId] = useState<
     Record<number, AgentPreset>
   >({})
 
   const activePreset =
-    selectedItem != null ? (persetByConvId[selectedItem.id] ?? null) : null
+    selectedItem != null ? (presetByConvId[selectedItem.id] ?? null) : null
 
   function markScheduleSession(id: number) {
     setPresetByConvId((prev) => ({ ...prev, [id]: "schedule" }))
