@@ -6,6 +6,7 @@
  * 工具调用过程用 toolTrace 展示；首段 delta 前展示「正在思考…」；流式时贴底滚动。
  */
 import "./index.scss"
+import { DownloadOutlined } from "@ant-design/icons"
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query"
 import {
   Alert,
@@ -21,10 +22,12 @@ import {
   Typography,
 } from "antd"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { downloadArtifact } from "@/api/artifacts"
 import { postChatStream } from "@/api/chatStream"
 import { getConversationMessages } from "@/api/conversations"
-import type { RoutingMode } from "@/types/chatStream"
+import type { AgentPreset, RoutingMode } from "@/types/chatStream"
 import type { ConversationListItem } from "@/types/conversations"
+import { parseArtifactIdFromToolResult } from "@/utils/artifactParse"
 import { errorDescription } from "@/utils/common"
 import { formatDisplayDateTime } from "@/utils/datetime"
 
@@ -40,6 +43,7 @@ const ROUTING_OPTIONS: { label: string; value: ChatUiRoutingMode }[] = [
 
 type ChatThreadPanelProp = {
   conversation: ConversationListItem | null
+  preset?: AgentPreset | null
 }
 
 /** 乐观展示用：尚未写入服务端列表的用户气泡 */
@@ -54,6 +58,7 @@ type ToolTrace = {
   arguments?: Record<string, unknown>
   resultText?: string
   isError?: boolean
+  artifactId?: string
 }
 
 function conversationPanelTitle(item: ConversationListItem): string {
@@ -61,7 +66,10 @@ function conversationPanelTitle(item: ConversationListItem): string {
   return t ? t : `会话 ${item.id}`
 }
 
-export default function ChatThreadPanel({ conversation }: ChatThreadPanelProp) {
+export default function ChatThreadPanel({
+  conversation,
+  preset,
+}: ChatThreadPanelProp) {
   const queryClient = useQueryClient()
   const scrollRef = useRef<HTMLDivElement>(null)
   const convId = conversation?.id ?? 0
@@ -184,6 +192,7 @@ export default function ChatThreadPanel({ conversation }: ChatThreadPanelProp) {
           message: text,
           conversation_id: convId,
           routing,
+          ...(preset ? { preset } : {}),
         },
         {
           onToolCall: ({ tool, arguments: args }) => {
@@ -195,11 +204,13 @@ export default function ChatThreadPanel({ conversation }: ChatThreadPanelProp) {
             requestAnimationFrame(() => scrollToBottom())
           },
           onToolResult: ({ tool, text: resultText, is_error }) => {
+            const artifactId = parseArtifactIdFromToolResult(resultText)
             setToolTrace({
               tool,
               phase: "result",
               resultText,
               ...(is_error !== undefined ? { isError: is_error } : {}),
+              ...(artifactId ? { artifactId } : {}),
             })
             requestAnimationFrame(() => scrollToBottom())
           },
@@ -416,9 +427,27 @@ export default function ChatThreadPanel({ conversation }: ChatThreadPanelProp) {
                             {JSON.stringify(toolTrace.arguments ?? {})}
                           </Typography.Text>
                         ) : (
-                          <Typography.Paragraph className="chat-thread-panel__msg-content">
-                            {toolTrace.resultText}
-                          </Typography.Paragraph>
+                          <Space orientation="vertical" size="small">
+                            <Typography.Paragraph className="chat-thread-panel__msg-content">
+                              {toolTrace.resultText}
+                            </Typography.Paragraph>
+                            {toolTrace.artifactId ? (
+                              <Button
+                                type="link"
+                                size="small"
+                                icon={<DownloadOutlined />}
+                                onClick={() => {
+                                  void downloadArtifact(
+                                    toolTrace.artifactId!,
+                                  ).catch((e) =>
+                                    message.error(errorDescription(e)),
+                                  )
+                                }}
+                              >
+                                下载文件
+                              </Button>
+                            ) : null}
+                          </Space>
                         )
                       }
                     />

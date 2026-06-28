@@ -19,7 +19,7 @@ alwaysApply: true
 
 - ✅ **组件渲染 = 执行函数**：每次 state 变化，函数组件会重新执行，JSX 会重新计算
 - ✅ **不要在 render 里做副作用**：请求/订阅/定时器放到 `useEffect`（或交给 React Query）
-- ⏳ **闭包与“旧值”**：事件处理/定时器里读到旧 state 的常见原因与解决思路（依赖数组/函数式更新）
+- 🔄 **闭包与“旧值”**：**`setPresetByConvId(prev => …)`** 函数式更新已用；定时器/流式回调里的旧值待后续 **Abort** 步巩固
 
 ### 2) Hooks 基础（对照 Vue Composition API）
 
@@ -33,6 +33,7 @@ alwaysApply: true
 - ✅ **列表渲染**：`map` + `key`（对照 `v-for :key`）
 - ✅ **事件绑定**：传函数 `onClick={() => ...}`（对照 `@click="..."`）
 - ✅ **受控输入**：`value` + `onChange`（对照 `v-model`）
+- 🔄 **Props 与状态提升**：**`ChatThreadPanel.preset`**；**`onScheduleSessionCreated`** 回调（对照 Vue **emit**）；共享 state 放 **`ChatPage`**
 
 ### 4) React Query（数据获取的“框架化”方式）
 
@@ -59,5 +60,6 @@ alwaysApply: true
   - ✅ **GET /health**（顶栏 **`HealthBage`**）
   - ✅ **GET /conversation/list**、**POST /conversation/delete**、**POST /conversation/create**、**GET /conversation/{id}/messages**
   - ✅ **POST /chat/stream**（**`delta` / `error` / `done`** + **`tool_call` / `tool_result` 展示**）；发送模式 UI：**`auto` / `chat`** 仅
-  - ⏳ 可选 **Abort**；⏳ **具名能力按钮**（阶段 4，非 MCP 模式 Tab）
-- 🔄 **近期 UI**：**`done`** + **`invalidateQueries`**；**toolTrace** 流式工具条；能力按钮与富消息块随阶段 4
+  - ✅ **`preset=schedule`**（行程助手入口 + **`presetByConvId`**）
+  - ⏳ **`GET /artifact/{id}`** 下载（A1②）；⏳ 可选 **Abort**；⏳ composer **导出快捷**（A1③）
+- 🔄 **近期 UI**：**`done`** + **`invalidateQueries`**；**toolTrace**；待 **artifact 下载按钮**

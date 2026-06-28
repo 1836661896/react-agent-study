@@ -93,6 +93,10 @@ export async function postChatStream(
     payload.mcp_arguments = body.mcp_arguments ?? {}
   }
 
+  if (body.preset) {
+    payload.preset = body.preset
+  }
+
   const _res = await fetch(_buildAbsoluteUrl("/chat/stream"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },

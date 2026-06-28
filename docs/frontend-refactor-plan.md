@@ -88,6 +88,7 @@
 
 | 日期 | 内容 |
 |------|------|
+| 2026-06-26 | **backend A1 ①**：**`preset=schedule`** 类型 + **api/chatStream** + **ChatPage/ConversationList/ChatThreadPanel**（行程助手入口、状态提升）；Network 验证通过。**待续**：artifact 下载、§6 四轮验收。 |
 | 2026-05-14 | 完成 §**1.2**（旧代码）契约复核；**`frontend-backend-contract.md`** §5 曾对照旧 `src`。 |
 | 2026-05-17 | **R4 收尾**：**health**、SSE **tool_***、模式 **auto/chat**；文档与 **lint** 同步。阶段 4：能力按钮、Abort。 |
 | 2026-05-17（早） | **R3/R4 续**：**create/messages**；双栏 + **`ChatThreadPanel`**。 |

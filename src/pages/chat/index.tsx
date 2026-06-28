@@ -6,6 +6,7 @@ import "./index.scss"
 import { type QueryClient, useQueryClient } from "@tanstack/react-query"
 import { Col, Row } from "antd"
 import { useEffect, useState } from "react"
+import type { AgentPreset } from "@/types/chatStream"
 import type { ApiResponse, ListResult } from "@/types/common"
 import type { ConversationListItem } from "@/types/conversations"
 import ChatThreadPanel from "./ChatThreadPanel/index"
@@ -37,6 +38,16 @@ export default function ChatPage() {
   const [selectedItem, setSelectedItem] = useState<ConversationListItem | null>(
     null,
   )
+  const [persetByConvId, setPresetByConvId] = useState<
+    Record<number, AgentPreset>
+  >({})
+
+  const activePreset =
+    selectedItem != null ? (persetByConvId[selectedItem.id] ?? null) : null
+
+  function markScheduleSession(id: number) {
+    setPresetByConvId((prev) => ({ ...prev, [id]: "schedule" }))
+  }
 
   /** 列表缓存刷新后，用各页中的最新行合并 memory_title 等，避免右侧标题停留在旧快照 */
   useEffect(() => {
@@ -74,11 +85,12 @@ export default function ChatPage() {
           <ConversationList
             selectedId={selectedItem?.id ?? null}
             onSelectConversation={setSelectedItem}
+            onScheduleSessionCreated={markScheduleSession}
           />
         </Col>
         {/* 右侧：历史消息、流式增量、输入框 */}
         <Col xs={24} md={14} lg={16} className="chat-page__col">
-          <ChatThreadPanel conversation={selectedItem} />
+          <ChatThreadPanel conversation={selectedItem} preset={activePreset} />
         </Col>
       </Row>
     </div>

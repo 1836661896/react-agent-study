@@ -16,7 +16,7 @@
 ## 1. 项目是做什么的
 
 - **定位**：**`myproject/backend`**（Python + FastAPI）的 **Web 界面**；技术栈为 **React + TypeScript + Vite**，UI 库 **Ant Design**，数据请求 **TanStack React Query**（部分模块）。
-- **当前阶段**：后端为**会话 + 流式聊天**（含 **`routing=auto`** 与 MCP **`tool_call` / `tool_result`**）；前端 **R1～R4 主路径已落地**：**多页路由**、顶栏 **`GET /health`**（**`HealthBage`**）、**`/chat` 双栏**（列内滚动）：左侧会话列表，右侧消息 **`useInfiniteQuery`** + **SSE**（**`delta` / `error` / `done`** 及工具事件展示）。发送模式 UI 仅 **「自动 / 对话」**；MCP 由 **auto** 或后续「能力按钮」触发，不在模式切换中暴露。**下一步（R5 / 阶段 4）**：**`npm run lint` 纳入提交习惯**（当前已通过）、流式 **Abort**、具名能力按钮、三栏左占位等见 **`docs/frontend-refactor-plan.md`**。
+- **当前阶段**：后端 **行程助手 A1** 联调中；前端 **R1～R4 已落地**，并已完成 **A1 ① preset 链路**：**`preset=schedule`** 随 **`POST /chat/stream`** 发送；左侧 **「行程助手」** 新建会话并固定 preset（**`ChatPage` `presetByConvId` + 回调 props**）。**待完成 A1 ②③**：**`artifact_id` 解析与下载**、composer 可选快捷导出；四轮验收见 **`myproject/backend/docs/skills/trip-assistant.md` §6**。**阶段 4 其它**：Abort、三栏左占位等见 **`docs/frontend-refactor-plan.md`**。
 
 ---
 
@@ -30,18 +30,19 @@
 ├── src/
 │   ├── api/
 │   │   ├── conversations.ts # list / delete / create / messages
-│   │   ├── chatStream.ts    # POST /chat/stream（SSE 行解析）
+│   │   ├── chatStream.ts    # POST /chat/stream（SSE；含 preset）
 │   │   └── health.ts        # GET /health
+│   │   # 待增：artifacts.ts — GET /artifact/{id} 下载
 │   ├── components/
 │   │   └── HealthBage.tsx   # 顶栏健康状态（useQuery）
 │   ├── config/
 │   │   └── env.ts           # VITE_API_BASE_URL
 │   ├── pages/
 │   │   ├── chat/
-│   │   │   ├── index.tsx    # 路由 /chat：左右分栏 + 选中会话与缓存同步
+│   │   │   ├── index.tsx    # /chat：双栏 + presetByConvId + 传给 ChatThreadPanel
 │   │   │   ├── index.scss
 │   │   │   ├── ConversationList/
-│   │   │   │   ├── index.tsx   # 列表、分页（含删空末页夹紧 page）、新建、多选、删
+│   │   │   │   ├── index.tsx   # 列表、新建、行程助手、多选删
 │   │   │   │   └── index.scss
 │   │   │   └── ChatThreadPanel/
 │   │   │       ├── index.tsx   # 消息 infinite、SSE、自动/对话模式、工具条、乐观气泡
@@ -51,7 +52,7 @@
 │   ├── types/
 │   │   ├── common.ts        # ApiResponse、ListResult、ListQuery 等
 │   │   ├── conversations.ts # 会话/消息类型与后端对齐
-│   │   └── chatStream.ts    # SSE 事件与请求体类型
+│   │   └── chatStream.ts    # SSE 事件；PostChatStreamBody 含 preset
 │   ├── utils/
 │   │   ├── request.ts       # HttpError、request()
 │   │   ├── common.ts        # errorDescription 等
@@ -87,11 +88,13 @@
 | 应用入口与全局壳 | `main.tsx`、`App.tsx` | 已完成（R4） | **`BrowserRouter`** + React Query + antd 中文；顶栏 **`Link`** + **`HealthBage`**；**`Routes`**（`/`、`/chat`、`*`） |
 | 环境变量 | `config/env.ts` | 已完成（R2） | 缺少 `VITE_API_BASE_URL` 时抛错 |
 | JSON 请求封装 | `utils/request.ts` | 已完成（R2） | `HttpError`、`request`；注意 **`exactOptionalPropertyTypes`** 下 **`fetch` init** 勿显式传 `body: undefined` |
-| 类型（信封与会话 / 流式） | `types/common.ts`、`types/conversations.ts`、`types/chatStream.ts` | 已完成（R3） | **`ApiResponse`、`ListResult`**；SSE 含 **`tool_call` / `tool_result`**；请求体 **`mcp_tool?`** 供后续能力按钮 |
-| 会话 API | `api/conversations.ts`、`api/chatStream.ts`、`api/health.ts` | 已完成（R3/R4） | JSON：**list / delete / create / messages / health**；SSE：**postChatStream** + 工具回调 |
-| 聊天页 UI | `pages/chat/index.tsx`、`ConversationList/*`、`ChatThreadPanel/*` | 进行中 | **一屏双栏**；列表分页/新建/删除；右侧 infinite 消息、**自动/对话** Segmented、**toolTrace** 工具条、乐观气泡 |
+| 类型（信封与会话 / 流式） | `types/common.ts`、`types/conversations.ts`、`types/chatStream.ts` | 已完成（R3 + A1①） | **`AgentPreset`**、**`PostChatStreamBody.preset?`**；SSE **`tool_*`** |
+| 会话 API | `api/conversations.ts`、`api/chatStream.ts`、`api/health.ts` | 已完成（R3/R4） | JSON：**list / delete / create / messages / health**；SSE：**postChatStream**（含 **preset**）+ 工具回调 |
+| 聊天页 UI | `pages/chat/index.tsx`、`ConversationList/*`、`ChatThreadPanel/*` | 进行中 | 双栏；**行程助手** 入口 + **presetByConvId**；**toolTrace**；待 artifact **下载按钮** |
+| 行程助手 preset | `chatStream.ts`、`ChatPage`、`ConversationList`、`ChatThreadPanel` | **A1① 已完成** | 仅 **行程助手** 创建的会话带 **`preset=schedule`**；已 Network 验证 |
+| Artifact 下载 | — | **未开始（A1②）** | 待 **`artifactParse` + `api/artifacts.ts` + toolTrace 下载** |
 | 健康检查 UI | `api/health.ts`、`components/HealthBage.tsx` | 已完成（R4） | 顶栏 Tag，30s **`refetchInterval`** |
-| 流式发送 | `api/chatStream.ts`、`ChatThreadPanel` | 进行中 | **`delta`/`error`/`done`** + **`tool_*`** 展示；**`invalidateQueries`**；待 **Abort**、具名能力按钮（阶段 4） |
+| 流式发送 | `api/chatStream.ts`、`ChatThreadPanel` | 进行中 | **`tool_*`**；待 **Abort**、导出快捷按钮（A1③）、其它能力按钮 |
 | 已下线路由封装 | — | **无** | 当前 `src` 无 **`/tasks`、`/agent/*`、`/events`** 等封装（与 **`frontend-backend-contract.md`** §3 一致） |
 
 ---

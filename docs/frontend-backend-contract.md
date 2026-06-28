@@ -15,7 +15,9 @@
 | 接口 | 方法 | 说明 |
 |------|------|------|
 | `/health` | GET | JSON 信封 **`{ code, data, msg }`** |
-| `/chat/stream` | POST | **SSE**；**`ChatRequest`**：`message`（必填）、`conversation_id`（可选）、`routing`（默认 **`auto`**）；显式 **`routing=mcp`** 时需 **`mcp_tool`**（前端日常发送走 **auto/chat**，能力按钮可日后传 **mcp**） |
+| `/chat/stream` | POST | **SSE**；**`ChatRequest`**：`message`（必填）、`conversation_id`（可选）、`routing`（默认 **`auto`**）、**`preset`**（可选，行程助手 **`schedule`**）；显式 **`routing=mcp`** 时需 **`mcp_tool`**（前端日常发送走 **auto/chat**，能力按钮可日后传 **mcp**） |
+| `/artifact/{id}` | GET | 下载工件二进制；成功为文件流，失败为 JSON **`{ code, msg }`** |
+| `/artifact/{id}/meta` | GET | 工件元数据（JSON 信封） |
 | `/conversation/list` | GET | 会话列表；成功 **`data`** 为 **`ListResult`** |
 | `/conversation/create` | POST | 新建空会话；成功 **`data`** 为 **`{ id }`** |
 | `/conversation/delete` | POST | 批量删除；body **`{ ids: number[] }`** |
@@ -41,13 +43,15 @@
 
 ## 5. 本仓库实现与契约的差距
 
-### 当前实现（2026-05-17）
+### 当前实现（2026-06-26）
 
 - **JSON**：**`utils/request.ts`**；**`api/conversations.ts`**（list / delete / create / messages）；**`api/health.ts`**。
-- **SSE**：**`api/chatStream.ts`** 解析并分发 **`delta` / `tool_call` / `tool_result` / `error` / `done`**；类型 **`types/chatStream.ts`**。
-- **布局**：**`/chat`** 双栏；**`App`** 顶栏 **`HealthBage`**（**`components/HealthBage.tsx`**，文件名拼写以仓库为准）。
-- **聊天区**：**`ChatThreadPanel`** — **`useInfiniteQuery`** 消息；发送 **`routing`** 仅 UI 暴露 **`auto` | `chat`**（类型 **`ChatUiRoutingMode`**）；**`auto→mcp`** 时 **`toolTrace`** 展示工具过程；**`done`** 后 **`invalidateQueries`**（messages infinite、list）。
-- **未有 / 待做**：流式 **Abort**；composer **具名能力按钮**（内部可映射 **`routing=mcp` + mcp_tool**）；三栏左占位；**`routing=plan`** 产品化。
+- **SSE**：**`api/chatStream.ts`** 解析并分发 **`delta` / `tool_call` / `tool_result` / `error` / `done`**；请求体支持 **`preset`**（有值时写入 JSON）。
+- **布局**：**`/chat`** 双栏；**`App`** 顶栏 **`HealthBage`**。
+- **聊天区**：**`ChatThreadPanel`** — infinite 消息；**`preset`** prop → **`postChatStream`**；**`routing`** UI 仅 **`auto` | `chat`**；**`toolTrace`**；**`done`** 后 **`invalidateQueries`**。
+- **A1 行程助手 ①（已完成）**：**`types/chatStream.ts`** **`AgentPreset`**；**`ChatPage`** **`presetByConvId`** + **`activePreset`**；**`ConversationList`** **「行程助手」** + **`onScheduleSessionCreated`**；Network 已验证 **`preset: "schedule"`**。
+- **A1 行程助手 ②③（待做）**：**`utils/artifactParse.ts`**、**`api/artifacts.ts`**、toolTrace **下载**、composer 快捷 **导出 docx/pdf**。
+- **未有 / 待做**：流式 **Abort**；**`POST /artifact`** 上传与会话文件 Tab（backend A2）；三栏左占位；**`routing=plan`** 产品化。
 
 ### 与契约对齐情况
 
@@ -58,6 +62,8 @@
 | `/chat/stream` 基础事件 | ✅ |
 | MCP 工具 SSE 展示 | ✅（非用户可选模式） |
 | 用户选 MCP + 手写工具名 | ❌ 已按产品约定移除 |
+| `preset=schedule`（行程助手） | ✅ A1① |
+| `GET /artifact/{id}` 下载 | ⏳ A1② |
 | 能力按钮 → `mcp_tool` | ⏳ 阶段 4 |
 
 ### 重写前（历史快照）
@@ -70,6 +76,7 @@
 - **2026-05-16**：list/delete + 路由页。
 - **2026-05-17（早）**：create/messages、双栏 ChatThreadPanel。
 - **2026-05-17（晚）**：health、SSE **tool_***、模式仅 auto/chat；§5 与本表同步。
+- **2026-06-26**：A1 **preset** 链路落地；artifact 下载待续。
 
 ---
 

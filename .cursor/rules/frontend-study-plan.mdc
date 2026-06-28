@@ -27,12 +27,14 @@ alwaysApply: true
 
 ## 当前建议（下一步怎么学）
 
-- **当前建议阶段**：**阶段 4 入口**（能力按钮、Abort、富消息；见 **`readme.md`**、**`docs/frontend-refactor-plan.md`** §R5）
-- **阶段 3 已达成**（2026-05-17）：**health** 顶栏；SSE **`delta`/`error`/`done`** + **`tool_*` 展示**；发送 UI 仅 **auto/chat**；**`npm run lint`** 通过。
-- **阶段 4 优先**：
-  - composer **具名能力**（整理/下载等）→ 内部 **`postChatStream({ routing: 'mcp', mcp_tool: '…' })`** 或 **`auto` + 意图**。
-  - **AbortController** 停止生成。
-  - 能口述：**JSON 信封** vs **SSE 行**；**toolTrace**（本地）vs **invalidate 后历史**（服务端）。
+- **当前建议**：**backend A1 行程助手** 剩余项（2026-06-26 已完成 **preset 链路**）— 见 **`myproject/backend/docs/skills/trip-assistant.md`** §5～§6。
+- **明日续（按步）**：
+  1. **`utils/artifactParse.ts`** — 从 **`tool_result.text`** 取 **`artifact_id`**。
+  2. **`api/artifacts.ts`** — **`GET /artifact/{id}`** 二进制下载（不用 JSON **`request()`**）。
+  3. **`ChatThreadPanel`** — toolTrace **下载按钮**；可选 composer **导出 docx/pdf**。
+  4. **四轮示例对话**联调验收。
+- **阶段 4 其它（A1 后）**：**AbortController**；三栏左占位；其它具名能力按钮。
+- **已学巩固**：**props**、**useState**、**状态提升**、**回调 props**、api 层组 payload；能口述 **JSON 信封** vs **SSE 行**。
 
 ## 与后端近期共识
 

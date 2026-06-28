@@ -4,6 +4,19 @@
 
 ---
 
+## 2026-06-26（backend A1 行程助手 · preset 链路）
+
+- **类型**：**`types/chatStream.ts`** — **`AgentPreset`**、**`PostChatStreamBody.preset?`**。
+- **请求层**：**`api/chatStream.ts`** — 有 **`preset`** 时写入 **`POST /chat/stream`** JSON body。
+- **聊天区**：**`ChatThreadPanel`** — **`preset`** prop；**`handleSend`** 条件传入 **`postChatStream`**。
+- **页面状态**：**`pages/chat/index.tsx`** — **`presetByConvId`**（**`useState<Record<number, AgentPreset>>`**）；**`activePreset`** 传给右侧。
+- **列表入口**：**`ConversationList`** — **「行程助手」** 按钮；**`onScheduleSessionCreated`** 回调（状态提升）；普通 **「新建会话」** 不带 preset。
+- **联调**：DevTools 验证 **行程助手** 会话 Payload 含 **`"preset":"schedule"`**；普通会话不含。
+- **文档**：**`readme.md`**、**`study-progress.md`**、**`frontend-backend-contract.md` §5**、规则 **`.cursor/rules/*`** 同步。
+- **未完成（明日续）**：**`utils/artifactParse.ts`**、**`api/artifacts.ts`**、toolTrace **下载按钮**、composer 快捷 **导出 docx/pdf**；backend **`trip-assistant.md` §6** 四轮验收。
+
+---
+
 ## 2026-05-17（健康检查、MCP 工具事件、对话模式）
 
 - **健康检查**：**`src/api/health.ts`**；**`src/components/HealthBage.tsx`**（顶栏 **`useQuery`**，30s 轮询）；**`App.tsx`** 顶栏右侧展示。

@@ -35,11 +35,13 @@ import { formatDisplayDateTime } from "@/utils/datetime"
 type ConversationListProps = {
   selectedId: number | null
   onSelectConversation: (item: ConversationListItem | null) => void
+  onScheduleSessionCreated?: (ud: number) => void
 }
 
 export default function ConversationList({
   selectedId,
   onSelectConversation,
+  onScheduleSessionCreated,
 }: ConversationListProps) {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
@@ -187,6 +189,22 @@ export default function ConversationList({
             loading={createMutation.isPending}
           >
             新建会话
+          </Button>
+          <Button
+            onClick={() =>
+              createMutation.mutate(
+                { kind: "chat" },
+                {
+                  onSuccess: (res) => {
+                    const id = res.data.id
+                    if (id != null) onScheduleSessionCreated?.(id)
+                  },
+                },
+              )
+            }
+            loading={createMutation.isPending}
+          >
+            行程助手
           </Button>
           {listQuery.isError ? (
             <Button onClick={() => listQuery.refetch()}>重试</Button>
