@@ -16,10 +16,11 @@
 | 5 | **`docs/frontend-backend-contract.md`** | **前后端契约**：现行/已下线接口、JSON 信封与 SSE、与 **`myproject/backend`** 文档的对应关系 | 后端路由变更或前端 `src/api` 调整时 |
 | 6 | **`docs/frontend-refactor-plan.md`** | **前端重构执行清单**：布局、API 层、组件、清理步骤与勾选（与 **`myproject/backend`** 对齐的落地顺序） | 每完成一个阶段或调整范围时 |
 | 7 | **`docs/product-roadmap.md`** | **产品对齐**：聊天为主、快捷入口、左侧栏等**构想与排期**，不替代代码真相 | 产品方向讨论有结论时 |
-| 8 | **`docs/collaboration-and-coding-rules.md`** | **人类可读**的协作与编码约定摘要；**指向** `.cursor/rules` 中权威规则（与 **`myproject/backend`** 同结构文档对齐） | 与 **`frontend-project-goal.mdc`** 同步补充 |
-| 9 | **`.cursor/rules/frontend-project-goal.mdc`** | 助手行为、**文件修改与操作原则**（与后端 **`python-learning-agent.mdc`** 同步逻辑）、项目目标、**现行后端 API 列表** | 规则或后端契约变化时 |
-| 10 | **`.cursor/rules/frontend-study-plan.mdc`** | 学习阶段、当前建议步骤 | 阶段切换时 |
-| 11 | **`.cursor/rules/react-learning-checklist.mdc`** | React 知识点勾选与 **§6 后端联调**摘要 | 清单状态或联调范围变化时 |
+| 8 | **`docs/collaboration-and-coding-rules.md`** | **人类可读**的协作与编码约定摘要；**指向** `.cursor/rules` 中权威规则（与 **`myproject/backend`** 同结构文档对齐） | 与 **`study-project-goal.mdc`** 同步补充 |
+| 9 | **`.cursor/rules/study-project-goal.mdc`** | 助手行为、**文件修改与操作原则**（与后端 **`python-learning-agent.mdc`** 同步逻辑）、项目目标、**现行后端 API 列表** | 规则或后端契约变化时 |
+| 10 | **`.cursor/rules/study-plan.mdc`** | 学习阶段、当前建议步骤 | 阶段切换时 |
+| 11 | **`.cursor/rules/study-learning-checklist.mdc`** | React 知识点勾选与 **§6 后端联调**摘要 | 清单状态或联调范围变化时 |
+| 12 | **`.cursor/rules/coding-*.mdc`** | **架构与编码**约定（自 youbomao_PC 适配）；索引见 **`collaboration-and-coding-rules.md` §4** | 分层、api、样式、质量规范变更时 |
 
 ---
 
@@ -36,9 +37,9 @@
 
 1. **`readme.md`**：不写长篇学习叙事与重复 API 表；细节在 **`docs/frontend-backend-contract.md`** 等专题。  
 2. **产品愿景**：大段构想放在 **`docs/product-roadmap.md`**；`readme` 的功能表只反映**当前代码真实落地程度**。  
-3. **助手新对话**：按文首顺序阅读 **`readme.md`** → **`docs/documentation-index.md`** → **`docs/frontend-refactor-plan.md`**（若涉及重构）→ 当前阶段相关的 **`.cursor/rules/*.mdc`**。
+3. **助手新对话**：按文首顺序阅读 **`readme.md`** → **`docs/documentation-index.md`** → **`docs/frontend-refactor-plan.md`**（若涉及重构）→ **`study-project-goal.mdc`** → 编码相关 **`coding-architecture.mdc`** 等（见 **`collaboration-and-coding-rules.md` §4**）。
 
 ---
 
 *建立：2026-05-14（与 `myproject/backend` 的 `docs/documentation-index.md` 分工方式对齐）。*  
-*最近全库文档与 **2026-05-17** 代码同步：**`readme`**、**`frontend-backend-contract` §5**、**`changelog`**、**`study-progress`**、**`product-roadmap`**、**`frontend-refactor-plan`**、**`.cursor/rules/*`**。*
+*最近全库文档与 **2026-06-29** 代码同步：**`readme`**、**`frontend-backend-contract` §5**、**`changelog`**、**`study-progress`**、**`frontend-refactor-plan`**、**`.cursor/rules/*`**。*

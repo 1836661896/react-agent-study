@@ -1,0 +1,31 @@
+---
+description: ESLint、Biome 与代码质量
+alwaysApply: true
+---
+
+# 代码质量工具
+
+## 工具分工
+
+| 工具 | 用途 |
+|------|------|
+| **ESLint** | `npm run lint`；`typescript-eslint`、`eslint-plugin-react-hooks`、类型相关规则 |
+| **Biome** | 格式化（缩进 2 空格、双引号、`semicolons: asNeeded`）、`organizeImports`、推荐 lint |
+
+保存时以编辑器配置为准；提交前至少跑 `npm run lint`。
+
+## 规则倾向
+
+- 避免 `any`；必要时用 `unknown` 收窄
+- 生产代码 **no-console**（`console.error` 在 catch 中可例外）
+- `import type` 分离类型导入
+- 遵守 `react-hooks/exhaustive-deps`；有意忽略须简短注释说明
+
+## 常量
+
+- storage key、路由 path、header key → 未来 `src/constants/`（暂无则放 `config/` 并注明）
+- 环境变量仅 `VITE_*`；敏感信息不进 Git；提供 `.env.example`（若仓库需要）
+
+## api 与副作用
+
+- 不在 `api/` 改 store、不弹 message（在 hooks / 页面处理）

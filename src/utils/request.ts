@@ -1,5 +1,5 @@
-import { env } from "@/config/env"
 import type { ApiResponse } from "@/types/common"
+import { buildApiUrl } from "@/utils/url"
 
 export type HttpErrorKind =
   | "network"
@@ -39,16 +39,7 @@ type HttpOptions = {
 }
 
 function buildUrl(path: string, query?: HttpOptions["query"]) {
-  const base = env.apiBaseUrl.replace(/\/$/, "")
-  const p = path.startsWith("/") ? path : `/${path}`
-  const url = new URL(`${base}${p}`)
-  if (query) {
-    for (const [k, v] of Object.entries(query)) {
-      if (v === undefined || v === null) continue
-      url.searchParams.set(k, String(v))
-    }
-  }
-  return url.toString()
+  return buildApiUrl(path, query)
 }
 
 function isApiEnvelope(x: unknown): x is ApiResponse {

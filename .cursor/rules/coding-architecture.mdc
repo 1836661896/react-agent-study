@@ -1,0 +1,59 @@
+---
+description: react-agent-study 单应用目录架构与分层约定
+alwaysApply: true
+---
+
+# 目录架构
+
+## 项目定位
+
+- **本仓库**：`react-agent-study`（文档约定名 **`myproject/frontend`**），Python 后端 **`myproject/backend`** 的 Web 界面。
+- **当前重心**：会话列表 + 消息历史 + **SSE 流式聊天**；非多租户后台，**无** admin/site/agent 三端划分。
+- **教学约束**：助手默认不得直接改 `src/**`（见 `study-project-goal.mdc`）；架构规则供人类编码与获授权时代码修改参考。
+
+## 顶层结构
+
+```text
+src/
+├── api/              # HTTP / SSE 业务接口（一文件一域）
+├── pages/            # 路由页面（按功能分子目录）
+├── components/       # 跨页面复用组件
+├── types/            # 共享类型（与后端契约对齐）
+├── utils/            # 工具与 request 封装
+├── config/           # 环境变量读取（env.ts）
+└── styles/           # 全局 SCSS
+```
+
+## 页面目录
+
+```text
+pages/{feature}/
+├── index.tsx         # 页面入口
+├── index.scss        # 页面级样式（当前惯例；新组件可优先 *.module.scss，见 coding-styling.mdc）
+├── type.ts           # 可选：页面/子面板 props 与私有类型
+└── {SubPanel}/       # 页面内子面板/子组件（PascalCase 目录）
+    ├── index.tsx
+    └── index.scss
+```
+
+单文件页面（如 `HomePage.tsx`）可放 `pages/` 根下；功能变复杂时再迁入子目录。
+
+## 分层职责
+
+| 层 | 职责 | 禁止 |
+|----|------|------|
+| `api/*` | 请求组装、返回类型声明 | 弹 UI 提示、改全局状态 |
+| `utils/request.ts` | JSON 信封解析、`HttpError` | 业务分支判断 |
+| `api/chatStream.ts` | SSE 流式协议 | 在组件内重复解析 SSE 行 |
+| `pages/*` | 布局、交互、React Query 调用 | 散落 `fetch` / 裸 axios |
+| `types/*` | 与 `docs/frontend-backend-contract.md` 对齐 | 页面内重复定义 API 类型 |
+
+## 路径别名
+
+- `@/` → `src/`（`vite.config.js` + `tsconfig.json` 已配置）。
+- 跨目录引用用 `@/`；禁止 `../../..`（见 `coding-imports.mdc`）。
+
+## 扩展预留
+
+- 全局客户端状态（如登录 token）未来可增 `stores/`；服务端数据仍优先 **TanStack Query**。
+- 路由常量未来可增 `constants/routes.ts`；跳转避免散落魔法字符串。

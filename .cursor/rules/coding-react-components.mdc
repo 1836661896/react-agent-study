@@ -1,0 +1,43 @@
+---
+description: React 组件、文件拆分与代码整洁
+globs: "**/*.tsx"
+alwaysApply: false
+---
+
+# React 组件
+
+## 文件
+
+- 功能页入口：`pages/{feature}/index.tsx`；复杂页拆 `ChatThreadPanel/`、`ConversationList/` 等子目录
+- 有页面级类型时加 **`type.ts`**（无则不必建空文件，见 `coding-pragmatic-structure.mdc`）
+- 组件目录：**PascalCase**（`ChatThreadPanel/`）
+- 单文件建议 **≤ 300 行**，超出且职责可切分时再拆 hooks 或子组件；**不为拆行而拆**
+
+## 组件内顺序
+
+1. props 类型
+2. hooks（含 Query、本地 state）
+3. 派生状态 / useMemo
+4. 事件处理
+5. JSX
+
+## 实践
+
+- 函数组件；复杂业务逻辑放同目录 `useXxx.ts` 或 `hooks/useXxx.ts`
+- props 必须类型化；避免 `any`
+- UI 提示统一 **Ant Design** `message` / `notification`（在页面或 hook，不在 `api/`）
+- 优先具名导出；页面 `index.tsx` 可用 default 配合 lazy
+
+## 数据获取
+
+- 列表/详情/健康检查：**TanStack Query**（`useQuery` / `useInfiniteQuery` / `useMutation`）
+- 写成功后 `invalidateQueries` 保持一致性
+- SSE 发送与流式 UI 状态放页面或专用 hook，不塞进 Query cache 除非有明确设计
+
+## Query Key 示例
+
+```ts
+['conversations', 'list']
+['conversations', conversationId, 'messages']
+['health']
+```

@@ -3,7 +3,7 @@
 > **用途**：落地「**会话列表 + 消息历史 + 流式聊天**」+ 左栏占位；本仓库**当前选定策略**为：**不考虑保留现有 `src/` 实现，整目录移除后完全重写**。  
 > **权威契约**：**`docs/frontend-backend-contract.md`**；字段级约定：**`myproject/backend/docs/chat-stream-api.md`**、**`myproject/backend/docs/conversations-api.md`**。  
 > **产品构想**：**`docs/product-roadmap.md`**。  
-> **代码修改**：按 **`.cursor/rules/frontend-project-goal.mdc`**。删除或重建 **`src/`**、修改 **`index.html`** 等，须用户当条消息含**一字不差**的 **`本次允许修改`**；否则仅口述步骤或由用户本地操作。
+> **代码修改**：按 **`.cursor/rules/study-project-goal.mdc`**。删除或重建 **`src/`**、修改 **`index.html`** 等，须用户当条消息含**一字不差**的 **`本次允许修改`**；否则仅口述步骤或由用户本地操作。
 
 ---
 
@@ -68,9 +68,9 @@
   - **已完成（会话 JSON）**：**`src/types/conversations.ts`**、**`src/types/common.ts`**；**`src/api/conversations.ts`**：**`GET conversation/list`**、**`POST conversation/delete`**、**`POST conversation/create`**、**`GET conversation/{id}/messages`**。  
   - **已完成（流式）**：**`src/types/chatStream.ts`**、**`src/api/chatStream.ts`**：**`POST /chat/stream`**；**`delta` / `tool_call` / `tool_result` / `error` / `done`**；**`done`** 后 **`invalidateQueries`**。  
   - *计划文件名曾写作 `conversation.ts`（单数）；实际仓库为 **`conversations.ts`**。*
-- [x] **R4** **UI 与布局**（主路径，2026-05-17）  
-  - **已完成**：双栏 **`/chat`**、**`ConversationList`**、**`ChatThreadPanel`**（infinite、SSE、**自动/对话** 模式、**toolTrace**、乐观气泡）；顶栏 **`HealthBage`** + **`api/health.ts`**。  
-  - **待完成 / 阶段 4**：三栏左占位；流式 **Abort**；composer **具名能力按钮**（非 MCP 模式切换）。
+- [x] **R4** **UI 与布局**（主路径，2026-05-17；A1 续 2026-06-26～29）  
+  - **已完成**：双栏 **`/chat`**、**`ConversationList`**、**`ChatThreadPanel`** + **`useChatThreadPanel`**（infinite、SSE、**自动/对话** 模式、**toolTrace**、乐观气泡）；顶栏 **`HealthBage`** + **`api/health.ts`**；**A1 ① preset**、**A1 ② artifact 下载**。  
+  - **待完成 / 阶段 4**：三栏左占位；流式 **Abort** UI；composer **导出快捷**（A1③）、**具名能力按钮**（非 MCP 模式切换）；**`trip-assistant.md` §6** 联调验收。
 - [ ] **R5** **收尾**  
   - [x] **`npm run lint`**（2026-05-17 已通过，提交前建议再跑）。  
   - [x] 文档：**`readme`**、**`frontend-backend-contract` §5**、**`changelog`**、**`study-progress`**（本批）。  
@@ -88,7 +88,8 @@
 
 | 日期 | 内容 |
 |------|------|
-| 2026-06-26 | **backend A1 ①**：**`preset=schedule`** 类型 + **api/chatStream** + **ChatPage/ConversationList/ChatThreadPanel**（行程助手入口、状态提升）；Network 验证通过。**待续**：artifact 下载、§6 四轮验收。 |
+| 2026-06-29 | **文档对齐**：A1 ② artifact 下载代码已存在，同步 **readme/contract/changelog/rules**。**代码 refactor**：**`useChatThreadPanel`**、**`queryKeys`/`routes`/`url`**。**待续**：§6 四轮验收、A1 ③、Abort。 |
+| 2026-06-26 | **backend A1 ①**：**`preset=schedule`** 类型 + **api/chatStream** + **ChatPage/ConversationList/ChatThreadPanel**（行程助手入口、状态提升）；Network 验证通过。**待续**：§6 四轮验收、A1 ③、Abort。 |
 | 2026-05-14 | 完成 §**1.2**（旧代码）契约复核；**`frontend-backend-contract.md`** §5 曾对照旧 `src`。 |
 | 2026-05-17 | **R4 收尾**：**health**、SSE **tool_***、模式 **auto/chat**；文档与 **lint** 同步。阶段 4：能力按钮、Abort。 |
 | 2026-05-17（早） | **R3/R4 续**：**create/messages**；双栏 + **`ChatThreadPanel`**。 |

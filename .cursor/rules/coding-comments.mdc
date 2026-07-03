@@ -1,0 +1,35 @@
+---
+description: 中文注释与 JSDoc 规范
+globs: "**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# 注释
+
+## 必须加中文注释
+
+- 导出函数 / 公共 hooks
+- 非显而易见的业务分支（SSE 事件分支、乐观更新、preset 路由等）
+- `utils/request.ts` 拦截与信封解析关键步骤
+- `constants` / `config` 中非自明的配置项含义
+
+## 写法
+
+- 说明 **业务含义 / 为什么**，勿复述代码字面意思。
+- 公共 API 用简短 **JSDoc**（`@param`、`@returns`）。
+- 文件顶：与后端契约或旧实现有差异时 1～2 行即可。
+
+## 示例
+
+```ts
+/**
+ * 拉取会话消息（分页）；响应对齐 backend conversations-api
+ * @see docs/frontend-backend-contract.md
+ */
+export async function getConversationMessages(conversationId: string, ...) { ... }
+```
+
+## 禁止
+
+- 变量名用拼音堆砌注释凑行数
+- 每个 import 都写注释

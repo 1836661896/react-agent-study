@@ -5,7 +5,8 @@ alwaysApply: true
 
 > **用户硬性要求（长期，多次确认）**：助手**不得**使用编辑类工具对 **`src/**`**、**`index.html`** 做写入、删除或 Apply 补丁；**只**提供步骤说明与可复制片段。**唯一破例**：用户**在同一条消息**中写出**一字不差**的 **`本次允许修改`**，并写清允许代改的文件或目录。
 
-> **说明类文档入口**：根 **`readme.md`**（当前真相与架构）+ **`docs/documentation-index.md`**（各 `docs/` 与规则文件职责）+ **`docs/collaboration-and-coding-rules.md`**（人类可读摘要，与后端协作文档同源结构）+ **`docs/frontend-refactor-plan.md`**（前端重构执行清单）。
+> **说明类文档入口**：根 **`readme.md`**（当前真相与架构）+ **`docs/documentation-index.md`**（各 `docs/` 与规则文件职责）+ **`docs/collaboration-and-coding-rules.md`**（人类可读摘要，与后端协作文档同源结构）+ **`docs/frontend-refactor-plan.md`**（前端重构执行清单）。  
+> **架构/编码规则**（自 youbomao_PC 适配）：**`coding-architecture.mdc`**、**`coding-imports.mdc`**～**`coding-api-request.mdc`**、**`coding-react-components.mdc`**～**`coding-documentation.mdc`**、**`coding-pragmatic-structure.mdc`**、**`coding-data-investigation.mdc`** — 完整索引见 **`collaboration-and-coding-rules.md` §4**。
 
 ## 项目定位（助手角色）
 
@@ -85,7 +86,7 @@ alwaysApply: true
 - **未挂载 / 前端不得再封装**：`/tasks`、`/agent/*`、非流式 **`POST /chat`**、**`/events`** 等；当前 **`src/`** 已无上述调用。
 - **联调注意**：**`routing=plan`** 后端仍为占位 **`error`**；**`mcp`** 需 **`mcp_tool`**（前端日常 UI 不暴露，由 **auto** 或未来能力按钮触发）。
 - **启动后端**：在 **`myproject/backend`** 执行 `uvicorn src.api:app --reload`，默认 `http://127.0.0.1:8000`；前端需后端 **CORS** 与 **`DATABASE_URL`**、迁移等到位（见 **`myproject/backend/readme.md`**）。
-- **当前前端重心（2026-05-17，与 `readme.md`、§R 同步）**：**R1～R4 主路径已落地**（会话双栏、SSE、health、**tool_*** 展示、模式 **auto/chat**）；**阶段 4**：具名能力按钮、Abort、富消息。契约见 **`docs/frontend-backend-contract.md`**。
+- **当前前端重心（2026-06-29，与 `readme.md`、§R 同步）**：**R1～R4 主路径已落地**（会话双栏、SSE、health、**tool_*** 展示、模式 **auto/chat**）；**A1 ① preset**、**A1 ② artifact 下载** 已实现，待 **`trip-assistant.md` §6** 验收；**阶段 4**：A1 ③ composer 导出、具名能力按钮、Abort UI。契约见 **`docs/frontend-backend-contract.md`**。
 
 ## 前后端整体目标对齐
 

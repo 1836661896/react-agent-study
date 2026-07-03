@@ -1,0 +1,23 @@
+---
+description: SCSS 与样式规范
+globs: "**/*.{scss,css}"
+alwaysApply: false
+---
+
+# 样式
+
+## 当前惯例（与存量代码一致）
+
+- 页面/子面板：同目录 **`index.scss`**，在对应 `index.tsx` 顶部 `import './index.scss'`
+- 全局：`src/styles/main.scss`、`App.scss`；通过 `main.tsx` / `App.tsx` 引入
+
+## 新代码倾向
+
+- 新组件若样式作用域需隔离，优先 **`*.module.scss`**，与 tsx 同目录
+- 全局变量 / mixins：放 `src/styles/`，通过 `@use` 或项目既有方式引用
+- **禁止** 业务文件大量裸全局 class 污染（尤其短名如 `.title`、`.item`）
+- 颜色、间距优先 Ant Design **Token / ConfigProvider**，减少硬编码色值
+
+## 布局
+
+- 一屏聊天布局：高度链从 `#root` → Layout → 主区（见 `App.scss`）；子面板用 flex + `min-height: 0` 防溢出

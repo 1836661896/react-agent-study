@@ -61,5 +61,6 @@ alwaysApply: true
   - ✅ **GET /conversation/list**、**POST /conversation/delete**、**POST /conversation/create**、**GET /conversation/{id}/messages**
   - ✅ **POST /chat/stream**（**`delta` / `error` / `done`** + **`tool_call` / `tool_result` 展示**）；发送模式 UI：**`auto` / `chat`** 仅
   - ✅ **`preset=schedule`**（行程助手入口 + **`presetByConvId`**）
-  - ⏳ **`GET /artifact/{id}`** 下载（A1②）；⏳ 可选 **Abort**；⏳ composer **导出快捷**（A1③）
-- 🔄 **近期 UI**：**`done`** + **`invalidateQueries`**；**toolTrace**；待 **artifact 下载按钮**
+  - ✅ **`GET /artifact/{id}`** 下载（A1②；**`artifactParse` + `downloadArtifact` + toolTrace 按钮**）
+  - ⏳ composer **导出快捷**（A1③）；⏳ 流式 **Abort** UI（API 已支持 **`signal`**）
+- 🔄 **近期 UI**：**`done`** + **`invalidateQueries`**；**toolTrace** + **artifact 下载**；待 composer 导出、Abort

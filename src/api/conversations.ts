@@ -55,7 +55,7 @@ export function getConversationMessages(
   )
 }
 
-//
+/** 创建会话；body 可选 kind 等字段 */
 export function createConversation(
   body?: ConversationCreateBody,
 ): Promise<ApiResponse<{ id: number }>> {

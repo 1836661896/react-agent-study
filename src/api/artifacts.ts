@@ -1,11 +1,6 @@
-import { env } from "@/config/env"
 import type { ApiResponse } from "@/types/common"
 import { HttpError } from "@/utils/request"
-
-function buildArtifactUrl(path: string): string {
-  const base = env.apiBaseUrl.replace(/\/$/, "")
-  return `${base}${path.startsWith("/") ? path : `/${path}`}`
-}
+import { buildApiUrl } from "@/utils/url"
 
 function filenameFromContentDisposition(header: string | null): string | null {
   if (!header) return null
@@ -15,7 +10,7 @@ function filenameFromContentDisposition(header: string | null): string | null {
 
 // 请求 GET /artifact/{id}，出发浏览器下载；失败抛 HttpError
 export async function downloadArtifact(artifactId: string): Promise<void> {
-  const url = buildArtifactUrl(`artifact/${artifactId}`)
+  const url = buildApiUrl(`artifact/${artifactId}`)
   let res: Response
   try {
     res = await fetch(url)

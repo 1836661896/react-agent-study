@@ -1,0 +1,32 @@
+---
+description: Markdown 文档分工，避免与 README、rules 重复
+globs: "**/*.md"
+alwaysApply: false
+---
+
+# 文档规范
+
+## 分工（一事一处）
+
+| 文件 | 只写 | 不写 |
+|------|------|------|
+| `readme.md` | 项目定位、**当前** `src/` 结构摘要、功能实现度表、启动步骤、文档索引 | 规范细则全文、学习叙事长篇 |
+| `docs/documentation-index.md` | 各文档职责与更新时机 | 架构/编码细则 |
+| `docs/frontend-backend-contract.md` | 前后端接口、信封、SSE、已下线 API | 学习进度 |
+| `docs/frontend-refactor-plan.md` | 前端重构**执行清单**与勾选 | 编码规范 |
+| `docs/changelog.md` | 按日期的变更流水 | 进度表 |
+| `docs/study-progress.md` | 学习摘要、下一步 | API 字段表 |
+| `docs/product-roadmap.md` | 产品构想与排期 | 当前代码真相 |
+| `docs/collaboration-and-coding-rules.md` | 人类可读摘要 + 指向 `.cursor/rules` | 与 rules 矛盾的硬约束 |
+| `.cursor/rules/*.mdc` | 编码与架构约定（AI/开发约束） | 项目介绍、进度勾选 |
+
+## 维护原则
+
+- 上层 **索引 + 链接**，不复制下层大段内容
+- 契约 = 接口是什么；refactor-plan = 做到哪一步；changelog = 何时改了什么
+- 架构细则在 **`coding-architecture.mdc`** 等 rules；`readme` 只保留摘要
+
+## 禁止
+
+- 在 README 写 ESLint 细则或 SSE 实现长篇
+- 同一进度同时维护在 README 与 refactor-plan（功能表在 readme，勾选在 refactor-plan）

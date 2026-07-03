@@ -25,18 +25,11 @@ import {
   deleteConversationItems,
   getConversationList,
 } from "@/api/conversations"
-import type {
-  ConversationCreateBody,
-  ConversationListItem,
-} from "@/types/conversations"
+import { queryKeys } from "@/constants/queryKeys"
+import type { ConversationCreateBody } from "@/types/conversations"
 import { errorDescription } from "@/utils/common"
 import { formatDisplayDateTime } from "@/utils/datetime"
-
-type ConversationListProps = {
-  selectedId: number | null
-  onSelectConversation: (item: ConversationListItem | null) => void
-  onScheduleSessionCreated?: (ud: number) => void
-}
+import type { ConversationListProps } from "./type"
 
 export default function ConversationList({
   selectedId,
@@ -51,7 +44,7 @@ export default function ConversationList({
   const queryClient = useQueryClient()
 
   const listQuery = useQuery({
-    queryKey: ["conversations", "list", page, limit] as const,
+    queryKey: queryKeys.conversations.list(page, limit),
     queryFn: () => getConversationList({ page, limit }),
     staleTime: 10_000,
     refetchOnWindowFocus: false,
@@ -61,8 +54,12 @@ export default function ConversationList({
     mutationFn: (ids: number[]) => deleteConversationItems({ ids }),
     onSuccess: (res, deletedIds) => {
       message.success(res.msg)
-      queryClient.invalidateQueries({ queryKey: ["conversations", "list"] })
-      queryClient.invalidateQueries({ queryKey: ["conversations", "messages"] })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.conversations.listRoot(),
+      })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.conversations.messagesRoot(),
+      })
       setBatchIds([])
       if (selectedId != null && deletedIds.includes(selectedId)) {
         onSelectConversation(null)
@@ -82,8 +79,12 @@ export default function ConversationList({
         message.warning("创建成功但未返回会话 id")
         return
       }
-      queryClient.invalidateQueries({ queryKey: ["conversations", "list"] })
-      queryClient.invalidateQueries({ queryKey: ["conversations", "messages"] })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.conversations.listRoot(),
+      })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.conversations.messagesRoot(),
+      })
       setPage(1)
       setBatchIds([])
       // 新建后立即选中：右侧线程区可发首条消息

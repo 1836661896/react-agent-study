@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query"
 import { Tag, Tooltip } from "antd"
 import { getHealth } from "@/api/health"
+import { queryKeys } from "@/constants/queryKeys"
 import { HttpError } from "@/utils/request"
 
 export default function HealthBage() {
   const q = useQuery({
-    queryKey: ["health"],
+    queryKey: queryKeys.health(),
     queryFn: getHealth,
     refetchInterval: 30_000,
     retry: 1,

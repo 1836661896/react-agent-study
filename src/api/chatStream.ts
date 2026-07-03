@@ -1,11 +1,5 @@
-import { env } from "@/config/env"
 import type { ChatStreamSseEvent, PostChatStreamBody } from "@/types/chatStream"
-
-function _buildAbsoluteUrl(path: string): string {
-  const base = env.apiBaseUrl.replace(/\/$/, "")
-  const p = path.startsWith("/") ? path : `/${path}`
-  return `${base}${p}`
-}
+import { buildApiUrl } from "@/utils/url"
 
 function _parseSseDataLine(line: string): ChatStreamSseEvent | null {
   const trimmed = line.trimEnd()
@@ -97,7 +91,7 @@ export async function postChatStream(
     payload.preset = body.preset
   }
 
-  const _res = await fetch(_buildAbsoluteUrl("/chat/stream"), {
+  const _res = await fetch(buildApiUrl("/chat/stream"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),

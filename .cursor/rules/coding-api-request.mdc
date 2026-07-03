@@ -1,0 +1,54 @@
+---
+description: api 层与 HTTP/SSE 请求封装职责与边界
+globs: "{src/api/**,src/utils/request.ts,src/utils/artifactParse.ts}"
+alwaysApply: false
+---
+
+# API 与请求
+
+## 两套协议（勿混用职责）
+
+| 协议 | 入口 | 用途 |
+|------|------|------|
+| JSON 信封 | `@/utils/request` 的 `request()` | `/health`、`/conversation/*` 等 `{ code, data, msg }` |
+| SSE 流 | `@/api/chatStream.ts` | `POST /chat/stream`；`delta` / `error` / `done` / `tool_*` |
+
+**禁止** 在页面/组件里直接 `fetch` 拼 URL；**禁止** 用 `request()` 解析 SSE 行。
+
+## `request()` 约定
+
+- 统一读 `env.apiBaseUrl`；业务 `code !== 0` 抛 `HttpError`（`kind: 'business'`）。
+- GET 查询用 `options.query`；需要取消时传 `signal`（AbortController）。
+
+```ts
+request<ApiResponse<ConversationListData>>('/conversation/list', {
+  query: { page: 1, page_size: 20 },
+})
+```
+
+## api 层约定
+
+- 命名：`getXxx` / `createXxx` / `updateXxx` / `deleteXxx` / `postXxxStream`
+- 一文件一业务域：`api/conversations.ts`、`api/chatStream.ts`、`api/artifacts.ts`
+- **禁止** 在 api 内 `message.success`、修改全局 store
+- 返回类型在 `@/types/*` 或同级 `*.types.ts`
+- 二进制下载（如 artifact）可单独用 `fetch`，不强行走 JSON `request()`
+
+## SSE 约定
+
+- 事件类型与字段以 **`myproject/backend/docs/chat-stream-api.md`** 为准；前端类型在 `@/types/chatStream.ts`。
+- 解析、行缓冲、事件分发放在 `chatStream.ts`；页面只消费回调或 async iterator 结果。
+
+## 页面调用
+
+```ts
+import { listConversations } from '@/api/conversations'
+import { postChatStream } from '@/api/chatStream'
+```
+
+业务代码只 import `api/*` 与 `utils/request` 的 `HttpError`；不要复制信封解析逻辑。
+
+## 权威契约
+
+- **`docs/frontend-backend-contract.md`**：现行/已下线接口摘要
+- **`myproject/backend/readme.md`** 及 `docs/*-api.md`：字段级权威

@@ -4,6 +4,37 @@
 
 ---
 
+## 2026-06-29（文档与代码对齐 · A1 ② artifact）
+
+- **代码现状（此前已落地，文档滞后）**：**`utils/artifactParse.ts`**、**`api/artifacts.ts`**、**`useChatThreadPanel`** 解析 **`artifactId`**、**`ChatThreadPanel`** toolTrace **「下载文件」** 按钮。
+- **文档**：**`readme.md`**、**`frontend-backend-contract.md` §5**、**`study-progress.md`**、**`study-plan.mdc`**、**`study-learning-checklist.mdc`**、**`frontend-refactor-plan.md`** 执行记录同步；A1 ② 标为 **已实现，待 §6 四轮验收**。
+- **仍待做**：A1 ③ composer 快捷导出；流式 Abort UI；**`trip-assistant.md` §6** 联调验收。
+
+---
+
+## 2026-06-29（按 coding-architecture 规则调整 src）
+
+- **新增** **`src/constants/queryKeys.ts`**、**`routes.ts`**；**`src/utils/url.ts`**（`buildApiUrl` 供 request / chatStream / artifacts 共用）。
+- **拆分** **`ChatThreadPanel/useChatThreadPanel.ts`**（524→~320 行 UI + hook）；**`pages/chat/conversationListCache.ts`**。
+- **统一** `@/` 跨目录 import、**`queryKeys`** 引用、**`ROUTES`** 路由常量；**`App.tsx`** / **`NotFoundPage`** 改用常量。
+
+---
+
+## 2026-06-29（规则文件命名统一）
+
+- **重命名** **`.cursor/rules/`**：教学规则 → **`study-project-goal.mdc`**、**`study-plan.mdc`**、**`study-learning-checklist.mdc`**；编码规则 → **`coding-architecture.mdc`** 等 10 个 **`coding-*`** 文件（去掉 youbomao 断号编号）。
+- **文档**：**`collaboration-and-coding-rules.md`**、**`documentation-index.md`**、**`readme.md`**、**`study-progress.md`**、**`frontend-refactor-plan.md`** 交叉引用同步。
+
+---
+
+## 2026-06-29（同步 youbomao_PC 架构/编码 rules）
+
+- **新增** **`.cursor/rules/`**：**`00-architecture.mdc`**、**`02-imports.mdc`**、**`03-comments.mdc`**、**`04-api-request.mdc`**（fetch + SSE）、**`06-react-components.mdc`**、**`07-styling.mdc`**、**`08-eslint-quality.mdc`**（ESLint + Biome）、**`09-documentation.mdc`**、**`12-pragmatic-structure.mdc`**、**`13-data-investigation.mdc`**。
+- **未同步**：youbomao 三端专用规则（**`01-architecture`**、**`10-agent-portal`**、**`11-portal-sharing`**、**`05-state-auth`** 待有登录/Zustand 再议）。
+- **文档**：**`collaboration-and-coding-rules.md` §4**、**`documentation-index.md`**、**`frontend-project-goal.mdc`** 文首索引更新。
+
+---
+
 ## 2026-06-26（backend A1 行程助手 · preset 链路）
 
 - **类型**：**`types/chatStream.ts`** — **`AgentPreset`**、**`PostChatStreamBody.preset?`**。
@@ -13,7 +44,7 @@
 - **列表入口**：**`ConversationList`** — **「行程助手」** 按钮；**`onScheduleSessionCreated`** 回调（状态提升）；普通 **「新建会话」** 不带 preset。
 - **联调**：DevTools 验证 **行程助手** 会话 Payload 含 **`"preset":"schedule"`**；普通会话不含。
 - **文档**：**`readme.md`**、**`study-progress.md`**、**`frontend-backend-contract.md` §5**、规则 **`.cursor/rules/*`** 同步。
-- **未完成（明日续）**：**`utils/artifactParse.ts`**、**`api/artifacts.ts`**、toolTrace **下载按钮**、composer 快捷 **导出 docx/pdf**；backend **`trip-assistant.md` §6** 四轮验收。
+- **未完成（当时口径）**：composer 快捷 **导出 docx/pdf**；backend **`trip-assistant.md` §6** 四轮验收。（**A1 ②** 已于后续代码中落地，见本日「文档与代码对齐」条目。）
 
 ---
 
