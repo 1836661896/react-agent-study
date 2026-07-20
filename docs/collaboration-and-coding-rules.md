@@ -31,6 +31,7 @@
 - **架构与分层**：目录职责见 **`coding-architecture.mdc`**；import 见 **`coding-imports.mdc`**；api/SSE 边界见 **`coding-api-request.mdc`**。
 - **务实边界**：不为拆行而拆、共享 vs 页面私有见 **`coding-pragmatic-structure.mdc`**。
 - **接口异常**：先确认返回值再改代码，见 **`coding-data-investigation.mdc`**。
+- **路径大小写（Windows）**：本仓库约定 **区分大小写**。克隆后请执行 **`git config core.ignorecase false`**（仅本仓库；该配置在 `.git/config`，**无法随仓库提交**）。编辑器侧已设 **`files.useCaseSensitiveFileNames: on`**（**`.vscode/settings.json`**）。仅改文件名大小写时仍建议两步 **`git mv`**。推荐在 **`tsconfig.json`** 打开 **`forceConsistentCasingInFileNames`: true**（由本地维护，助手默认不改该文件）。
 
 ---
 

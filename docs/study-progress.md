@@ -19,7 +19,7 @@
 2. 打开 **`docs/frontend-refactor-plan.md`** §**W1** / **`docs/study-progress.md`**。
 3. **直接从 W1-4b② 前补完**：若本机还缺 **`src/utils/request.ts`**，先按上次片段补全，再做 **`getHealth` + HealthBage 挂顶栏**。
 4. 完成后勾选 W1，进入 **W2**（会话/流式/附件类型与 api；**`preset=guide`**、默认 **`routing=chat`**）。
-5. **大小写**：`main.tsx` 当前 `import App from "./app"`；仓库历史文件名多为 **`App.tsx`**。Linux/CI 区分大小写时请统一为 **`./App`** + **`App.tsx`**。
+5. **大小写**：统一 **`App.tsx` + `import from "./App"`**。换设备后执行 **`git config core.ignorecase false`**；见 **`docs/collaboration-and-coding-rules.md` §3**。可选：在 **`tsconfig.json`** 的 `compilerOptions` 增加 **`"forceConsistentCasingInFileNames": true`**。
 
 ---
 

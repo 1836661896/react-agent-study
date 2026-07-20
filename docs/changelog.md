@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-07-20 晚（路径大小写约定）
+
+- **本仓库**：`git config --local core.ignorecase false`（需各机自配；见协作文档）。
+- **编辑器**：**`.vscode/settings.json`** 增加 **`files.useCaseSensitiveFileNames: on`**。
+- **文档**：**`collaboration-and-coding-rules.md`** 补充 Windows 大小写约定；建议本地开启 TS **`forceConsistentCasingInFileNames`**。
+
+---
+
 ## 2026-07-20 晚（W0 迁移 + W1 空壳进行中 · 下班提交）
 
 - **W0**：旧业务 **`src/`** 整树迁入 **`backup/src/`**（提交入库便于换设备对照）。
