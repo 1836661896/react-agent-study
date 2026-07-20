@@ -1,40 +1,44 @@
 ---
-description: 前端学习阶段计划——以 Vue 迁移视角学习 React，并逐步对接后端 API
+description: 前端学习阶段计划——2026-07 起按 W 阶段完整重写 src/，对齐重建后端
 alwaysApply: true
 ---
 
 ## 使用方式（给助手）
 
-- 新对话/换设备：先读本仓库根目录 **`readme.md`** + **`docs/documentation-index.md`**，再读本文件与 **`study-learning-checklist.mdc`**。
+- 新对话/换设备：先读本仓库根目录 **`readme.md`** + **`docs/documentation-index.md`**，再读本文件、**`study-rewrite-pedagogy.mdc`** 与 **`study-learning-checklist.mdc`**。
 - **路径约定**：**`myproject/frontend`** / **`myproject/backend`** 为文档中的约定路径；不在此记录本机实际克隆目录。
-- 教学节奏：按阶段小步推进；每次只引入少量知识点，优先讲“与 Vue 不同的地方”和“为什么这样设计”。
+- **重写教学节奏**：见 **`study-rewrite-pedagogy.mdc`**（DOM → CSS → 引用 → 逻辑；禁止一次给整页完整代码）。
 
 ---
 
-## 项目推进计划（按难易：易 → 中 → 较难）
+## 项目推进计划（2026-07：完整重写）
 
-> **近期目标**：与 **`myproject/backend`** 当前能力形成闭环——**会话列表 + 消息历史 + 流式发送**；再迭代快捷路由与富消息展示。
+> **选定策略（用户 2026-07-20）**：**删除整个 `src/` 后按重建后端契约重写**。执行勾选见 **`docs/frontend-refactor-plan.md`** §**W**。  
+> **目标契约**：会话 + SSE；**`preset=guide`**；默认 **`routing=chat`**；上传 **`POST /artifact`** + **`attachment_ids`**；历史 **`attachments`**；可选画像 **`/user/profile`**。
 
-| 顺序 | 阶段 | 难易 | 目标与产出（前端） | 状态 |
-|------|------|------|--------------------|------|
-| 0 | 阶段 0：工程与运行 | 易 | 能跑起来、能构建；环境变量/代理就绪 | ✅ 已完成 |
-| 1 | 阶段 1：React 基础与最小联调 | 易~中 | 函数组件/JSX/useState/useEffect；**GET /health**；曾练习 tasks/agent 等（**现行后端已移除对应路由**，仅作学习史） | ✅ 已完成 |
-| 2 | 阶段 2：组件拆分与数据模型 | 中 | 拆组件、统一 types；避免单文件过大 | ✅ 已完成 |
-| 3 | 阶段 3：请求层与错误体验 + 对齐现行 API | 中 | **`request.ts`**；React Query 列表 / 消息 / **infinite**；**SSE** + **health UI**；**`tool_call`/`tool_result` 展示**；模式 **auto/chat** | ✅ **已完成**（可选 **Abort** 可并入阶段 4） |
-| 4 | 阶段 4：可扩展聊天 UI | 较难 | **具名能力按钮**（映射 `mcp_tool`，非 MCP 模式切换）；SSE 富消息；流式 **Abort**；左侧活动流（后端就绪后） | 🔄 **进行中** |
+| 顺序 | 阶段 | 难易 | 目标与产出 | 状态 |
+|---|---|---|-----|---|
+| — | 历史 R0～R4 / 旧 A1（`schedule`） | — | 旧实现仅作对照；重写后不再作为主路径 | 🗄 归档 |
+| W0 | 快照 / 迁移 | 易 | 用户已将 `src/` 迁至 **`backup/src/`** | ✅ |
+| W1 | 空壳可跑 | 易 | `main` / `App` / 路由 / Health / 全局样式 | ⏳ |
+| W2 | 类型与 API | 中 | conversations / chatStream / artifacts（含 upload）/ health；对齐新字段 | ⏳ |
+| W3～W4 | 布局 DOM + CSS | 中 | `/chat` 双栏空壳 + 一屏高度与滚动 | ⏳ |
+| W5 | 会话列表 | 中 | list / create / delete | ⏳ |
+| W6 | 线程 + SSE | 较难 | messages + 流式；**`guide`** + **`chat`/`auto`** | ⏳ |
+| W7 | 附件 | 较难 | 上传、发送挂载、历史展示/下载 | ⏳ |
+| W8 | 可选增强 | 中 | 画像 UI、Abort、能力按钮 | ⏳ |
 
 ---
 
 ## 当前建议（下一步怎么学）
 
-- **当前建议**：**backend A1 行程助手** — **① preset**、**② artifact 下载** 代码已落地；优先 **`trip-assistant.md` §6** 四轮联调验收。
-- **按步**：
-  1. **联调验收**：行程助手会话四轮示例；第 4 轮验证 **下载文件**。
-  2. **A1 ③（可选）**：composer 快捷 **导出 docx/pdf**。
-  3. **阶段 4**：**AbortController** 接 UI；三栏左占位；其它具名能力按钮。
-- **已学巩固**：**props**、**useState**、**状态提升**、**回调 props**、api 层组 payload、**二进制 fetch 与 JSON 信封分离**；能口述 **JSON 信封** vs **SSE 行**。
+1. **换设备**：先读 **`docs/study-progress.md`**「换设备继续」。
+2. **立刻**：补全 **`src/utils/request.ts`** → **`api/health`** + **HealthBage** → 勾选 **W1**。
+3. 然后 **W2** 类型与 API（**`guide`**、附件）；教学按 **①DOM → ②CSS → ③引用 → ④逻辑**；确认约定：**单独回复 `1`**。
+4. 权威后端：**`myproject/backend/readme.md`** 与相关 docs；旧代码只读 **`backup/src/`**。
 
 ## 与后端近期共识
 
-- **权威文档**：**`myproject/backend/readme.md`**；流式 **`myproject/backend/docs/chat-stream-api.md`**；会话 **`myproject/backend/docs/conversations-api.md`**。
-- **布局**：主聊天区 + 输入区附近「快捷能力」按钮为近期产品方向；左侧历史/活动流为可选占位，以后端演进为准。
+- **身份**：**`preset=guide`（导游）**；旧 **`schedule`** / **`schedule_draft`** **不恢复**。
+- **routing**：默认 **`chat`**；**`auto`/`mcp`** 已通；**`plan`** 占位。
+- **附件**：先 **`POST /artifact`**，再 Chat 带 **`attachment_ids`**；messages 回 **`attachments`**。

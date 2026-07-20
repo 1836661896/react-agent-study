@@ -17,7 +17,8 @@
 ## 2. 对话与教学语言
 
 - **中文**为主；英文术语先给中文释义。  
-- **节奏**：分步推进；复杂步骤等用户确认后再继续（详见 **`study-project-goal.mdc`**）。
+- **节奏**：分步推进；复杂步骤等用户确认后再继续（详见 **`study-project-goal.mdc`**）。  
+- **完整重写期间**（2026-07 起）：严格按 **①DOM → ②CSS → ③组件引用 → ④JS 逻辑**；**禁止**一次给出整页/整 hook 完整实现（权威：**`study-rewrite-pedagogy.mdc`**）。
 
 ---
 
@@ -40,8 +41,9 @@
 | 文件 | 作用 |
 |------|------|
 | **`study-project-goal.mdc`** | 导师角色、能否改代码、教学节奏、`readme`/`docs` 维护范围、后端 API 摘要 |
-| **`study-plan.mdc`** | 学习阶段、当前建议步骤 |
+| **`study-plan.mdc`** | 学习阶段（§W）、当前建议步骤 |
 | **`study-learning-checklist.mdc`** | React 知识点勾选与后端联调摘要 |
+| **`study-rewrite-pedagogy.mdc`** | 完整重写教学：DOM→CSS→引用→逻辑；禁止整页完整代码 |
 
 ### 架构与编码（`coding-*`，自 youbomao_PC 适配）
 
@@ -62,6 +64,6 @@
 
 | 文件 | 作用 |
 |------|------|
-| **`docs/frontend-refactor-plan.md`** | 与现行后端对齐的前端重构**执行清单**（勾选推进） |
+| **`docs/frontend-refactor-plan.md`** | 完整重写 **§W** 执行清单（勾选推进） |
 
-*修订：2026-06-29 规则文件统一为 `study-*` / `coding-*` 命名。*
+*修订：2026-07-20 增加 `study-rewrite-pedagogy.mdc`；清单切 §W。*

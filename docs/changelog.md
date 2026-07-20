@@ -4,6 +4,24 @@
 
 ---
 
+## 2026-07-20 晚（W0 迁移 + W1 空壳进行中 · 下班提交）
+
+- **W0**：旧业务 **`src/`** 整树迁入 **`backup/src/`**（提交入库便于换设备对照）。
+- **W1 已落地**：新 `src` 空壳 — `main`（Router + Query + antd 中文）、顶栏与 `/` `/chat` `*` 占位、全局/App SCSS、`env` / `ApiResponse` / `buildApiUrl`。
+- **W1 未完**：尚无 **`request.ts`**、无 Health 顶栏；下一会话从补全请求层 + Health 继续。
+- **文档/规则**：同步 **`readme`**、**`study-progress`**、**`frontend-refactor-plan` §W1**、**契约 §5**、**`study-rewrite-pedagogy`**（含确认约定 **`1`**）。
+
+---
+
+## 2026-07-20（选定完整重写 + 教学规则）
+
+- **决策**：对齐重建 **`myproject/backend`**，**删除整目录 `src/` 后重写**（§**W**）。
+- **新增规则**：**`.cursor/rules/study-rewrite-pedagogy.mdc`** — ①DOM → ②CSS → ③引用 → ④逻辑；禁止一次给整页完整代码。
+- **更新**：**`study-plan.mdc`**、**`study-learning-checklist.mdc`**、**`study-project-goal.mdc`**（重建 API：`guide`、附件、画像）；**`frontend-refactor-plan.md`**（§R→§W）；**`frontend-backend-contract.md`**；**`readme.md`**；**`study-progress.md`**；**`documentation-index.md`**；**`collaboration-and-coding-rules.md`**。
+- **契约要点**：身份 **`preset=guide`**；默认 **`routing=chat`**；**`POST /artifact`** + **`attachment_ids`**；messages **`attachments`**；旧 **`schedule` / A1③** 非主路径。
+
+---
+
 ## 2026-06-29（文档与代码对齐 · A1 ② artifact）
 
 - **代码现状（此前已落地，文档滞后）**：**`utils/artifactParse.ts`**、**`api/artifacts.ts`**、**`useChatThreadPanel`** 解析 **`artifactId`**、**`ChatThreadPanel`** toolTrace **「下载文件」** 按钮。

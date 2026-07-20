@@ -1,42 +1,32 @@
-/**
- * 覆盖 antd Layout 默认 min-height: 100vh，否则内容高于视口时整页被撑高。
- * 高度由 html/body/#root 的 100% 约束在视口内，内部各栏自行 overflow。
- */
-.app-root.ant-layout {
+.app-root {
   height: 100%;
   min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
 
-.app-root__header {
-  flex-shrink: 0;
-  color: #fff;
-  line-height: 64px;
-}
+  &__header {
+    flex-shrink: 0;
+    padding: 0 16px;
+    line-height: 56px;
+    background: #001529;
+    color: #fff;
 
-.app-root__header-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
+    a {
+      color: #fff;
+    }
+  }
 
-.app-root__content {
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  padding: 16px;
-}
+  &__header-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
 
-/** 路由出口单节点占满 Content，并允许子 flex 在 min-height:0 下收缩（否则顶出整页滚动） */
-.app-root__content > * {
-  flex: 1;
-  min-height: 0;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
+  &__content {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 16px;
+  }
 }

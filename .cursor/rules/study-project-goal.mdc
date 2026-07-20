@@ -5,7 +5,8 @@ alwaysApply: true
 
 > **用户硬性要求（长期，多次确认）**：助手**不得**使用编辑类工具对 **`src/**`**、**`index.html`** 做写入、删除或 Apply 补丁；**只**提供步骤说明与可复制片段。**唯一破例**：用户**在同一条消息**中写出**一字不差**的 **`本次允许修改`**，并写清允许代改的文件或目录。
 
-> **说明类文档入口**：根 **`readme.md`**（当前真相与架构）+ **`docs/documentation-index.md`**（各 `docs/` 与规则文件职责）+ **`docs/collaboration-and-coding-rules.md`**（人类可读摘要，与后端协作文档同源结构）+ **`docs/frontend-refactor-plan.md`**（前端重构执行清单）。  
+> **说明类文档入口**：根 **`readme.md`**（当前真相与架构）+ **`docs/documentation-index.md`**（各 `docs/` 与规则文件职责）+ **`docs/collaboration-and-coding-rules.md`**（人类可读摘要，与后端协作文档同源结构）+ **`docs/frontend-refactor-plan.md`**（前端重构执行清单 §**W**）。  
+> **重写教学节奏**：**`study-rewrite-pedagogy.mdc`**（DOM→CSS→引用→逻辑；禁止一次给整页完整代码）。  
 > **架构/编码规则**（自 youbomao_PC 适配）：**`coding-architecture.mdc`**、**`coding-imports.mdc`**～**`coding-api-request.mdc`**、**`coding-react-components.mdc`**～**`coding-documentation.mdc`**、**`coding-pragmatic-structure.mdc`**、**`coding-data-investigation.mdc`** — 完整索引见 **`collaboration-and-coding-rules.md` §4**。
 
 ## 项目定位（助手角色）
@@ -43,6 +44,7 @@ alwaysApply: true
 - 对话统一使用**中文**；避免大段未解释的英文术语，若必须使用先给中文解释。
 - 新阶段开始时：先用简短几句话给出**目标**与 **2～4 步**概览。
 - 每一步：只讲本步「要做什么」「为什么现在做」；命令或代码**控制在一小块**；用户确认完成后再给下一步；用户有疑问时优先解释当前步。
+- **完整重写期间**：另遵 **`study-rewrite-pedagogy.mdc`** — 按 **DOM → CSS → 组件引用 → JS 逻辑** 分层推进；**禁止**一次给出整页/整 hook 完整实现。
 - **用户声明「不要直接修改代码」**：对 **`src/**`**、**`index.html`** **不使用** Apply/写入/删除类工具，只给步骤与可复制片段；**例外**仍为同条消息内**一字不差**的 **`本次允许修改`** 且用户写清允许代改的范围。
 
 ## 助手对业务源码的硬约束（速查，与上文一致）
@@ -79,14 +81,16 @@ alwaysApply: true
 
 - **后端项目位置（规范）**：**`myproject/backend`**；进度以 **`myproject/backend/readme.md`** 为准；流式与会话字段级约定以 **`myproject/backend/docs/chat-stream-api.md`**、**`myproject/backend/docs/conversations-api.md`** 为准。
 - **统一 JSON 响应**（**`/health`**、**`/conversation/*`** 等非 SSE）：**`{ code, data, msg }`**（与前端 `HttpError` / `res.code === 0` 对齐）。
-- **当前后端已挂载 API**（与 **`myproject/backend/src/api.py`** 及 routers 对齐；随项目演进更新）：
+- **当前后端已挂载 API**（重建 **`src/`**；随项目演进更新）：
   - **GET /health**：健康检查。
-  - **POST /chat/stream**：**SSE**；**`ChatRequest`**（`message`、`conversation_id?`、`routing` 默认 **`auto`**、`mcp_tool?`）；事件 **`delta` / `error` / `done`**；**`mcp` / `auto→mcp`** 另有 **`tool_call` / `tool_result`**（见 backend **`docs/chat-stream-api.md`**）。
-  - **GET /conversation/list**、**POST /conversation/delete**、**POST /conversation/create**、**GET /conversation/{id}/messages**：会话与消息（分页见 **`docs/conversations-api.md`**）。
-- **未挂载 / 前端不得再封装**：`/tasks`、`/agent/*`、非流式 **`POST /chat`**、**`/events`** 等；当前 **`src/`** 已无上述调用。
-- **联调注意**：**`routing=plan`** 后端仍为占位 **`error`**；**`mcp`** 需 **`mcp_tool`**（前端日常 UI 不暴露，由 **auto** 或未来能力按钮触发）。
-- **启动后端**：在 **`myproject/backend`** 执行 `uvicorn src.api:app --reload`，默认 `http://127.0.0.1:8000`；前端需后端 **CORS** 与 **`DATABASE_URL`**、迁移等到位（见 **`myproject/backend/readme.md`**）。
-- **当前前端重心（2026-06-29，与 `readme.md`、§R 同步）**：**R1～R4 主路径已落地**（会话双栏、SSE、health、**tool_*** 展示、模式 **auto/chat**）；**A1 ① preset**、**A1 ② artifact 下载** 已实现，待 **`trip-assistant.md` §6** 验收；**阶段 4**：A1 ③ composer 导出、具名能力按钮、Abort UI。契约见 **`docs/frontend-backend-contract.md`**。
+  - **POST /chat/stream**：**SSE**；**`message`** 与 **`attachment_ids`** 不可同时为空；**`routing`** 默认 **`chat`**（另有 **`auto` / `mcp`**；**`plan`** 占位）；可选 **`preset=guide`**、**`mcp_tool` / `mcp_arguments`**；事件 **`delta` / `error` / `done`**，**`mcp`/`auto→mcp`** 另有 **`tool_call` / `tool_result`**。
+  - **GET /conversation/list**、**POST /conversation/delete**、**POST /conversation/create**、**GET /conversation/{id}/messages**（消息含 **`attachments`**）。
+  - **POST /artifact**、**GET /artifact/{id}**、**GET /artifact/{id}/meta**：上传与下载。
+  - **GET /user/profile**、**PUT /user/profile**：用户画像（重写 W8 可选）。
+- **未挂载 / 前端不得再封装**：`/tasks`、`/agent/*`、非流式 **`POST /chat`**、**`/events`**、旧 **`schedule_draft`** 路径等。
+- **联调注意**：**`routing=plan`** 占位 **`error`**；日常发送默认 **`chat`**；身份用 **`guide`**（勿再传 **`schedule`**）。
+- **启动后端**：在 **`myproject/backend`** 执行 `uvicorn src.api:app --reload`，默认 `http://127.0.0.1:8000`（见 backend **`readme.md`**）。
+- **当前前端重心（2026-07-20）**：**完整重写 `src/`**（§**W**）；旧 R1～R4 / A1（`schedule`）仅 git 对照。清单：**`docs/frontend-refactor-plan.md`**；教学：**`study-rewrite-pedagogy.mdc`**。
 
 ## 前后端整体目标对齐
 

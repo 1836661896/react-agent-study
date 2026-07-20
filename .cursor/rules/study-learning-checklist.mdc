@@ -1,66 +1,59 @@
 ---
-description: React 知识点清单（Vue 迁移视角）——按状态推进
+description: React 知识点与后端联调勾选——完整重写 W 阶段对齐重建后端
 alwaysApply: true
 ---
 
-> 说明：这里的“状态”用于控制学习节奏。每次学习结束，把本次涉及到的知识点从「未开始」改为「进行中/已完成」。
+> 说明：这里的「状态」用于控制学习节奏。每次学习结束，把本次涉及到的知识点从「未开始」改为「进行中/已完成」。
 
 ## 状态标记
 
 - ✅ 已完成：能解释 + 能在当前项目里指出对应代码
 - 🔄 进行中：讲过/用过，但还需要更多练习巩固
 - ⏳ 未开始：还没引入
+- 🗄 归档：旧实现曾掌握；完整重写后须在新代码中重新勾选
 
 ---
 
 ## React 专属知识点（重点）
 
-### 1) 渲染模型：组件函数会反复执行（Vue 与 React 最大差异之一）
+### 1) 渲染模型
 
-- ✅ **组件渲染 = 执行函数**：每次 state 变化，函数组件会重新执行，JSX 会重新计算
-- ✅ **不要在 render 里做副作用**：请求/订阅/定时器放到 `useEffect`（或交给 React Query）
-- 🔄 **闭包与“旧值”**：**`setPresetByConvId(prev => …)`** 函数式更新已用；定时器/流式回调里的旧值待后续 **Abort** 步巩固
+- 🗄 **组件渲染 = 执行函数**（旧 `src` 曾完成；重写 W1 起再练）
+- ⏳ **不要在 render 里做副作用**
+- ⏳ **闭包与函数式更新 / Abort**
 
-### 2) Hooks 基础（对照 Vue Composition API）
+### 2) Hooks 基础
 
-- ✅ **useState**：值 + setter；setter 触发重新渲染（对照 `ref`）
-- ✅ **useEffect**：副作用与依赖数组（对照 `onMounted/watch`；已用 `[]` 做挂载后一次请求）
-- ⏳ **useMemo/useCallback**：性能优化与引用稳定（先理解再引入）
+- 🗄 **useState** / **useEffect**（旧代码曾用；W5～W6 重练）
+- ⏳ **useMemo/useCallback**（有明确性能需求再引入）
 
-### 3) JSX（对照 Vue template）
+### 3) JSX
 
-- ✅ **条件渲染**：`&&`、三元（对照 `v-if/v-else`）
-- ✅ **列表渲染**：`map` + `key`（对照 `v-for :key`）
-- ✅ **事件绑定**：传函数 `onClick={() => ...}`（对照 `@click="..."`）
-- ✅ **受控输入**：`value` + `onChange`（对照 `v-model`）
-- 🔄 **Props 与状态提升**：**`ChatThreadPanel.preset`**；**`onScheduleSessionCreated`** 回调（对照 Vue **emit**）；共享 state 放 **`ChatPage`**
+- 🗄 条件 / 列表 / 事件 / 受控输入（旧代码）
+- ⏳ **Props 与状态提升**（W5～W6：列表选中、preset=`guide`）
 
-### 4) React Query（数据获取的“框架化”方式）
+### 4) React Query
 
-- ✅ **useQuery**：`data/isLoading/isError` 与 `queryKey`（缓存 key、共享、去重）
-- ✅ **useMutation**：提交/删除等写操作；`mutate` 触发；成功后处理
-- ✅ **invalidateQueries**：写成功后让读数据失效并重拉（保持一致性）
-- 🔄 **isError / error 在 UI 中展示**：阶段 3 目标（错误条、重试）
-- ⏳ **staleTime / refetchOnWindowFocus**：什么时候自动重拉、如何控制
+- 🗄 **useQuery / useMutation / invalidateQueries**（旧代码）
+- ⏳ 重写后重新勾选；**isError UI**、**staleTime** 仍可后置
 
-### 5) TypeScript（本项目实践）
+### 5) TypeScript
 
-- 🔄 **API 返回结构与类型**：区分 “React Query 的 data” 与 “后端 envelope 的 data”
-- ⏳ **类型收敛**：把 `any/unknown` 收敛为明确类型（含错误类型）
+- ⏳ **对齐重建契约**：`AgentPreset = "guide"`、`attachment_ids`、`attachments`、`updated_at`
+- ⏳ 类型收敛（少用 `any`）
 
 ---
 
-### 6) 后端联调（与 **`myproject/backend`** 当前 `src/` 及 readme、docs 对齐）
+### 6) 后端联调（重建 backend）
 
-> **路径约定**：**`myproject/backend`** 为文档中的规范仓库位置；接口以 **`myproject/backend/readme.md`** 及 **`myproject/backend/docs/chat-stream-api.md`**、**`myproject/backend/docs/conversations-api.md`** 为准。  
-> **本仓库文档索引**：**`docs/documentation-index.md`**。
+> 权威：**`myproject/backend/readme.md`**、**`docs/chat-stream-api.md`**、**`docs/conversations-api.md`**、**`docs/artifacts-api.md`**、**`docs/agent-presets.md`**。
 
-- ✅ **历史练习（旧挂载路由，后端重构后已移除）**：曾联调 **`POST /agent/run`**、**`GET /agent/last-step`**、**`GET /agent/steps`**、任务相关接口、非流式 **`POST /chat`** 等；可作为 React Query / 表单练习参考，**不再代表现行后端**。
-- 🔄 **现行后端挂载（前端对齐进度）**：
-  - ✅ **GET /health**（顶栏 **`HealthBage`**）
-  - ✅ **GET /conversation/list**、**POST /conversation/delete**、**POST /conversation/create**、**GET /conversation/{id}/messages**
-  - ✅ **POST /chat/stream**（**`delta` / `error` / `done`** + **`tool_call` / `tool_result` 展示**）；发送模式 UI：**`auto` / `chat`** 仅
-  - ✅ **`preset=schedule`**（行程助手入口 + **`presetByConvId`**）
-  - ✅ **`GET /artifact/{id}`** 下载（A1②；**`artifactParse` + `downloadArtifact` + toolTrace 按钮**）
-  - ⏳ composer **导出快捷**（A1③）；⏳ 流式 **Abort** UI（API 已支持 **`signal`**）
-- 🔄 **近期 UI**：**`done`** + **`invalidateQueries`**；**toolTrace** + **artifact 下载**；待 composer 导出、Abort
+- 🗄 **旧 A1**：`preset=schedule`、行程助手文案 — **不再作为主路径**
+- ⏳ **GET /health**（W1：差 request + HealthBage）
+- ⏳ **会话 list / create / delete / messages**（含 **`attachments`**）
+- ⏳ **POST /chat/stream**（默认 **`chat`**；**`preset=guide`**；**`attachment_ids`**；SSE **`delta` / `tool_*` / `error` / `done`**）
+- ⏳ **POST /artifact** 上传 + **GET /artifact/{id}** 下载
+- ⏳ **GET/PUT /user/profile**（W8）
+- ⏳ 流式 **Abort** UI（W8；后端 disconnect 未做，前端可先断连接）
+
+**重写进度**：**W0 ✅**；**W1 🔄**（壳/路由/Provider 已有）。清单：**`docs/frontend-refactor-plan.md`** §**W**；换设备见 **`docs/study-progress.md`**。

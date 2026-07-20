@@ -1,131 +1,78 @@
 # React 前端 — Agent 项目
 
-> **换设备 / 新对话**：根目录 **`readme.md`** + **`docs/documentation-index.md`**（各文档职责）+ **`.cursor/rules/study-project-goal.mdc`** + **`study-plan.mdc`** + **`study-learning-checklist.mdc`**。  
+> **换设备 / 新对话**：根目录 **`readme.md`** + **`docs/documentation-index.md`** + **`docs/study-progress.md`**（**下一步从哪接**）+ **`.cursor/rules/study-project-goal.mdc`** + **`study-plan.mdc`** + **`study-rewrite-pedagogy.mdc`** + **`study-learning-checklist.mdc`**。  
 > **变更流水**：**`docs/changelog.md`**。  
-> **学习进度与下一步**：**`docs/study-progress.md`**。  
-> **前后端契约（接口、信封、SSE、遗留差距）**：**`docs/frontend-backend-contract.md`**。  
-> **前端重构执行计划（分步清单）**：**`docs/frontend-refactor-plan.md`**。  
-> **产品构想与排期**：**`docs/product-roadmap.md`**。  
-> **协作与编码约定（人类可读摘要）**：**`docs/collaboration-and-coding-rules.md`**（硬约束以 **`.cursor/rules/study-project-goal.mdc`** 为准）。  
-> **流式 / 会话字段级约定（后端权威）**：**`myproject/backend/docs/chat-stream-api.md`**、**`myproject/backend/docs/conversations-api.md`**。
+> **前后端契约**：**`docs/frontend-backend-contract.md`**。  
+> **完整重写清单 §W**：**`docs/frontend-refactor-plan.md`**。  
+> **产品构想**：**`docs/product-roadmap.md`**。  
+> **协作摘要**：**`docs/collaboration-and-coding-rules.md`**。  
+> **后端权威**：**`myproject/backend/docs/chat-stream-api.md`**、**`conversations-api.md`**、**`artifacts-api.md`**、**`agent-presets.md`**。
 
-**路径说明（规范）**：**`myproject/frontend`**（本仓库）、**`myproject/backend`** 为文档中的约定路径；协作时以此为准。**不在项目文档中记录本机实际克隆目录**。
+**路径说明（规范）**：**`myproject/frontend`**（本仓库）、**`myproject/backend`**；**不在文档中记录本机克隆目录**。
 
 ---
 
 ## 1. 项目是做什么的
 
-- **定位**：**`myproject/backend`**（Python + FastAPI）的 **Web 界面**；技术栈为 **React + TypeScript + Vite**，UI 库 **Ant Design**，数据请求 **TanStack React Query**（部分模块）。
-- **当前阶段**：后端 **行程助手 A1** 联调中；前端 **R1～R4 已落地**。**A1 ① preset 链路**已完成：**`preset=schedule`** 随 **`POST /chat/stream`** 发送；左侧 **「行程助手」** 新建会话并固定 preset（**`ChatPage` `presetByConvId` + 回调 props**）。**A1 ② artifact 下载**已实现（**`artifactParse` + `api/artifacts.ts` + toolTrace 下载按钮**），待 **`trip-assistant.md` §6** 四轮联调验收。**A1 ③** composer 可选快捷导出 docx/pdf 仍待做。**阶段 4 其它**：Abort、三栏左占位、具名能力按钮等见 **`docs/frontend-refactor-plan.md`**。
+- **定位**：**`myproject/backend`**（Python + FastAPI）的 **Web 界面**；**React + TypeScript + Vite**，**Ant Design**，**TanStack React Query**。
+- **当前阶段（2026-07-20 晚）**：**完整重写进行中**（§**W**）。旧业务在 **`backup/src/`**；新 **`src/`** 为空壳 + 请求地基（未完）。对齐重建后端：**`preset=guide`**、默认 **`routing=chat`**、附件、可选画像。
+- **下一步**：补 **`request.ts`** + Health 顶栏（收尾 W1）→ **W2** 类型与 API。详见 **`docs/study-progress.md`**。
+- **非目标**：恢复 **`schedule` / schedule_draft / 旧 A1③`**。
 
 ---
 
 ## 2. 目录与架构（摘要）
 
-> **说明**：以下为**当前磁盘上 `src/` 真实结构**（随提交更新）；**目标能力**仍以 **`docs/frontend-refactor-plan.md`** §**R3～R4** 为准。
+> **当前磁盘真相**（随提交更新）。旧实现对照：**`backup/src/`**（勿当运行入口）。
 
 ```
 .
-├── docs/                    # 说明类文档（职责见 documentation-index.md）
-├── src/
-│   ├── api/
-│   │   ├── conversations.ts # list / delete / create / messages
-│   │   ├── chatStream.ts    # POST /chat/stream（SSE；含 preset）
-│   │   ├── artifacts.ts     # GET /artifact/{id} 二进制下载
-│   │   └── health.ts        # GET /health
-│   ├── components/
-│   │   └── HealthBage.tsx   # 顶栏健康状态（useQuery）
-│   ├── config/
-│   │   └── env.ts           # VITE_API_BASE_URL
-│   ├── constants/
-│   │   ├── queryKeys.ts     # TanStack Query key 工厂
-│   │   └── routes.ts        # ROUTES.home / ROUTES.chat
+├── backup/src/              # 重写前快照（只读对照）
+├── docs/
+├── src/                     # ← 运行入口（重建中）
+│   ├── main.tsx             # Router + Query + antd zhCN
+│   ├── app.tsx / App.tsx    # 顶栏 + Routes（注意大小写，见 study-progress）
+│   ├── config/env.ts        # VITE_API_BASE_URL
+│   ├── constants/routes.ts
 │   ├── pages/
-│   │   ├── chat/
-│   │   │   ├── index.tsx    # /chat：双栏 + presetByConvId
-│   │   │   ├── index.scss
-│   │   │   ├── conversationListCache.ts  # 列表缓存行查找
-│   │   │   ├── ConversationList/
-│   │   │   │   ├── index.tsx
-│   │   │   │   ├── type.ts
-│   │   │   │   └── index.scss
-│   │   │   └── ChatThreadPanel/
-│   │   │       ├── index.tsx
-│   │   │       ├── type.ts             # props、ToolTrace 等私有类型
-│   │   │       ├── useChatThreadPanel.ts  # infinite 消息、SSE 发送、toolTrace
-│   │   │       └── index.scss
-│   │   ├── HomePage.tsx     # 路由 /
-│   │   └── NotFoundPage.tsx # 路由 *
-│   ├── types/
-│   │   ├── common.ts        # ApiResponse、ListResult、ListQuery 等
-│   │   ├── conversations.ts # 会话/消息类型与后端对齐
-│   │   └── chatStream.ts    # SSE 事件；PostChatStreamBody 含 preset
-│   ├── utils/
-│   │   ├── request.ts       # HttpError、request()（JSON 信封）
-│   │   ├── url.ts           # buildApiUrl（JSON / SSE / 下载共用）
-│   │   ├── artifactParse.ts # tool_result 解析 artifact_id
-│   │   ├── common.ts        # errorDescription 等
-│   │   └── datetime.ts      # formatDisplayDateTime
-│   ├── styles/
-│   │   ├── main.scss        # 全局 reset、#root 高度链
-│   │   └── App.scss         # Layout 一屏 flex、主区不溢出
-│   ├── App.tsx
-│   ├── main.tsx             # BrowserRouter、QueryClientProvider、antd zhCN
-│   └── vite-env.d.ts
-├── index.html               # /src/main.tsx
+│   │   ├── HomePage.tsx
+│   │   ├── NotFoundPage.tsx
+│   │   └── chat/index.tsx   # 占位（W3 双栏）
+│   ├── styles/              # main.scss + App.scss（一屏高度）
+│   ├── types/common.ts      # ApiResponse 信封
+│   └── utils/url.ts         # buildApiUrl
+│   # 待补：utils/request.ts、api/*、Health、聊天业务…
+├── index.html               # → /src/main.tsx
 ├── vite.config.js           # @ → ./src
-├── tsconfig.json
 └── package.json
 ```
-
-**架构约定（当前 → 目标）**
-
-- **JSON**：当前由 **`src/utils/request.ts`** 的 **`request()`** 对接 **`{ code, data, msg }`**（与计划中的 **`lib/http.ts`** 角色相同；是否改名为 `lib/http` 由后续重构决定）。
-- **路由**：**`react-router-dom`** 的 **`BrowserRouter`** 在 **`main.tsx`**；**`/chat`** 页面在 **`src/pages/chat/index.tsx`**（经 **`App.tsx`** **`import ChatPage from "./pages/chat"`**）。
-- **会话 HTTP**：**`src/api/conversations.ts`** 已封装 **`list`**、**`delete`**、**`create`**、**`messages`**（见 **`docs/frontend-backend-contract.md`**）。
-- **SSE**：**`src/api/chatStream.ts`**，**`POST /chat/stream`**，与 **`src/types/chatStream.ts`** 对齐后端 **`docs/chat-stream-api.md`**。
-- **环境**：**`src/config/env.ts`** → **`VITE_API_BASE_URL`**。
 
 ---
 
 ## 3. 功能模块与实现程度
 
-> **约定**：与 **`docs/frontend-refactor-plan.md`** §**R** 同步；细项随代码更新。
+> 与 **`docs/frontend-refactor-plan.md`** §**W** 同步。
 
-| 模块 | 主要路径 | 实现程度 | 说明 |
-|------|-----------|-----------|------|
-| 应用入口与全局壳 | `main.tsx`、`App.tsx` | 已完成（R4） | **`BrowserRouter`** + React Query + antd 中文；顶栏 **`Link`** + **`HealthBage`**；**`Routes`**（`/`、`/chat`、`*`） |
-| 环境变量 | `config/env.ts` | 已完成（R2） | 缺少 `VITE_API_BASE_URL` 时抛错 |
-| JSON 请求封装 | `utils/request.ts` | 已完成（R2） | `HttpError`、`request`；注意 **`exactOptionalPropertyTypes`** 下 **`fetch` init** 勿显式传 `body: undefined` |
-| 类型（信封与会话 / 流式） | `types/common.ts`、`types/conversations.ts`、`types/chatStream.ts` | 已完成（R3 + A1①） | **`AgentPreset`**、**`PostChatStreamBody.preset?`**；SSE **`tool_*`** |
-| 会话 API | `api/conversations.ts`、`api/chatStream.ts`、`api/health.ts` | 已完成（R3/R4） | JSON：**list / delete / create / messages / health**；SSE：**postChatStream**（含 **preset**）+ 工具回调 |
-| 聊天页 UI | `pages/chat/index.tsx`、`ConversationList/*`、`ChatThreadPanel/*` | 进行中 | 双栏；**行程助手** 入口 + **presetByConvId**；**toolTrace** + **artifact 下载按钮**；待 composer 导出快捷（A1③） |
-| 行程助手 preset | `chatStream.ts`、`ChatPage`、`ConversationList`、`ChatThreadPanel` | **A1① 已完成** | 仅 **行程助手** 创建的会话带 **`preset=schedule`**；已 Network 验证 |
-| Artifact 下载 | `utils/artifactParse.ts`、`api/artifacts.ts`、`ChatThreadPanel` | **A1② 已实现，待验收** | **`tool_result`** 解析 **`artifact_id`** → **`GET /artifact/{id}`** 触发浏览器下载 |
-| 健康检查 UI | `api/health.ts`、`components/HealthBage.tsx` | 已完成（R4） | 顶栏 Tag，30s **`refetchInterval`** |
-| 流式发送 | `api/chatStream.ts`、`ChatThreadPanel/useChatThreadPanel.ts` | 进行中 | **`tool_*`** + artifact 下载；**`postChatStream`** 已支持 **`signal`**；UI 待 **Abort**、composer 导出快捷（A1③）、其它能力按钮 |
-| 已下线路由封装 | — | **无** | 当前 `src` 无 **`/tasks`、`/agent/*`、`/events`** 等封装（与 **`frontend-backend-contract.md`** §3 一致） |
+| 模块 | 路径 | 程度 | 说明 |
+|------|------|------|------|
+| 应用壳 / 路由 / Provider | `main.tsx`、`App`/`app` | 🔄 W1 | 差 Health |
+| 环境 / URL | `config/env`、`utils/url` | ✅ | |
+| JSON `request` / Health | `utils/request`、`api/health` | ⏳ | 下一会话 |
+| 会话 / SSE / 附件 API | `api/*`、`types/*` | ⏳ W2 | `guide`、attachments |
+| 聊天双栏 UI | `pages/chat/*` | ⏳ W3～W7 | 现为占位 |
+| 旧业务对照 | `backup/src/` | 🗄 | 不迁回 |
 
 ---
 
 ## 4. 环境与启动
 
-- **Node.js**：与 **`package.json`** 中 Vite / TypeScript 版本兼容的当前 LTS 即可。
-- **安装依赖**：在项目根目录执行 `npm install`。
-- **本地开发**：`npm run dev`（Vite 默认 **`http://localhost:5173`**）。
-- **API 基址**：配置 **`.env.development`** / **`.env.production`** 中的 **`VITE_API_BASE_URL`**（指向 **`myproject/backend`** 服务根 URL，无尾斜杠亦可，由 **`utils/request.ts`** 等拼接路径）。
+- **安装**：`npm install`
+- **开发**：`npm run dev`（默认 **`http://localhost:5173`**）
+- **API 基址**：`.env.development` 中 **`VITE_API_BASE_URL`**（指向 backend 根 URL）
 
 ---
 
 ## 5. API 约定备忘
 
-- **JSON**：**`{ code, data, msg }`**；**`code !== 0`** 业务失败（实现位置：**`src/utils/request.ts`** 的 **`request()`**）。
-- **SSE**：**`/chat/stream`**；事件形态与 **`ChatRequest`** 字段见 **`myproject/backend/docs/chat-stream-api.md`**。
-- **会话分页**：见 **`myproject/backend/docs/conversations-api.md`**。
-- **完整接口表与遗留说明**：**`docs/frontend-backend-contract.md`**。
-
----
-
-## 6. 后端仓库
-
-- **`myproject/backend`**：根 **`readme.md`** 为后端当前真相；与本前端联调时以前端 **`docs/frontend-backend-contract.md`** 自查是否仍调用已下线路由。
+- JSON：**`{ code, data, msg }`**；SSE / 附件字段见 **`docs/frontend-backend-contract.md`** 与 backend 文档。
+- 身份：**`preset=guide`**；日常发送默认 **`routing=chat`**。

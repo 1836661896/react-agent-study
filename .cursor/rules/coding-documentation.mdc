@@ -13,7 +13,7 @@ alwaysApply: false
 | `readme.md` | 项目定位、**当前** `src/` 结构摘要、功能实现度表、启动步骤、文档索引 | 规范细则全文、学习叙事长篇 |
 | `docs/documentation-index.md` | 各文档职责与更新时机 | 架构/编码细则 |
 | `docs/frontend-backend-contract.md` | 前后端接口、信封、SSE、已下线 API | 学习进度 |
-| `docs/frontend-refactor-plan.md` | 前端重构**执行清单**与勾选 | 编码规范 |
+| `docs/frontend-refactor-plan.md` | 前端完整重写 **§W** 清单与勾选 | 编码规范 |
 | `docs/changelog.md` | 按日期的变更流水 | 进度表 |
 | `docs/study-progress.md` | 学习摘要、下一步 | API 字段表 |
 | `docs/product-roadmap.md` | 产品构想与排期 | 当前代码真相 |

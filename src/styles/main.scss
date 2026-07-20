@@ -1,13 +1,10 @@
-/**
- * 全局视口高度链：否则子树里 height: 100% 等价于 auto，整页随内容变高出现 body 滚动条。
- */
 html,
 body {
-  height: 100%;
-  margin: 0;
+    height: 100%;
+    margin: 0;
 }
 
 #root {
-  height: 100%;
-  min-height: 0;
+    height: 100%;
+    min-height: 0;
 }
