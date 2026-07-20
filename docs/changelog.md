@@ -4,6 +4,25 @@
 
 ---
 
+## 2026-07-20（W1 收尾 + W2 半截 · 下班提交）
+
+- **W1**：`request.ts`、`api/health`、`HealthBage` 挂顶栏。
+- **W2 半**：`ListQuery`/`ListResult`；`types/conversations` + `api/conversations`；`types/chatStream`（SSE 字段对齐后端；默认身份 **`guide`**）。
+- **未做（下次）**：**`api/chatStream.ts`**、artifacts types/api。
+- **教学**：UI 严格 DOM→CSS→引用→逻辑；Health 过简曾整段给代码为例外。
+- **文档**：readme / study-progress / refactor-plan §W2 / 契约 §5 / checklist / plan 同步。
+
+---
+
+## 2026-07-20（W1 收尾 · request + Health）
+
+- **代码**：**`utils/request.ts`**、**`api/health.ts`**、**`components/HealthBage`** 挂顶栏；W1 勾选完成。
+- **教学**：Health 过简曾整段给代码；用户确认 **后续 UI 严格 DOM → CSS → 引用 → 逻辑**。
+- **文档**：**`readme`**、**`study-progress`**、**`frontend-refactor-plan` §W1**、契约 §5、checklist / pedagogy / plan 同步。
+- **下一会话**：**W2** 类型与 API。
+
+---
+
 ## 2026-07-20 晚（路径大小写约定）
 
 - **本仓库**：`git config --local core.ignorecase false`（需各机自配；见协作文档）。

@@ -35,11 +35,11 @@ alwaysApply: true
 ### 4) React Query
 
 - 🗄 **useQuery / useMutation / invalidateQueries**（旧代码）
-- ⏳ 重写后重新勾选；**isError UI**、**staleTime** 仍可后置
+- 🔄 **HealthBage 重练 useQuery**（W1）；列表/mutation 等 W5 再勾 ✅；**isError UI**、**staleTime** 仍可后置
 
 ### 5) TypeScript
 
-- ⏳ **对齐重建契约**：`AgentPreset = "guide"`、`attachment_ids`、`attachments`、`updated_at`
+- 🔄 **对齐重建契约**：`AgentPreset = "guide"`、`attachment_ids`、`attachments`、`updated_at`（types 已写；api/UI 未全接）
 - ⏳ 类型收敛（少用 `any`）
 
 ---
@@ -49,11 +49,11 @@ alwaysApply: true
 > 权威：**`myproject/backend/readme.md`**、**`docs/chat-stream-api.md`**、**`docs/conversations-api.md`**、**`docs/artifacts-api.md`**、**`docs/agent-presets.md`**。
 
 - 🗄 **旧 A1**：`preset=schedule`、行程助手文案 — **不再作为主路径**
-- ⏳ **GET /health**（W1：差 request + HealthBage）
-- ⏳ **会话 list / create / delete / messages**（含 **`attachments`**）
-- ⏳ **POST /chat/stream**（默认 **`chat`**；**`preset=guide`**；**`attachment_ids`**；SSE **`delta` / `tool_*` / `error` / `done`**）
+- ✅ **GET /health**（W1：`request` + HealthBage）
+- 🔄 **会话 list / create / delete / messages**（types+api 已有；UI 待 W5）
+- ⏳ **POST /chat/stream**（类型已有；**api 下次**；默认 **`chat`**；**`preset=guide`**；**`attachment_ids`**；SSE **`delta` / `tool_*` / `error` / `done`**）
 - ⏳ **POST /artifact** 上传 + **GET /artifact/{id}** 下载
 - ⏳ **GET/PUT /user/profile**（W8）
 - ⏳ 流式 **Abort** UI（W8；后端 disconnect 未做，前端可先断连接）
 
-**重写进度**：**W0 ✅**；**W1 🔄**（壳/路由/Provider 已有）。清单：**`docs/frontend-refactor-plan.md`** §**W**；换设备见 **`docs/study-progress.md`**。
+**重写进度**：**W0 ✅**；**W1 ✅**；**W2 🔄**（会话 + chatStream 类型；缺 SSE api / artifacts）。清单：**`docs/frontend-refactor-plan.md`** §**W**；换设备见 **`docs/study-progress.md`**。

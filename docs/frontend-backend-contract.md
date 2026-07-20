@@ -44,18 +44,18 @@
 
 ## 5. 本仓库实现与契约的差距
 
-### 当前（2026-07-20 晚）
+### 当前（2026-07-20 · W2 半截）
 
 - **策略**：完整重写进行中（§**W**）。旧代码在 **`backup/src/`**；运行入口为新 **`src/`**。
-- **新 `src` 已有**：应用壳、路由占位、Provider、`env` / 信封类型 / `buildApiUrl`。
-- **新 `src` 尚未有**：**`request`**、会话/流式/附件 api、Health UI、聊天业务、**`preset=guide`**。
-- **目标**见 **`docs/frontend-refactor-plan.md`** §W1～W7。
+- **新 `src` 已有**：壳 / Health / **`request`**；会话 **types + api**；**`types/chatStream`**（`guide`、`attachment_ids`；SSE 字段对齐后端）。
+- **新 `src` 尚未有**：**`api/chatStream`**、artifacts api、聊天业务 UI。
+- **目标**见 **`docs/frontend-refactor-plan.md`** §W2～W7。
 
 | 能力 | 新 src | 重写目标 |
 |------|--------|----------|
-| `/health` | ⏳ 缺 request + UI | ✅ 收尾 W1 |
-| `/conversation/*` | ❌ | ✅ W2/W5/W6 |
-| `/chat/stream` | ❌ | ✅ W2/W6（`guide` + `chat`） |
+| `/health` | ✅ | W1 |
+| `/conversation/*` | ✅ types+api | W5/W6 接 UI |
+| `/chat/stream` | ✅ 类型；⏳ api | W2 收尾 / W6 UI |
 | `POST /artifact` 上传 | ❌ | ✅ W2/W7 |
 | `GET /artifact/{id}` 下载 | ❌ | ✅ W2/W7 |
 | `/user/profile` | ❌ | ⏳ W8 |
@@ -63,7 +63,7 @@
 ### 复核记录
 
 - **2026-07-20**：对照重建 backend；选定完整重写；**`study-rewrite-pedagogy.mdc`**。
-- **2026-07-20 晚**：W0 迁 **`backup/`**；W1 空壳进行中（差 Health）。
+- **2026-07-20**：W0 迁 **`backup/`**；**W1 ✅**；W2 会话层 + chatStream 类型落地；SSE api 次日。
 
 ---
 

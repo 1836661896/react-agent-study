@@ -15,8 +15,8 @@
 ## 1. 项目是做什么的
 
 - **定位**：**`myproject/backend`**（Python + FastAPI）的 **Web 界面**；**React + TypeScript + Vite**，**Ant Design**，**TanStack React Query**。
-- **当前阶段（2026-07-20 晚）**：**完整重写进行中**（§**W**）。旧业务在 **`backup/src/`**；新 **`src/`** 为空壳 + 请求地基（未完）。对齐重建后端：**`preset=guide`**、默认 **`routing=chat`**、附件、可选画像。
-- **下一步**：补 **`request.ts`** + Health 顶栏（收尾 W1）→ **W2** 类型与 API。详见 **`docs/study-progress.md`**。
+- **当前阶段（2026-07-20）**：**完整重写进行中**（§**W**）。**W1 ✅**；**W2 🔄**（会话 types/api + chatStream 类型已有；SSE api / 附件 api 待做）。旧业务在 **`backup/src/`**。对齐：**`preset=guide`**、默认 **`routing=chat`**、附件、可选画像。
+- **下一步**：**`api/chatStream.ts`** → artifacts → 勾选 W2 → **W3** 双栏 DOM。详见 **`docs/study-progress.md`**。
 - **非目标**：恢复 **`schedule` / schedule_draft / 旧 A1③`**。
 
 ---
@@ -31,19 +31,28 @@
 ├── docs/
 ├── src/                     # ← 运行入口（重建中）
 │   ├── main.tsx             # Router + Query + antd zhCN
-│   ├── app.tsx / App.tsx    # 顶栏 + Routes（注意大小写，见 study-progress）
-│   ├── config/env.ts        # VITE_API_BASE_URL
+│   ├── App.tsx              # 顶栏 + Routes + HealthBage
+│   ├── components/HealthBage.tsx
+│   ├── api/
+│   │   ├── health.ts
+│   │   └── conversations.ts # list/create/delete/messages
+│   ├── config/env.ts
 │   ├── constants/routes.ts
 │   ├── pages/
 │   │   ├── HomePage.tsx
 │   │   ├── NotFoundPage.tsx
 │   │   └── chat/index.tsx   # 占位（W3 双栏）
-│   ├── styles/              # main.scss + App.scss（一屏高度）
-│   ├── types/common.ts      # ApiResponse 信封
-│   └── utils/url.ts         # buildApiUrl
-│   # 待补：utils/request.ts、api/*、Health、聊天业务…
-├── index.html               # → /src/main.tsx
-├── vite.config.js           # @ → ./src
+│   ├── styles/
+│   ├── types/
+│   │   ├── common.ts        # ApiResponse + ListQuery/ListResult
+│   │   ├── conversations.ts
+│   │   └── chatStream.ts    # guide / attachment_ids / SSE 事件
+│   └── utils/
+│       ├── url.ts
+│       └── request.ts
+│   # 待补：api/chatStream、artifacts；W3～聊天 UI…
+├── index.html
+├── vite.config.js
 └── package.json
 ```
 
@@ -55,11 +64,14 @@
 
 | 模块 | 路径 | 程度 | 说明 |
 |------|------|------|------|
-| 应用壳 / 路由 / Provider | `main.tsx`、`App`/`app` | 🔄 W1 | 差 Health |
+| 应用壳 / 路由 / Provider | `main.tsx`、`App` | ✅ W1 | |
 | 环境 / URL | `config/env`、`utils/url` | ✅ | |
-| JSON `request` / Health | `utils/request`、`api/health` | ⏳ | 下一会话 |
-| 会话 / SSE / 附件 API | `api/*`、`types/*` | ⏳ W2 | `guide`、attachments |
-| 聊天双栏 UI | `pages/chat/*` | ⏳ W3～W7 | 现为占位 |
+| JSON `request` / Health | `utils/request`、`api/health`、`HealthBage` | ✅ W1 | |
+| 会话 types + api | `types/conversations`、`api/conversations` | ✅ W2 半 | |
+| SSE 类型 | `types/chatStream` | ✅ W2 半 | `guide`；事件字段已对齐后端 |
+| SSE api | `api/chatStream` | ⏳ | **下次**；默认 `routing=chat` |
+| 附件 types + api | `api/artifacts` 等 | ⏳ W2 | |
+| 聊天双栏 UI | `pages/chat/*` | ⏳ W3～W7 | 现为占位；分层教学 |
 | 旧业务对照 | `backup/src/` | 🗄 | 不迁回 |
 
 ---

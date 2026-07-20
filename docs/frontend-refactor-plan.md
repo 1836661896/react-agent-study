@@ -23,17 +23,22 @@
   - 用户已将整目录旧 **`src/`** 迁至 **`backup/src/`**；**`index.html`** 仍指向 **`/src/main.tsx`**。  
   - 旧实现仅作对照，**不迁业务组件**。
 
-- [ ] **W1 空壳可跑**（**进行中 · 2026-07-20 晚**）  
+- [x] **W1 空壳可跑**（**2026-07-20**）  
   - [x] `main.tsx`：`BrowserRouter`、`QueryClientProvider`、antd `zhCN`。  
   - [x] 顶栏 + `Routes`（`/`、`/chat`、`*`）占位页；**样式**一屏高度（`styles/main.scss`、`App.scss`）。  
   - [x] `config/env.ts`、`types/common`（信封）、`utils/url.ts`。  
-  - [ ] **`utils/request.ts`** + **`api/health`** + 顶栏 **HealthBage**（下一步）。  
-  - 教学：DOM→CSS→Router→Provider→Health；用户确认约定见 **`study-rewrite-pedagogy.mdc`**（单独回复 **`1`**）。
+  - [x] **`utils/request.ts`** + **`api/health`** + 顶栏 **HealthBage**。  
+  - 教学约定：用户单独回复 **`1`**；**UI 组件**严格 **①DOM → ②CSS → ③引用 → ④逻辑**（Health 过简曾整给，后续不再）。
 
-- [ ] **W2 类型与 API（可无聊天 UI）**  
-  - `types/common`、`conversations`（含 **`attachments`**、**`updated_at`**）、`chatStream`（**`AgentPreset = "guide"`**、**`attachment_ids`**）。  
-  - `utils/request`、`url`；`api/conversations`、`chatStream`（默认 **`routing=chat`**）、`artifacts`（**upload + download**）、`health`。  
-  - 可选：`api/userProfile.ts`。
+- [ ] **W2 类型与 API（可无聊天 UI）**（**进行中 · 2026-07-20**）  
+  - [x] `types/common`：`ListQuery` / `ListResult`。  
+  - [x] `types/conversations`（**`attachments`**、**`updated_at`**）。  
+  - [x] `api/conversations`（list / create / delete / messages）。  
+  - [x] `types/chatStream`（**`AgentPreset = "guide"`**、**`attachment_ids`**；SSE 对齐 `text`/`msg`/`tool`）。  
+  - [ ] **`api/chatStream.ts`**（默认 **`routing=chat`**）← **下次**。  
+  - [ ] `artifacts` 类型 + api（**upload + download**）。  
+  - 可选：`api/userProfile.ts`。  
+  - `health` 已在 W1。
 
 - [ ] **W3 `/chat` 布局 DOM**  
   - 双栏空壳：左列表区、右线程区、底输入区；占位文案即可。  

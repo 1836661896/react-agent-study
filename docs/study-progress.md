@@ -4,27 +4,31 @@
 
 ---
 
-## 最近一次学习（2026-07-20 晚 · W0～W1 进行中）
+## 最近一次学习（2026-07-20 · W1 完成 + W2 半截）
 
-- **W0**：旧实现整目录迁至 **`backup/src/`**；根目录 **`src/`** 从空壳重建。
-- **W1 已完成**：①DOM 壳、②全局/App SCSS（含 `&__*` 嵌套）、③Router + 首页/聊天/404 占位、④a Provider（Query + antd 中文）。
-- **W1 进行中**：④b 请求地基 — 已有 **`config/env.ts`**、**`types/common.ts`（仅信封）**、**`utils/url.ts`**；**尚未**重建 **`utils/request.ts`**、**`api/health`**、顶栏 **HealthBage**。
-- **约定**：用户单独回复 **`1`** = 当前步完成（见 **`study-rewrite-pedagogy.mdc`**）。
+- **W1 ✅**：`request.ts`、`api/health`、顶栏 **HealthBage**。
+- **W2 进行中**：
+  - ✅ `types/common`（`ListQuery` / `ListResult`）
+  - ✅ `types/conversations`（`updated_at`、`attachments`）
+  - ✅ `api/conversations`（list / create / delete / messages）
+  - ✅ `types/chatStream`（`preset=guide`、`attachment_ids`；SSE 字段对齐后端 `text`/`msg`/`tool`）
+  - ⏳ **`api/chatStream.ts`**（SSE 对接）← **下次优先**
+  - ⏳ `artifacts` 类型 + api（upload / download）
+- **教学约定**：UI 严格 **①DOM → ②CSS → ③引用 → ④逻辑**；单独回复 **`1`** = 当前步完成。
 
 ---
 
 ## 换设备继续（下一步）
 
-1. 拉最新 **`main`**；确认 **`backup/src/`** 在（旧代码对照，勿迁业务回 `src`）。
-2. 打开 **`docs/frontend-refactor-plan.md`** §**W1** / **`docs/study-progress.md`**。
-3. **直接从 W1-4b② 前补完**：若本机还缺 **`src/utils/request.ts`**，先按上次片段补全，再做 **`getHealth` + HealthBage 挂顶栏**。
-4. 完成后勾选 W1，进入 **W2**（会话/流式/附件类型与 api；**`preset=guide`**、默认 **`routing=chat`**）。
-5. **大小写**：统一 **`App.tsx` + `import from "./App"`**。换设备后执行 **`git config core.ignorecase false`**；见 **`docs/collaboration-and-coding-rules.md` §3**。可选：在 **`tsconfig.json`** 的 `compilerOptions` 增加 **`"forceConsistentCasingInFileNames": true`**。
+1. 拉最新 **`main`**；确认 **`backup/src/`** 在。
+2. 打开 **`docs/frontend-refactor-plan.md`** §**W2** / 本文件。
+3. **优先**：写 **`src/api/chatStream.ts`**（默认 **`routing=chat`**；勿抄旧 backup 的默认 `auto`）；对照已有 **`types/chatStream.ts`** 与 backend **`sse_events.py`**。
+4. 然后 artifacts 类型 + api；勾选 W2 后再进 **W3** 双栏 DOM。
 
 ---
 
 ## 提交前约定
 
-1. 有代码时建议 **`npm run lint`**（本批以文档 + 空壳为主）。
+1. 有代码时建议 **`npm run lint`**。
 2. 更新 **`readme.md`** 功能表、**`changelog.md`**、勾选 **`frontend-refactor-plan.md`**。
 3. 教学默认不工具改 **`src/**`**，除非消息含 **`本次允许修改`**。

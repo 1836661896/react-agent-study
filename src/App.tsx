@@ -1,5 +1,6 @@
 import "@/styles/App.scss"
 import { Link, Route, Routes } from "react-router-dom"
+import HealthBage from "./components/HealthBage"
 import { ROUTES } from "./constants/routes"
 import ChatPage from "./pages/chat"
 import HomePage from "./pages/HomePage"
@@ -13,6 +14,7 @@ export default function App() {
           <strong>Agent 前端</strong>
           <Link to={ROUTES.home}>首页</Link>
           <Link to={ROUTES.chat}>聊天</Link>
+          <HealthBage />
         </div>
       </header>
       <main className="app-root__content">
