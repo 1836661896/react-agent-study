@@ -4,26 +4,23 @@
 
 ---
 
-## 最近一次学习（2026-07-20 · W1 完成 + W2 半截）
+## 最近一次学习（2026-07-21 · W2～W6 主路径）
 
-- **W1 ✅**：`request.ts`、`api/health`、顶栏 **HealthBage**。
-- **W2 进行中**：
-  - ✅ `types/common`（`ListQuery` / `ListResult`）
-  - ✅ `types/conversations`（`updated_at`、`attachments`）
-  - ✅ `api/conversations`（list / create / delete / messages）
-  - ✅ `types/chatStream`（`preset=guide`、`attachment_ids`；SSE 字段对齐后端 `text`/`msg`/`tool`）
-  - ⏳ **`api/chatStream.ts`**（SSE 对接）← **下次优先**
-  - ⏳ `artifacts` 类型 + api（upload / download）
-- **教学约定**：UI 严格 **①DOM → ②CSS → ③引用 → ④逻辑**；单独回复 **`1`** = 当前步完成。
+- **W2 ✅**：`api/chatStream`（默认 **`chat`**）；`types/artifacts` + `api/artifacts`。
+- **W3～W4 ✅**：`/chat` 双栏 DOM + 一屏高度 CSS。
+- **W5 ✅**：`ConversationList` — list / create / delete；选中抬到父 state。
+- **W6 🔄**：`ChatThreadPanel` — messages Query；SSE 发送（**`preset=guide`**）；乐观用户气泡；**`routing`：`chat` | `auto`**。
+  - **未做**：`tool_call` / `tool_result` 展示。
+- **教学约定**：UI 严格 **①DOM → ②CSS → ③引用 → ④逻辑**；单独回复 **`1`**；注释风格保持「变量/方法均有注释」。
 
 ---
 
 ## 换设备继续（下一步）
 
-1. 拉最新 **`main`**；确认 **`backup/src/`** 在。
-2. 打开 **`docs/frontend-refactor-plan.md`** §**W2** / 本文件。
-3. **优先**：写 **`src/api/chatStream.ts`**（默认 **`routing=chat`**；勿抄旧 backup 的默认 `auto`）；对照已有 **`types/chatStream.ts`** 与 backend **`sse_events.py`**。
-4. 然后 artifacts 类型 + api；勾选 W2 后再进 **W3** 双栏 DOM。
+1. 拉最新 **`main`**。
+2. 打开 **`docs/frontend-refactor-plan.md`** §**W6**。
+3. **优先**：SSE **`tool_*`** 展示（选 `auto` 触发工具时可见）。
+4. 然后 **W7** 附件 UI（upload → `attachment_ids` → 历史下载）。
 
 ---
 

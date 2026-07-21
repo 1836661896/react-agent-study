@@ -30,28 +30,32 @@
   - [x] **`utils/request.ts`** + **`api/health`** + 顶栏 **HealthBage**。  
   - 教学约定：用户单独回复 **`1`**；**UI 组件**严格 **①DOM → ②CSS → ③引用 → ④逻辑**（Health 过简曾整给，后续不再）。
 
-- [ ] **W2 类型与 API（可无聊天 UI）**（**进行中 · 2026-07-20**）  
+- [x] **W2 类型与 API（可无聊天 UI）**（**2026-07-21**）  
   - [x] `types/common`：`ListQuery` / `ListResult`。  
   - [x] `types/conversations`（**`attachments`**、**`updated_at`**）。  
   - [x] `api/conversations`（list / create / delete / messages）。  
   - [x] `types/chatStream`（**`AgentPreset = "guide"`**、**`attachment_ids`**；SSE 对齐 `text`/`msg`/`tool`）。  
-  - [ ] **`api/chatStream.ts`**（默认 **`routing=chat`**）← **下次**。  
-  - [ ] `artifacts` 类型 + api（**upload + download**）。  
-  - 可选：`api/userProfile.ts`。  
+  - [x] **`api/chatStream.ts`**（默认 **`routing=chat`**；`attachment_ids`；Abort `signal`）。  
+  - [x] `types/artifacts` + `api/artifacts`（**upload + download**）。  
+  - 可选延后：`api/userProfile.ts`（W8）。  
   - `health` 已在 W1。
 
-- [ ] **W3 `/chat` 布局 DOM**  
-  - 双栏空壳：左列表区、右线程区、底输入区；占位文案即可。  
+- [x] **W3 `/chat` 布局 DOM**（**2026-07-21**）  
+  - 双栏空壳：左列表区、右线程区、底输入区；占位文案。  
   - **本步无** Query / SSE。
 
-- [ ] **W4 布局 CSS**  
+- [x] **W4 布局 CSS**（**2026-07-21**）  
   - 一屏高度链、列表/消息区滚动、composer 不撑破视口。
 
-- [ ] **W5 会话列表逻辑**  
-  - list / create / delete；选中会话抬到父 state（对照 Vue emit）。
+- [x] **W5 会话列表**（**2026-07-21**）  
+  - [x] ③ 拆 `ConversationList` 并挂入 `/chat`。  
+  - [x] ④ list / create / delete；选中会话抬到父 state。  
 
-- [ ] **W6 线程 + SSE**  
-  - messages（infinite 可后置）；发送；**`preset=guide`** 入口；模式 **`chat` | `auto`**；`tool_*` 展示；`done` → `invalidateQueries`。
+- [ ] **W6 线程 + SSE**（进行中 · 2026-07-21）  
+  - [x] ③ 拆 `ChatThreadPanel` 空壳（消息区 + composer）。  
+  - [x] ④ messages Query；发送 SSE（**`preset=guide`**、默认 **`chat`**）；流式气泡；`done` → invalidate。  
+  - [x] 乐观用户气泡；**`routing`：`chat` | `auto`**。  
+  - [ ] **`tool_call` / `tool_result` 展示**。
 
 - [ ] **W7 附件**  
   - composer：选文件 → **`POST /artifact`** → 待发送 `attachment_ids`。  

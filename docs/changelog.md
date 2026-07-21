@@ -4,6 +4,24 @@
 
 ---
 
+## 2026-07-21（W2～W6 主路径 · 下班提交）
+
+- **W2**：**`api/chatStream.ts`**（默认 **`chat`**）；**`types/artifacts`** + **`api/artifacts`**。
+- **W3～W4**：`/chat` 双栏 DOM + CSS（一屏高度 / 分区滚动）。
+- **W5**：**`ConversationList`** — list / create / delete；选中抬到父 state。
+- **W6 半**：**`ChatThreadPanel`** — messages；SSE（**`guide`**）；乐观气泡；**`routing` chat|auto**。未做 **`tool_*` UI**。
+- **文档**：readme / study-progress / refactor-plan / 契约 §5 / checklist / plan 同步至当前进度。
+- **下一会话**：W6 `tool_*` → W7 附件 UI。
+
+---
+
+## 2026-07-21（W2 收尾 · 午前）
+
+- **代码**：**`api/chatStream.ts`**（默认 **`routing=chat`**）；**`types/artifacts`** + **`api/artifacts`**（upload / download）。
+- **文档**：当时同步至 W2；当日晚已推进到 W6（见上条）。
+
+---
+
 ## 2026-07-20（W1 收尾 + W2 半截 · 下班提交）
 
 - **W1**：`request.ts`、`api/health`、`HealthBage` 挂顶栏。

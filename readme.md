@@ -15,8 +15,8 @@
 ## 1. 项目是做什么的
 
 - **定位**：**`myproject/backend`**（Python + FastAPI）的 **Web 界面**；**React + TypeScript + Vite**，**Ant Design**，**TanStack React Query**。
-- **当前阶段（2026-07-20）**：**完整重写进行中**（§**W**）。**W1 ✅**；**W2 🔄**（会话 types/api + chatStream 类型已有；SSE api / 附件 api 待做）。旧业务在 **`backup/src/`**。对齐：**`preset=guide`**、默认 **`routing=chat`**、附件、可选画像。
-- **下一步**：**`api/chatStream.ts`** → artifacts → 勾选 W2 → **W3** 双栏 DOM。详见 **`docs/study-progress.md`**。
+- **当前阶段（2026-07-21）**：**完整重写进行中**（§**W**）。**W0～W5 ✅**；**W6 🔄**（消息历史 + SSE 发送已通；缺 `tool_*` UI）。旧业务在 **`backup/src/`**。对齐：**`preset=guide`**、默认 **`routing=chat`**、附件 api 已有、可选画像。
+- **下一步**：W6 **`tool_*` 展示** → **W7** 附件 UI。详见 **`docs/study-progress.md`**。
 - **非目标**：恢复 **`schedule` / schedule_draft / 旧 A1③`**。
 
 ---
@@ -35,22 +35,28 @@
 │   ├── components/HealthBage.tsx
 │   ├── api/
 │   │   ├── health.ts
-│   │   └── conversations.ts # list/create/delete/messages
+│   │   ├── conversations.ts # list/create/delete/messages
+│   │   ├── chatStream.ts    # SSE；默认 routing=chat
+│   │   └── artifacts.ts     # upload + download
 │   ├── config/env.ts
 │   ├── constants/routes.ts
 │   ├── pages/
 │   │   ├── HomePage.tsx
 │   │   ├── NotFoundPage.tsx
-│   │   └── chat/index.tsx   # 占位（W3 双栏）
+│   │   └── chat/
+│   │       ├── index.tsx / index.scss
+│   │       ├── ConversationList/   # W5 列表
+│   │       └── ChatThreadPanel/    # W6 消息 + SSE
 │   ├── styles/
 │   ├── types/
-│   │   ├── common.ts        # ApiResponse + ListQuery/ListResult
+│   │   ├── common.ts
 │   │   ├── conversations.ts
-│   │   └── chatStream.ts    # guide / attachment_ids / SSE 事件
+│   │   ├── chatStream.ts
+│   │   └── artifacts.ts
 │   └── utils/
 │       ├── url.ts
 │       └── request.ts
-│   # 待补：api/chatStream、artifacts；W3～聊天 UI…
+│   # 待做：W6 tool_*；W7 附件 UI；W8 可选…
 ├── index.html
 ├── vite.config.js
 └── package.json
@@ -67,11 +73,12 @@
 | 应用壳 / 路由 / Provider | `main.tsx`、`App` | ✅ W1 | |
 | 环境 / URL | `config/env`、`utils/url` | ✅ | |
 | JSON `request` / Health | `utils/request`、`api/health`、`HealthBage` | ✅ W1 | |
-| 会话 types + api | `types/conversations`、`api/conversations` | ✅ W2 半 | |
-| SSE 类型 | `types/chatStream` | ✅ W2 半 | `guide`；事件字段已对齐后端 |
-| SSE api | `api/chatStream` | ⏳ | **下次**；默认 `routing=chat` |
-| 附件 types + api | `api/artifacts` 等 | ⏳ W2 | |
-| 聊天双栏 UI | `pages/chat/*` | ⏳ W3～W7 | 现为占位；分层教学 |
+| 会话 types + api | `types/conversations`、`api/conversations` | ✅ W2 | |
+| SSE 类型 + api | `types/chatStream`、`api/chatStream` | ✅ W2 | 默认 `routing=chat`；`guide` |
+| 附件 types + api | `types/artifacts`、`api/artifacts` | ✅ W2 | upload / download；UI 待 W7 |
+| 聊天双栏布局 | `pages/chat` | ✅ W3～W4 | |
+| 会话列表 UI | `ConversationList` | ✅ W5 | list / create / delete |
+| 线程 + SSE UI | `ChatThreadPanel` | 🔄 W6 | messages + 发送已通；缺 `tool_*` |
 | 旧业务对照 | `backup/src/` | 🗄 | 不迁回 |
 
 ---

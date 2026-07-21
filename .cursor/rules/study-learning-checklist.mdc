@@ -18,28 +18,28 @@ alwaysApply: true
 
 ### 1) 渲染模型
 
-- 🗄 **组件渲染 = 执行函数**（旧 `src` 曾完成；重写 W1 起再练）
+- ✅ **组件渲染 = 执行函数**（W1～W6 重练）
 - ⏳ **不要在 render 里做副作用**
-- ⏳ **闭包与函数式更新 / Abort**
+- 🔄 **闭包与函数式更新 / Abort**（SSE `setStreamingText(prev => …)` 已用；Abort UI 待 W8）
 
 ### 2) Hooks 基础
 
-- 🗄 **useState** / **useEffect**（旧代码曾用；W5～W6 重练）
+- ✅ **useState**（W5～W6）；⏳ **useEffect**（本轮未强调）
 - ⏳ **useMemo/useCallback**（有明确性能需求再引入）
 
 ### 3) JSX
 
-- 🗄 条件 / 列表 / 事件 / 受控输入（旧代码）
-- ⏳ **Props 与状态提升**（W5～W6：列表选中、preset=`guide`）
+- ✅ 条件 / 列表 / 事件 / 受控输入（W5～W6）
+- ✅ **Props 与状态提升**（列表选中、`conversationId`；**`preset=guide`** 写死在发送）
 
 ### 4) React Query
 
-- 🗄 **useQuery / useMutation / invalidateQueries**（旧代码）
-- 🔄 **HealthBage 重练 useQuery**（W1）；列表/mutation 等 W5 再勾 ✅；**isError UI**、**staleTime** 仍可后置
+- ✅ **useQuery / useMutation / invalidateQueries**（列表 + 消息 + 发送后刷新）
+- 🔄 **isError UI** 已有简单文案；**staleTime** 仍可后置
 
 ### 5) TypeScript
 
-- 🔄 **对齐重建契约**：`AgentPreset = "guide"`、`attachment_ids`、`attachments`、`updated_at`（types 已写；api/UI 未全接）
+- ✅ **对齐重建契约**：`guide`、`attachment_ids`、`attachments`、`updated_at`、`memory_title`（types + api；附件 UI 待 W7）
 - ⏳ 类型收敛（少用 `any`）
 
 ---
@@ -50,10 +50,10 @@ alwaysApply: true
 
 - 🗄 **旧 A1**：`preset=schedule`、行程助手文案 — **不再作为主路径**
 - ✅ **GET /health**（W1：`request` + HealthBage）
-- 🔄 **会话 list / create / delete / messages**（types+api 已有；UI 待 W5）
-- ⏳ **POST /chat/stream**（类型已有；**api 下次**；默认 **`chat`**；**`preset=guide`**；**`attachment_ids`**；SSE **`delta` / `tool_*` / `error` / `done`**）
-- ⏳ **POST /artifact** 上传 + **GET /artifact/{id}** 下载
+- ✅ **会话 list / create / delete / messages**（api + UI）
+- 🔄 **POST /chat/stream**（api + 发送 UI；缺 **`tool_*` 展示**）
+- ✅ **POST /artifact** 上传 + **GET /artifact/{id}** 下载（api 已有；UI 待 W7）
 - ⏳ **GET/PUT /user/profile**（W8）
 - ⏳ 流式 **Abort** UI（W8；后端 disconnect 未做，前端可先断连接）
 
-**重写进度**：**W0 ✅**；**W1 ✅**；**W2 🔄**（会话 + chatStream 类型；缺 SSE api / artifacts）。清单：**`docs/frontend-refactor-plan.md`** §**W**；换设备见 **`docs/study-progress.md`**。
+**重写进度**：**W0～W5 ✅**；**W6 🔄**（缺 `tool_*`）。清单：**`docs/frontend-refactor-plan.md`** §**W**；换设备见 **`docs/study-progress.md`**。
