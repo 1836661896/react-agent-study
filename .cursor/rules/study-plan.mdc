@@ -33,7 +33,7 @@ alwaysApply: true
 ## 当前建议（下一步怎么学）
 
 1. **换设备**：先读 **`docs/study-progress.md`**「换设备继续」。
-2. **立刻**：W6 补 **`tool_call` / `tool_result`** 展示。
+2. **立刻**：W6 tool 抽屉 **③ handlers → ④ 逻辑**（来数据默认开、流结束默认关、可再开）。
 3. 然后 **W7** 附件 UI；确认约定：单独回复 **`1`**。
 4. 权威后端：**`myproject/backend/readme.md`** 与相关 docs；旧代码只读 **`backup/src/`**。
 

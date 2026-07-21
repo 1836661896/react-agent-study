@@ -106,6 +106,28 @@ export default function ChatThreadPanel({
             <div className="chat-page__msg-content">{optimisticUser}</div>
           </div>
         )}
+        {/* 工具抽屉：① 先写死「有数据 + 展开」；④ 再：有数据才渲染、来数据默认开、流结束默认关、可手动再开 */}
+        <div className="chat-page__tool-drawer is-open">
+          <button type="button" className="chat-page__tool-drawer-toggle">
+            <span>工具调用</span>
+            <span className="chat-page__tool-drawer-count">2</span>
+            <span className="chat-page__tool-drawer-chevron" aria-hidden>
+              ▾
+            </span>
+          </button>
+          <div className="chat-page__tool-drawer-panel">
+            <div className="chat-page__tool chat-page__tool--call">
+              <div className="chat-page__tool-label">tool_call</div>
+              <div className="chat-page__tool-name">示例工具名</div>
+              <pre className="chat-page__tool-body">{`{"city": "杭州"}`}</pre>
+            </div>
+            <div className="chat-page__tool chat-page__tool--result">
+              <div className="chat-page__tool-label">tool_result</div>
+              <div className="chat-page__tool-name">示例工具名</div>
+              <pre className="chat-page__tool-body">示例返回文本…</pre>
+            </div>
+          </div>
+        </div>
         {streaming && streamingText && (
           <div className="chat-page__msg chat-page__msg--assistant">
             <div className="chat-page__msg-role">assistant（生成中）</div>

@@ -46,6 +46,98 @@
     padding: 16px;
   }
 
+  &__tool-drawer {
+    flex-shrink: 0;
+    border-top: 1px solid #e8e8e8;
+    background: #fafafa;
+  }
+
+  &__tool-drawer-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+    color: #595959;
+    text-align: left;
+  }
+
+  &__tool-drawer-count {
+    min-width: 1.25em;
+    padding: 0 6px;
+    border-radius: 10px;
+    background: #e6f4ff;
+    color: #1677ff;
+    font-size: 12px;
+  }
+
+  &__tool-drawer-chevron {
+    margin-left: auto;
+    transition: transform 0.15s ease;
+  }
+
+  /* 默认收起：不占高度 */
+  &__tool-drawer-panel {
+    display: none;
+    max-height: 40vh;
+    overflow: auto;
+    padding: 0 16px 12px;
+  }
+
+  &__tool-drawer.is-open {
+    .chat-page__tool-drawer-panel {
+      display: block;
+    }
+
+    .chat-page__tool-drawer-chevron {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__tool {
+    margin-bottom: 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #e8e8e8;
+    background: #fff;
+    font-size: 12px;
+
+    &--call {
+      border-left: 3px solid #1677ff;
+    }
+
+    &--result {
+      border-left: 3px solid #52c41a;
+    }
+
+    &--result.is-error {
+      border-left-color: #ff4d4f;
+    }
+  }
+
+  &__tool-label {
+    color: #8c8c8c;
+    margin-bottom: 2px;
+  }
+
+  &__tool-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  &__tool-body {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #434343;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+  }
+
   &__composer {
     flex-shrink: 0;
     padding: 12px 16px;

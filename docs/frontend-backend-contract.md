@@ -47,15 +47,15 @@
 ### 当前（2026-07-21 · W0～W5 ✅ · W6 🔄）
 
 - **策略**：完整重写进行中（§**W**）。旧代码在 **`backup/src/`**；运行入口为新 **`src/`**。
-- **新 `src` 已有**：壳 / Health / **`request`**；会话 / SSE / 附件 **types+api**；**`ConversationList`**；**`ChatThreadPanel`**（messages + SSE 发送；`guide`；`chat`|`auto`）。
-- **新 `src` 尚未有**：`tool_*` UI；附件上传/展示 UI；画像 UI。
+- **新 `src` 已有**：壳 / Health / **`request`**；会话 / SSE / 附件 **types+api**；**`ConversationList`**；**`ChatThreadPanel`**（messages + SSE 发送；`guide`；`chat`|`auto`）；tool 抽屉 **DOM+CSS 占位**。
+- **新 `src` 尚未有**：tool 抽屉接 SSE（handlers + state）；附件上传/展示 UI；画像 UI。
 - **目标**见 **`docs/frontend-refactor-plan.md`** §W6～W8。
 
 | 能力 | 新 src | 重写目标 |
 |------|--------|----------|
 | `/health` | ✅ | W1 |
 | `/conversation/*` | ✅ types+api+列表 UI | W6 消息已接 |
-| `/chat/stream` | ✅ types+api+发送 UI | 缺 `tool_*` 展示 |
+| `/chat/stream` | ✅ types+api+发送 UI | tool 抽屉 ①②；缺 ③④ |
 | `POST /artifact` 上传 | ✅ api | W7 接 UI |
 | `GET /artifact/{id}` 下载 | ✅ api | W7 接 UI |
 | `/user/profile` | ❌ | ⏳ W8 |
@@ -64,8 +64,8 @@
 
 - **2026-07-20**：对照重建 backend；选定完整重写；**`study-rewrite-pedagogy.mdc`**。
 - **2026-07-20**：W0 迁 **`backup/`**；**W1 ✅**；W2 会话层 + chatStream 类型落地；SSE api 次日。
-- **2026-07-21**：**W2 ✅**；**W3～W5 ✅**；**W6 半**（发送通；`tool_*` 待做）。
-
+- **2026-07-21**：**W2 ✅**；**W3～W5 ✅**；**W6 半**（发送通；tool 抽屉 ①②）。
+- **2026-07-21**：W6 tool 抽屉 UX 定为持久抽屉；①② 已提交。
 ---
 
 ## 6. 环境与 CORS

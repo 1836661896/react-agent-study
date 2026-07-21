@@ -55,7 +55,11 @@
   - [x] ③ 拆 `ChatThreadPanel` 空壳（消息区 + composer）。  
   - [x] ④ messages Query；发送 SSE（**`preset=guide`**、默认 **`chat`**）；流式气泡；`done` → invalidate。  
   - [x] 乐观用户气泡；**`routing`：`chat` | `auto`**。  
-  - [ ] **`tool_call` / `tool_result` 展示**。
+  - [ ] **`tool_call` / `tool_result` 抽屉展示**  
+    - UX：有数据默认展开；流结束自动收起；数据保留可再开（非流式临时气泡）。  
+    - [x] ① DOM 占位 + ② CSS（`chat-page__tool-drawer` / `is-open`）。  
+    - [ ] ③ `onToolCall` / `onToolResult` 壳。  
+    - [ ] ④ state（列表 + 开合）与真实渲染。
 
 - [ ] **W7 附件**  
   - composer：选文件 → **`POST /artifact`** → 待发送 `attachment_ids`。  

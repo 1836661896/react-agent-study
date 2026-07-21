@@ -51,9 +51,9 @@ alwaysApply: true
 - 🗄 **旧 A1**：`preset=schedule`、行程助手文案 — **不再作为主路径**
 - ✅ **GET /health**（W1：`request` + HealthBage）
 - ✅ **会话 list / create / delete / messages**（api + UI）
-- 🔄 **POST /chat/stream**（api + 发送 UI；缺 **`tool_*` 展示**）
+- 🔄 **POST /chat/stream**（api + 发送 UI；tool 抽屉 ①②；缺 ③④）
 - ✅ **POST /artifact** 上传 + **GET /artifact/{id}** 下载（api 已有；UI 待 W7）
 - ⏳ **GET/PUT /user/profile**（W8）
 - ⏳ 流式 **Abort** UI（W8；后端 disconnect 未做，前端可先断连接）
 
-**重写进度**：**W0～W5 ✅**；**W6 🔄**（缺 `tool_*`）。清单：**`docs/frontend-refactor-plan.md`** §**W**；换设备见 **`docs/study-progress.md`**。
+**重写进度**：**W0～W5 ✅**；**W6 🔄**（tool 抽屉 ①②）。清单：**`docs/frontend-refactor-plan.md`** §**W**；换设备见 **`docs/study-progress.md`**。

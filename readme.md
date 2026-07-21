@@ -15,8 +15,8 @@
 ## 1. 项目是做什么的
 
 - **定位**：**`myproject/backend`**（Python + FastAPI）的 **Web 界面**；**React + TypeScript + Vite**，**Ant Design**，**TanStack React Query**。
-- **当前阶段（2026-07-21）**：**完整重写进行中**（§**W**）。**W0～W5 ✅**；**W6 🔄**（消息历史 + SSE 发送已通；缺 `tool_*` UI）。旧业务在 **`backup/src/`**。对齐：**`preset=guide`**、默认 **`routing=chat`**、附件 api 已有、可选画像。
-- **下一步**：W6 **`tool_*` 展示** → **W7** 附件 UI。详见 **`docs/study-progress.md`**。
+- **当前阶段（2026-07-21）**：**完整重写进行中**（§**W**）。**W0～W5 ✅**；**W6 🔄**（消息 + SSE 已通；tool 抽屉 ①② 占位已有，③④ 未接）。旧业务在 **`backup/src/`**。对齐：**`preset=guide`**、默认 **`routing=chat`**、附件 api 已有、可选画像。
+- **下一步**：W6 tool 抽屉 **③→④** → **W7** 附件 UI。详见 **`docs/study-progress.md`**。
 - **非目标**：恢复 **`schedule` / schedule_draft / 旧 A1③`**。
 
 ---
@@ -56,7 +56,7 @@
 │   └── utils/
 │       ├── url.ts
 │       └── request.ts
-│   # 待做：W6 tool_*；W7 附件 UI；W8 可选…
+│   # 待做：W6 tool 抽屉 ③④；W7 附件 UI；W8 可选…
 ├── index.html
 ├── vite.config.js
 └── package.json
@@ -78,7 +78,7 @@
 | 附件 types + api | `types/artifacts`、`api/artifacts` | ✅ W2 | upload / download；UI 待 W7 |
 | 聊天双栏布局 | `pages/chat` | ✅ W3～W4 | |
 | 会话列表 UI | `ConversationList` | ✅ W5 | list / create / delete |
-| 线程 + SSE UI | `ChatThreadPanel` | 🔄 W6 | messages + 发送已通；缺 `tool_*` |
+| 线程 + SSE UI | `ChatThreadPanel` | 🔄 W6 | 发送已通；tool 抽屉 DOM+CSS 占位；缺 handlers/state |
 | 旧业务对照 | `backup/src/` | 🗄 | 不迁回 |
 
 ---

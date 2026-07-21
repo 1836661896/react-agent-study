@@ -4,14 +4,12 @@
 
 ---
 
-## 最近一次学习（2026-07-21 · W2～W6 主路径）
+## 最近一次学习（2026-07-21 · W6 tool 抽屉 ①②）
 
-- **W2 ✅**：`api/chatStream`（默认 **`chat`**）；`types/artifacts` + `api/artifacts`。
-- **W3～W4 ✅**：`/chat` 双栏 DOM + 一屏高度 CSS。
-- **W5 ✅**：`ConversationList` — list / create / delete；选中抬到父 state。
-- **W6 🔄**：`ChatThreadPanel` — messages Query；SSE 发送（**`preset=guide`**）；乐观用户气泡；**`routing`：`chat` | `auto`**。
-  - **未做**：`tool_call` / `tool_result` 展示。
-- **教学约定**：UI 严格 **①DOM → ②CSS → ③引用 → ④逻辑**；单独回复 **`1`**；注释风格保持「变量/方法均有注释」。
+- **W6 续**：工具区 UX 定为 **持久抽屉**（非流式临时气泡）——有 `tool_*` 数据时默认展开；流结束后自动收起；数据保留，可手动再开。
+- **已做**：① DOM 占位（`chat-page__tool-drawer`）+ ② CSS（`is-open` 展开/收起）。
+- **未做**：③ `onToolCall` / `onToolResult` 壳；④ `toolItems` + `toolsOpen` 真实数据与开合逻辑。
+- **教学约定**：UI 严格 **①DOM → ②CSS → ③引用 → ④逻辑**；单独回复 **`1`**。
 
 ---
 
@@ -19,7 +17,7 @@
 
 1. 拉最新 **`main`**。
 2. 打开 **`docs/frontend-refactor-plan.md`** §**W6**。
-3. **优先**：SSE **`tool_*`** 展示（选 `auto` 触发工具时可见）。
+3. **立刻**：W6 tool 抽屉 **③ handlers → ④ 逻辑**（接 SSE；来数据默认开、流结束默认关、可再开）。
 4. 然后 **W7** 附件 UI（upload → `attachment_ids` → 历史下载）。
 
 ---

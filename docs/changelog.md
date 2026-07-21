@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-07-21（W6 tool 抽屉 ①②）
+
+- **代码**：`ChatThreadPanel` 工具抽屉 DOM 占位 + `pages/chat/index.scss` 展开/收起样式（写死示例；未接 SSE）。
+- **UX 约定**：持久抽屉——来 `tool_*` 默认开、流结束默认关、可手动再开。
+- **未做**：handlers 壳与真实 state。
+- **文档**：readme / study-progress / refactor-plan / 契约 §5 / checklist / plan 同步。
+- **下一会话**：W6 ③→④ → W7 附件 UI。
+
+---
+
 ## 2026-07-21（W2～W6 主路径 · 下班提交）
 
 - **W2**：**`api/chatStream.ts`**（默认 **`chat`**）；**`types/artifacts`** + **`api/artifacts`**。
