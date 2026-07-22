@@ -83,12 +83,12 @@ alwaysApply: true
 - **统一 JSON 响应**（**`/health`**、**`/conversation/*`** 等非 SSE）：**`{ code, data, msg }`**（与前端 `HttpError` / `res.code === 0` 对齐）。
 - **当前后端已挂载 API**（重建 **`src/`**；随项目演进更新）：
   - **GET /health**：健康检查。
-  - **POST /chat/stream**：**SSE**；**`message`** 与 **`attachment_ids`** 不可同时为空；**`routing`** 默认 **`chat`**（另有 **`auto` / `mcp`**；**`plan`** 占位）；可选 **`preset=guide`**、**`mcp_tool` / `mcp_arguments`**；事件 **`delta` / `error` / `done`**，**`mcp`/`auto→mcp`** 另有 **`tool_call` / `tool_result`**。
+  - **POST /chat/stream**：**SSE**；**`message`** 与 **`attachment_ids`** 不可同时为空；**`routing`** 默认 **`chat`**（另有 **`auto` / `mcp`**；**`plan`** 占位）；**`preset` 可选**（日常可不传；导游 **`guide`**）；事件 **`delta` / `error` / `done`**，**`mcp`/`auto→mcp`** 另有 **`tool_call` / `tool_result`**。
   - **GET /conversation/list**、**POST /conversation/delete**、**POST /conversation/create**、**GET /conversation/{id}/messages**（消息含 **`attachments`**）。
   - **POST /artifact**、**GET /artifact/{id}**、**GET /artifact/{id}/meta**：上传与下载。
   - **GET /user/profile**、**PUT /user/profile**：用户画像（重写 W8 可选）。
 - **未挂载 / 前端不得再封装**：`/tasks`、`/agent/*`、非流式 **`POST /chat`**、**`/events`**、旧 **`schedule_draft`** 路径等。
-- **联调注意**：**`routing=plan`** 占位 **`error`**；日常发送默认 **`chat`**；身份用 **`guide`**（勿再传 **`schedule`**）。
+- **联调注意**：**`routing=plan`** 占位 **`error`**；日常发送默认 **`chat`** 且**不传** `preset`；需要导游时再传 **`guide`**（勿再传 **`schedule`**）。消息列表接口降序，UI 按 **`id` 升序**。纯附件走 backend 固定回复。
 - **启动后端**：在 **`myproject/backend`** 执行 `uvicorn src.api:app --reload`，默认 `http://127.0.0.1:8000`（见 backend **`readme.md`**）。
 - **当前前端重心（2026-07-20）**：**完整重写 `src/`**（§**W**）；旧 R1～R4 / A1（`schedule`）仅 git 对照。清单：**`docs/frontend-refactor-plan.md`**；教学：**`study-rewrite-pedagogy.mdc`**。
 

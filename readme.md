@@ -15,9 +15,9 @@
 ## 1. 项目是做什么的
 
 - **定位**：**`myproject/backend`**（Python + FastAPI）的 **Web 界面**；**React + TypeScript + Vite**，**Ant Design**，**TanStack React Query**。
-- **当前阶段（2026-07-22）**：**完整重写**（§**W**）。**W0～W7 ✅**；**W8 ⏳**（画像 / Abort）。附件：粘贴文件、图预览、发送挂载已通。
-- **下一步**：验收主路径，或 **W8**。详见 **`docs/study-progress.md`**。
-- **非目标**：恢复 **`schedule` / schedule_draft / 旧 A1③`**。
+- **当前阶段（2026-07-22）**：**完整重写**（§**W**）。**W0～W7 ✅**。日常**不传** `preset`；历史 **id 升序**；纯附件靠 backend 固定回复。
+- **下一步**：**展示优化** + **身份显式切换** → 附件解析联调 → Abort → **`routing=plan`** → 语音。详见 **`docs/study-progress.md`**。
+- **非目标（近期）**：用户画像设置页；恢复 **`schedule` / schedule_draft / 旧 A1③`**。
 
 ---
 
@@ -74,12 +74,12 @@
 | 环境 / URL | `config/env`、`utils/url` | ✅ | |
 | JSON `request` / Health | `utils/request`、`api/health`、`HealthBage` | ✅ W1 | |
 | 会话 types + api | `types/conversations`、`api/conversations` | ✅ W2 | |
-| SSE 类型 + api | `types/chatStream`、`api/chatStream` | ✅ W2 | 默认 `routing=chat`；`guide` |
+| SSE 类型 + api | `types/chatStream`、`api/chatStream` | ✅ W2 | 默认 `routing=chat`；`preset` 可选 |
 | 附件 types + api | `types/artifacts`、`api/artifacts` | ✅ W2 | upload / download |
 | 聊天双栏布局 | `pages/chat` | ✅ W3～W4 | `index.scss` 按展示顺序分区 |
 | 会话列表 UI | `ConversationList` | ✅ W5 | list / create / delete |
-| 线程 + SSE UI | `ChatThreadPanel` | ✅ W6 | messages / SSE / `guide` / tool 抽屉 |
-| 附件 UI | composer + 气泡 | ✅ W7 | 上传 / 粘贴文件 / 图预览 / `attachment_ids` / 下载 |
+| 线程 + SSE UI | `ChatThreadPanel` | ✅ W6 | messages（**按 id 升序**）/ SSE / tool 抽屉；**默认不传 preset** |
+| 附件 UI | composer + 气泡 | ✅ W7 | 上传 / 粘贴 / 预览 / `attachment_ids` / 下载；可只发附件 |
 | 旧业务对照 | `backup/src/` | 🗄 | 不迁回 |
 
 ---
@@ -95,4 +95,6 @@
 ## 5. API 约定备忘
 
 - JSON：**`{ code, data, msg }`**；SSE / 附件字段见 **`docs/frontend-backend-contract.md`** 与 backend 文档。
-- 身份：**`preset=guide`**；日常发送默认 **`routing=chat`**。
+- **日常发送**：默认 **`routing=chat`**；**不传** `preset`（普通对话无导游身份）。需要导游时再显式传 **`preset=guide`**（UI 入口尚未做）。
+- **消息列表**：接口为 `created_at` **降序**；前端按 **`id` 升序**再渲染（旧上新下）。
+- **纯附件**：可只发 `attachment_ids`；backend 返回固定「尚未解析」说明（不调 LLM），见 backend **`chat-stream-api.md`**。

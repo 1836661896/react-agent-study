@@ -12,7 +12,7 @@
 | 项 | 说明 |
 |----|------|
 | 历史 §R1～R4 / 旧 A1（`schedule`） | **归档**；实现仅在 **git 历史**可查，不迁移组件 |
-| 本轮 | §**W0～W8**；字段从第一天起对齐 **`guide` / 附件 / 默认 `chat`** |
+| 本轮 | §**W0～W8**；默认 **`routing=chat`**、**`preset` 可选**；附件 / 消息正序 |
 | 工程根 | **保留** `package.json`、Vite/TS/ESLint、`.env*`、`docs/`、规则；**重写** `src/`；`index.html` 入口按需对齐 |
 
 ---
@@ -53,8 +53,9 @@
 
 - [x] **W6 线程 + SSE**（**2026-07-22** 收尾）  
   - [x] ③ 拆 `ChatThreadPanel` 空壳（消息区 + composer）。  
-  - [x] ④ messages Query；发送 SSE（**`preset=guide`**、默认 **`chat`**）；流式气泡；`done` → invalidate。  
+  - [x] ④ messages Query；发送 SSE（默认 **`chat`**；**不硬编码 preset**）；流式气泡；`done` → invalidate。  
   - [x] 乐观用户气泡；**`routing`：`chat` | `auto`**。  
+  - [x] 历史展示：对接口降序 **`records` 按 `id` 升序**再渲染。  
   - [x] **`tool_call` / `tool_result` 抽屉展示**  
     - UX：有数据默认展开；流结束自动收起；数据保留可再开（非流式临时气泡）。  
     - [x] ① DOM 占位 + ② CSS（`chat-page__tool-drawer` / `is-open`）。  
@@ -69,8 +70,19 @@
   - **暂不做**：剪贴板「文字+文件」同时保留。  
   - [x] ① DOM → ② CSS → ③ 引用 → ④ 逻辑  
 
-- [ ] **W8 可选**  
-  - 画像 GET/PUT UI；Abort 按钮；具名能力 → `mcp_tool`（非模式切换）。
+- [ ] **W8′ 展示优化 + 身份切换** ← **当前**  
+  - 聊天区组件/样式可读性（气泡、附件、间距等；先定少量可感知点）。  
+  - **身份显式切换**：普通（不传 `preset`）/ 导游（`preset=guide`）。与用户画像无关。  
+
+- [ ] **其后（与 backend 语音前排期对齐）**  
+  - R4b.2 附件解析联调  
+  - **Abort**（停止/中断）  
+  - **`routing=plan`** UI/联调（随 backend）  
+  - 再后：**语音**  
+
+- [ ] **暂不做**  
+  - 用户画像 GET/PUT 设置页（期望后端自主提取 V2）  
+  - 具名能力 → `mcp_tool`（可更后）
 
 - [ ] **收尾**  
   - `npm run lint`；更新 **`readme`** 功能表、契约 §5、**`changelog`**、checklist。
@@ -80,18 +92,20 @@
 ## 验收（主路径）
 
 1. Health 绿；能建会话、发消息、续聊（落库后列表有标题）。  
-2. Network：`preset: "guide"`（导游会话）；日常 `routing: "chat"`。  
-3. 上传文件后发送，messages 中可见 **`attachments`** 并可下载。  
-4. 显式或 auto 触发 MCP 时可见 **`tool_call` / `tool_result`**。
+2. Network：日常 **`routing: "chat"`** 且**无** `preset`；切到导游后带 **`preset: "guide"`**（身份按钮落地后验）。  
+3. 消息列表**旧上新下**。  
+4. 上传后发送可见 **`attachments`** 并可下载；**只发附件**时收到 backend 固定「尚未解析」说明。  
+5. 显式或 auto 触发 MCP 时可见 **`tool_call` / `tool_result`**。
 
 ---
 
 ## 非目标（本轮不做）
 
 - 恢复 **`schedule` / schedule_draft / 旧 A1③ composer 导出快捷**  
-- 左侧真实活动流、**`routing=plan`** 产品化、多 part 气泡  
-- WebSocket 通话 UI  
+- 左侧真实活动流、多 part 气泡（随 **`plan`**）  
+- WebSocket 通话 UI（语音阶段）  
+- **用户画像设置页**  
 
 ---
 
-*修订：2026-07-20 — 用户选定完整重写；清单由 §R 切换为 §W。*
+*修订：2026-07-20 — 完整重写 §W。2026-07-22 — 默认无 preset、消息正序；排期改为展示+身份 → 解析 → Abort → plan → 语音。*

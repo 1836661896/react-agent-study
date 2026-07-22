@@ -15,7 +15,7 @@ alwaysApply: true
 
 ## 助手必须遵守
 
-1. **目标契约以重建后端为准**（规范路径 **`myproject/backend`**）：`preset=guide`、默认 **`routing=chat`**、**`attachment_ids`**、messages **`attachments`**、**`POST /artifact`**、可选 **`/user/profile`**。勿再教旧 **`schedule` / schedule_draft / A1③ 导出快捷** 为主路径。
+1. **目标契约以重建后端为准**（规范路径 **`myproject/backend`**）：默认 **`routing=chat`**、**`preset` 可选**、**`attachment_ids`**、messages **`attachments`**、**`POST /artifact`**、可选 **`/user/profile`**。勿再教旧 **`schedule` / schedule_draft / A1③ 导出快捷** 为主路径；勿默认硬编码 **`preset=guide`**。
 2. **禁止**：一次回复甩出整页/整 hook 的「可直接粘贴完整实现」。
 3. **每步只推进一层**（顺序固定，可跳过已存在的层，但不可倒序塞逻辑）：
    - **① DOM**：结构与 `className` / 语义标签，无业务、可先写死占位文案  

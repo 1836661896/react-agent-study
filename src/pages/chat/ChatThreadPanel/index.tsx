@@ -84,7 +84,7 @@ export default function ChatThreadPanel({
     setStreaming(false)
     setStreamingText("")
     setDraft("")
-  }, [conversationId])
+  }, [])
 
   const attachmentSrc = (url: string) =>
     url.startsWith("http") ? url : buildApiUrl(url)
@@ -158,7 +158,6 @@ export default function ChatThreadPanel({
       const body: PostChatStreamBody = {
         conversation_id: conversationId,
         routing,
-        preset: "guide",
       }
       if (text) body.message = text
       if (attachmentIds.length > 0) body.attachment_ids = attachmentIds
@@ -214,7 +213,7 @@ export default function ChatThreadPanel({
     }
   }
 
-  const messages = data?.data?.records ?? [] // 消息列表
+  const messages = [...(data?.data?.records ?? [])].sort((a, b) => a.id - b.id) // 消息列表
 
   return (
     <>

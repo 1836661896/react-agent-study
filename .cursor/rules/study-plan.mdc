@@ -14,7 +14,7 @@ alwaysApply: true
 ## 项目推进计划（2026-07：完整重写）
 
 > **选定策略（用户 2026-07-20）**：**删除整个 `src/` 后按重建后端契约重写**。执行勾选见 **`docs/frontend-refactor-plan.md`** §**W**。  
-> **目标契约**：会话 + SSE；**`preset=guide`**；默认 **`routing=chat`**；上传 **`POST /artifact`** + **`attachment_ids`**；历史 **`attachments`**；可选画像 **`/user/profile`**。
+> **目标契约**：会话 + SSE；默认 **`routing=chat`**；**`preset` 可选**（日常可不传；导游才 `guide`）；上传 **`POST /artifact`** + **`attachment_ids`**；历史 **`attachments`**；可选画像 **`/user/profile`**。
 
 | 顺序 | 阶段 | 难易 | 目标与产出 | 状态 |
 |---|---|---|-----|---|
@@ -39,6 +39,6 @@ alwaysApply: true
 
 ## 与后端近期共识
 
-- **身份**：**`preset=guide`（导游）**；旧 **`schedule`** / **`schedule_draft`** **不恢复**。
+- **身份**：**`preset` 可选**；已知身份为 **`guide`（导游）**；日常默认**不传**；旧 **`schedule`** / **`schedule_draft`** **不恢复**。
 - **routing**：默认 **`chat`**；**`auto`/`mcp`** 已通；**`plan`** 占位。
 - **附件**：先 **`POST /artifact`**，再 Chat 带 **`attachment_ids`**；messages 回 **`attachments`**。前端可粘贴任意文件；**暂不**处理文字+文件同贴。

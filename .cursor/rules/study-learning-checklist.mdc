@@ -30,7 +30,7 @@ alwaysApply: true
 ### 3) JSX
 
 - ✅ 条件 / 列表 / 事件 / 受控输入（W5～W6）
-- ✅ **Props 与状态提升**（列表选中、`conversationId`；**`preset=guide`** 写死在发送）
+- ✅ **Props 与状态提升**（列表选中、`conversationId`；发送**不**硬编码 `preset`）
 
 ### 4) React Query
 

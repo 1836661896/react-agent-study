@@ -15,14 +15,14 @@
 | 接口 | 方法 | 说明 |
 |------|------|------|
 | `/health` | GET | JSON 信封 **`{ code, data, msg }`** |
-| `/chat/stream` | POST | **SSE**；**`message`** 与 **`attachment_ids`** 不可同时为空；**`routing`** 默认 **`chat`**；可选 **`preset=guide`**、**`mcp_tool`/`mcp_arguments`**；事件 **`delta` / `error` / `done`**，mcp 另有 **`tool_*`** |
+| `/chat/stream` | POST | **SSE**；**`message`** 与 **`attachment_ids`** 不可同时为空；**`routing`** 默认 **`chat`**；**`preset` 可选**（日常可不传；导游才 **`guide`**）；纯附件时 backend **固定回复**（未解析）；mcp 另有 **`tool_*`** |
 | `/artifact` | POST | **multipart** 字段 **`file`**；成功 `data` 含 **`artifact_id`** 等 |
 | `/artifact/{id}` | GET | 下载正文（二进制）；失败可为 JSON fail |
 | `/artifact/{id}/meta` | GET | 元数据 JSON 信封 |
 | `/conversation/list` | GET | **`ListResult`**；项含 **`updated_at`** 等 |
 | `/conversation/create` | POST | **`data: { id }`**；可选 **`kind`** |
 | `/conversation/delete` | POST | **`{ ids: number[] }`** |
-| `/conversation/{id}/messages` | GET | 每条含 **`attachments`**（可 `[]`） |
+| `/conversation/{id}/messages` | GET | 每条含 **`attachments`**（可 `[]`）；接口 **`created_at` 降序**；UI 宜再正序 |
 | `/user/profile` | GET/PUT | 用户画像（重写 W8 可选） |
 
 ---
@@ -44,12 +44,13 @@
 
 ## 5. 本仓库实现与契约的差距
 
-### 当前（2026-07-22 · W0～W7 ✅ · W8 ⏳）
+### 当前（2026-07-22 · W0～W7 ✅ · 联调对齐 · W8 ⏳）
 
 - **策略**：完整重写进行中（§**W**）。旧代码在 **`backup/src/`**；运行入口为新 **`src/`**。
-- **新 `src` 已有**：壳 / Health / **`request`**；会话 / SSE / 附件 **types+api+UI**；**`ConversationList`**；**`ChatThreadPanel`**（messages + SSE；`guide`；tool 抽屉；上传/粘贴任意文件/`attachment_ids`；历史图预览与文件名下载；切换会话清理）。
-- **新 `src` 尚未有**：画像 UI；Abort UI；粘贴「文字+文件」同保留。
-- **目标**见 **`docs/frontend-refactor-plan.md`** §W8。
+- **新 `src` 已有**：壳 / Health / **`request`**；会话 / SSE / 附件 **types+api+UI**；**`ConversationList`**；**`ChatThreadPanel`**（messages **按 id 升序** + SSE；**默认不传 preset**；tool 抽屉；上传/粘贴/`attachment_ids`；历史图/文件名下载；切换会话清理）。
+- **新 `src` 尚未有**：身份切换 UI；Abort；`routing=plan` UI；粘贴「文字+文件」同保留。  
+- **暂不做**：用户画像设置页（自主提取另排）。  
+- **排期**见 **`docs/study-progress.md`** / backend **`readme` §7**。
 
 | 能力 | 新 src | 重写目标 |
 |------|--------|----------|
@@ -67,6 +68,7 @@
 - **2026-07-21**：**W2 ✅**；**W3～W5 ✅**；**W6 半**（发送通；tool 抽屉 ①②）。
 - **2026-07-21**：W6 tool 抽屉 UX 定为持久抽屉；①② 已提交。
 - **2026-07-22**：**W6 ✅**；**W7 ✅**（含粘贴文件、预览打磨）；**W8** 可选未开。
+- **2026-07-22（晚）**：去掉硬编码 **`preset=guide`**；消息 **id 升序**；对齐 backend 纯附件固定回复。
 ---
 
 ## 6. 环境与 CORS

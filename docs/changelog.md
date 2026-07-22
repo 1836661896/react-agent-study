@@ -4,6 +4,23 @@
 
 ---
 
+## 2026-07-22（排期 · 语音前顺序定稿）
+
+- **下一程**：① 展示优化 + 身份切换 → ② R4b.2 解析联调 → ③ Abort → ④ **`routing=plan`** → ⑤ 语音。  
+- **不做优先**：用户画像设置页。  
+- **文档**：study-progress / readme / refactor-plan 与 backend 对齐。
+
+---
+
+## 2026-07-22（联调对齐 · preset / 消息顺序）
+
+- **代码**：去掉发送体硬编码 **`preset: "guide"`**（日常无身份）；历史 **`records` 按 `id` 升序**展示。
+- **对齐 backend**：纯附件可只发 **`attachment_ids`**（backend 固定回复）；`message` / 附件二选一。
+- **文档**：readme §1/§3/§5、契约 §2/§5、refactor-plan 验收、study-progress。
+- **下一会话**：**主路径验收**或 **W8**；R4b.2 解析更后。
+
+---
+
 ## 2026-07-22（W7 打磨 · 附件体验 + SCSS）
 
 - **代码**：粘贴任意文件；待发/历史图预览与非图文件名；发送 revoke；切换会话 `useEffect` 清理；`tool_result` `is-error`；`PostChatStreamBody` 条件赋值；`index.scss` 按页面顺序重排 + BEM。
