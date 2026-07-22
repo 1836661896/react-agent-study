@@ -15,8 +15,8 @@
 ## 1. 项目是做什么的
 
 - **定位**：**`myproject/backend`**（Python + FastAPI）的 **Web 界面**；**React + TypeScript + Vite**，**Ant Design**，**TanStack React Query**。
-- **当前阶段（2026-07-21）**：**完整重写进行中**（§**W**）。**W0～W5 ✅**；**W6 🔄**（消息 + SSE 已通；tool 抽屉 ①② 占位已有，③④ 未接）。旧业务在 **`backup/src/`**。对齐：**`preset=guide`**、默认 **`routing=chat`**、附件 api 已有、可选画像。
-- **下一步**：W6 tool 抽屉 **③→④** → **W7** 附件 UI。详见 **`docs/study-progress.md`**。
+- **当前阶段（2026-07-22）**：**完整重写**（§**W**）。**W0～W7 ✅**；**W8 ⏳**（画像 / Abort）。附件：粘贴文件、图预览、发送挂载已通。
+- **下一步**：验收主路径，或 **W8**。详见 **`docs/study-progress.md`**。
 - **非目标**：恢复 **`schedule` / schedule_draft / 旧 A1③`**。
 
 ---
@@ -46,7 +46,7 @@
 │   │   └── chat/
 │   │       ├── index.tsx / index.scss
 │   │       ├── ConversationList/   # W5 列表
-│   │       └── ChatThreadPanel/    # W6 消息 + SSE
+│   │       └── ChatThreadPanel/    # W6～W7 消息 + SSE + 附件
 │   ├── styles/
 │   ├── types/
 │   │   ├── common.ts
@@ -56,7 +56,7 @@
 │   └── utils/
 │       ├── url.ts
 │       └── request.ts
-│   # 待做：W6 tool 抽屉 ③④；W7 附件 UI；W8 可选…
+│   # 待做：W8 可选（画像 / Abort）…
 ├── index.html
 ├── vite.config.js
 └── package.json
@@ -75,10 +75,11 @@
 | JSON `request` / Health | `utils/request`、`api/health`、`HealthBage` | ✅ W1 | |
 | 会话 types + api | `types/conversations`、`api/conversations` | ✅ W2 | |
 | SSE 类型 + api | `types/chatStream`、`api/chatStream` | ✅ W2 | 默认 `routing=chat`；`guide` |
-| 附件 types + api | `types/artifacts`、`api/artifacts` | ✅ W2 | upload / download；UI 待 W7 |
-| 聊天双栏布局 | `pages/chat` | ✅ W3～W4 | |
+| 附件 types + api | `types/artifacts`、`api/artifacts` | ✅ W2 | upload / download |
+| 聊天双栏布局 | `pages/chat` | ✅ W3～W4 | `index.scss` 按展示顺序分区 |
 | 会话列表 UI | `ConversationList` | ✅ W5 | list / create / delete |
-| 线程 + SSE UI | `ChatThreadPanel` | 🔄 W6 | 发送已通；tool 抽屉 DOM+CSS 占位；缺 handlers/state |
+| 线程 + SSE UI | `ChatThreadPanel` | ✅ W6 | messages / SSE / `guide` / tool 抽屉 |
+| 附件 UI | composer + 气泡 | ✅ W7 | 上传 / 粘贴文件 / 图预览 / `attachment_ids` / 下载 |
 | 旧业务对照 | `backup/src/` | 🗄 | 不迁回 |
 
 ---

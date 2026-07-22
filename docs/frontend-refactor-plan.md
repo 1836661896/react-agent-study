@@ -51,20 +51,23 @@
   - [x] ③ 拆 `ConversationList` 并挂入 `/chat`。  
   - [x] ④ list / create / delete；选中会话抬到父 state。  
 
-- [ ] **W6 线程 + SSE**（进行中 · 2026-07-21）  
+- [x] **W6 线程 + SSE**（**2026-07-22** 收尾）  
   - [x] ③ 拆 `ChatThreadPanel` 空壳（消息区 + composer）。  
   - [x] ④ messages Query；发送 SSE（**`preset=guide`**、默认 **`chat`**）；流式气泡；`done` → invalidate。  
   - [x] 乐观用户气泡；**`routing`：`chat` | `auto`**。  
-  - [ ] **`tool_call` / `tool_result` 抽屉展示**  
+  - [x] **`tool_call` / `tool_result` 抽屉展示**  
     - UX：有数据默认展开；流结束自动收起；数据保留可再开（非流式临时气泡）。  
     - [x] ① DOM 占位 + ② CSS（`chat-page__tool-drawer` / `is-open`）。  
-    - [ ] ③ `onToolCall` / `onToolResult` 壳。  
-    - [ ] ④ state（列表 + 开合）与真实渲染。
+    - [x] ③ `onToolCall` / `onToolResult` 壳（antd `Button`）。  
+    - [x] ④ `toolItems`（稳定 `id`）+ `toolsOpen` 与真实渲染。
 
-- [ ] **W7 附件**  
-  - composer：选文件 → **`POST /artifact`** → 待发送 `attachment_ids`。  
-  - 历史气泡：渲染 **`attachments`** + 下载。  
-  - 教学：再走一遍 ①～④。
+- [x] **W7 附件**（**2026-07-22**）  
+  - composer：antd（`Radio` / `Input.TextArea` / `Upload` / `Button` / `Tag` / `Image`）。  
+  - 选文件 + **粘贴任意文件** → 大小校验 → **`POST /artifact`** → 待发（图缩略图 / 非图文件名）→ 发送 **`attachment_ids`**。  
+  - 历史：`attachments` 有则展示（图预览 / 文件名 Tag）+ 点击下载。  
+  - 切换会话清理 pending（revoke）/ tool；发送前 revoke 预览 URL。  
+  - **暂不做**：剪贴板「文字+文件」同时保留。  
+  - [x] ① DOM → ② CSS → ③ 引用 → ④ 逻辑  
 
 - [ ] **W8 可选**  
   - 画像 GET/PUT UI；Abort 按钮；具名能力 → `mcp_tool`（非模式切换）。

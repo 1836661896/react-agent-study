@@ -24,8 +24,8 @@ alwaysApply: true
 | W2 | 类型与 API | 中 | conversations / chatStream / artifacts；对齐新字段 | ✅ |
 | W3～W4 | 布局 DOM + CSS | 中 | `/chat` 双栏空壳 + 一屏高度与滚动 | ✅ |
 | W5 | 会话列表 | 中 | list / create / delete | ✅ |
-| W6 | 线程 + SSE | 较难 | messages + 流式；**`guide`** + **`chat`/`auto`** | 🔄 |
-| W7 | 附件 | 较难 | 上传、发送挂载、历史展示/下载 | ⏳ |
+| W6 | 线程 + SSE | 较难 | messages + 流式；**`guide`** + **`chat`/`auto`**；tool 抽屉 | ✅ |
+| W7 | 附件 | 较难 | 上传、粘贴文件、发送挂载、历史预览/下载 | ✅ |
 | W8 | 可选增强 | 中 | 画像 UI、Abort、能力按钮 | ⏳ |
 
 ---
@@ -33,12 +33,12 @@ alwaysApply: true
 ## 当前建议（下一步怎么学）
 
 1. **换设备**：先读 **`docs/study-progress.md`**「换设备继续」。
-2. **立刻**：W6 tool 抽屉 **③ handlers → ④ 逻辑**（来数据默认开、流结束默认关、可再开）。
-3. 然后 **W7** 附件 UI；确认约定：单独回复 **`1`**。
+2. **立刻**：主路径验收，或 **W8**（Abort / 画像）按 ①～④。
+3. 确认约定：单独回复 **`1`**。
 4. 权威后端：**`myproject/backend/readme.md`** 与相关 docs；旧代码只读 **`backup/src/`**。
 
 ## 与后端近期共识
 
 - **身份**：**`preset=guide`（导游）**；旧 **`schedule`** / **`schedule_draft`** **不恢复**。
 - **routing**：默认 **`chat`**；**`auto`/`mcp`** 已通；**`plan`** 占位。
-- **附件**：先 **`POST /artifact`**，再 Chat 带 **`attachment_ids`**；messages 回 **`attachments`**。
+- **附件**：先 **`POST /artifact`**，再 Chat 带 **`attachment_ids`**；messages 回 **`attachments`**。前端可粘贴任意文件；**暂不**处理文字+文件同贴。

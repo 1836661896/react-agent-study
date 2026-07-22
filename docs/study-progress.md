@@ -4,21 +4,20 @@
 
 ---
 
-## 最近一次学习（2026-07-21 · W6 tool 抽屉 ①②）
+## 最近一次学习（2026-07-22 · W7 收尾 + 附件体验打磨）
 
-- **W6 续**：工具区 UX 定为 **持久抽屉**（非流式临时气泡）——有 `tool_*` 数据时默认展开；流结束后自动收起；数据保留，可手动再开。
-- **已做**：① DOM 占位（`chat-page__tool-drawer`）+ ② CSS（`is-open` 展开/收起）。
-- **未做**：③ `onToolCall` / `onToolResult` 壳；④ `toolItems` + `toolsOpen` 真实数据与开合逻辑。
-- **教学约定**：UI 严格 **①DOM → ②CSS → ③引用 → ④逻辑**；单独回复 **`1`**。
+- **W6～W7**：tool 抽屉 ③④；附件 UI ①～④（antd composer；上传 / **粘贴任意文件**；`attachment_ids`；历史图预览 + 非图文件名；下载）。
+- **打磨**：`exactOptionalPropertyTypes` 条件组 body；发送前 revoke 预览；切换会话 `useEffect` 清空 pending/tool；`is_error` class；`pages/chat/index.scss` 按展示顺序重排。
+- **已知不做（暂）**：粘贴时「文字 + 文件」同时保留（有文件则 `preventDefault`，只上传文件）；前端大小上限暂 `10MB`（未强制对齐后端 `ARTIFACT_MAX_BYTES` 默认值）。
+- **下一步**：主路径验收，或 **W8**（画像 / Abort）。
 
 ---
 
 ## 换设备继续（下一步）
 
 1. 拉最新 **`main`**。
-2. 打开 **`docs/frontend-refactor-plan.md`** §**W6**。
-3. **立刻**：W6 tool 抽屉 **③ handlers → ④ 逻辑**（接 SSE；来数据默认开、流结束默认关、可再开）。
-4. 然后 **W7** 附件 UI（upload → `attachment_ids` → 历史下载）。
+2. 打开 **`docs/frontend-refactor-plan.md`** §**W8**（或验收清单）。
+3. 可选：**W8** Abort / 画像；确认约定单独回 **`1`**。
 
 ---
 

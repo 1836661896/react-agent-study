@@ -4,6 +4,31 @@
 
 ---
 
+## 2026-07-22（W7 打磨 · 附件体验 + SCSS）
+
+- **代码**：粘贴任意文件；待发/历史图预览与非图文件名；发送 revoke；切换会话 `useEffect` 清理；`tool_result` `is-error`；`PostChatStreamBody` 条件赋值；`index.scss` 按页面顺序重排 + BEM。
+- **约定（暂）**：不处理「文字+文件」同贴；大小上限前端仍 `10MB`（未改）。
+- **文档**：study-progress / refactor-plan / readme / 契约 §5 / checklist 同步。
+- **下一会话**：验收或 **W8**。
+
+---
+
+## 2026-07-22（W7 附件 ①～④）
+
+- **代码**：composer antd 化；`uploadArtifact` + pending；粘贴；发送 `attachment_ids`；历史附件 + `downloadArtifact`。
+- **文档**：readme / study-progress / refactor-plan / 契约 §5 / checklist / plan；**W7 ✅**。
+- **下一会话**：打磨见上条；或 **W8**。
+
+---
+
+## 2026-07-22（W6 tool 抽屉 ③④ 收尾）
+
+- **代码**：`ChatThreadPanel` 接 `onToolCall` / `onToolResult`；`toolItems` + `toolsOpen`；antd `Button` 开合；稳定 `id` 作列表 `key`。
+- **文档**：readme / study-progress / refactor-plan / checklist / plan 同步；**W6 ✅**。
+- **下一会话**：**W7** 附件 UI（①～④；优先 antd）。
+
+---
+
 ## 2026-07-21（W6 tool 抽屉 ①②）
 
 - **代码**：`ChatThreadPanel` 工具抽屉 DOM 占位 + `pages/chat/index.scss` 展开/收起样式（写死示例；未接 SSE）。

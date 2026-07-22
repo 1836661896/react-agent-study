@@ -4,9 +4,9 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import stylistic from '@stylistic/eslint-plugin'
 import tseslint from 'typescript-eslint'
-import { globalIgnores } from 'eslint/config'
+import { defineConfig, globalIgnores } from 'eslint/config'
 
-export default tseslint.config(
+export default defineConfig(
   globalIgnores(['dist']),
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -16,7 +16,8 @@ export default tseslint.config(
       '@stylistic': stylistic,
     },
     rules: {
-      '@stylistic/indent': ['error', 2, { SwitchCase: 1 }],
+      // 缩进交给 Biome；与 @stylistic/indent 在联合类型上会打架
+      '@stylistic/indent': 'off',
     },
   },
   {

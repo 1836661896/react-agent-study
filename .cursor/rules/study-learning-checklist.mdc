@@ -19,12 +19,12 @@ alwaysApply: true
 ### 1) 渲染模型
 
 - ✅ **组件渲染 = 执行函数**（W1～W6 重练）
-- ⏳ **不要在 render 里做副作用**
+- ✅ **不要在 render 里做副作用**（会话切换清理放在 `useEffect`）
 - 🔄 **闭包与函数式更新 / Abort**（SSE `setStreamingText(prev => …)` 已用；Abort UI 待 W8）
 
 ### 2) Hooks 基础
 
-- ✅ **useState**（W5～W6）；⏳ **useEffect**（本轮未强调）
+- ✅ **useState**（W5～W6）；🔄 **useEffect**（切换会话清理 pending / tool）
 - ⏳ **useMemo/useCallback**（有明确性能需求再引入）
 
 ### 3) JSX
@@ -39,7 +39,8 @@ alwaysApply: true
 
 ### 5) TypeScript
 
-- ✅ **对齐重建契约**：`guide`、`attachment_ids`、`attachments`、`updated_at`、`memory_title`（types + api；附件 UI 待 W7）
+- ✅ **对齐重建契约**：`guide`、`attachment_ids`、`attachments`、`updated_at`、`memory_title`（types + api + UI）
+- 🔄 **exactOptionalPropertyTypes**（发送 body 有值才赋值）
 - ⏳ 类型收敛（少用 `any`）
 
 ---
@@ -51,9 +52,9 @@ alwaysApply: true
 - 🗄 **旧 A1**：`preset=schedule`、行程助手文案 — **不再作为主路径**
 - ✅ **GET /health**（W1：`request` + HealthBage）
 - ✅ **会话 list / create / delete / messages**（api + UI）
-- 🔄 **POST /chat/stream**（api + 发送 UI；tool 抽屉 ①②；缺 ③④）
-- ✅ **POST /artifact** 上传 + **GET /artifact/{id}** 下载（api 已有；UI 待 W7）
+- ✅ **POST /chat/stream**（api + 发送 UI；tool 抽屉；`is_error` 样式）
+- ✅ **POST /artifact** 上传 + **GET /artifact/{id}** 下载（api + UI；粘贴任意文件；图预览）
 - ⏳ **GET/PUT /user/profile**（W8）
-- ⏳ 流式 **Abort** UI（W8；后端 disconnect 未做，前端可先断连接）
+- ⏳ 流式 **Abort** UI（W8；切换会话仅清 UI，不断开 fetch）
 
-**重写进度**：**W0～W5 ✅**；**W6 🔄**（tool 抽屉 ①②）。清单：**`docs/frontend-refactor-plan.md`** §**W**；换设备见 **`docs/study-progress.md`**。
+**重写进度**：**W0～W7 ✅**；**W8 ⏳**。清单：**`docs/frontend-refactor-plan.md`** §**W**；换设备见 **`docs/study-progress.md`**。
