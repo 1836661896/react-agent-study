@@ -4,24 +4,23 @@
 
 ---
 
-## 最近一次学习（2026-07-22 · 排期对齐）
+## 最近一次学习（2026-07-23 · W8′ 收尾并提交）
 
-- **已对齐代码**：不硬编码 `preset`；消息按 `id` 升序；纯附件依赖 backend 固定回复。
-- **暂定下一程（与 backend 一致，语音前）**：
-  1. **展示优化** + **身份显式切换**（普通 / 导游 → 是否传 `preset=guide`）
-  2. **R4b.2** 附件解析（mcp；frontend 联调）
-  3. **Abort**（停止/中断）
-  4. **`routing=plan`**
-  5. **语音**
-- **不做优先**：用户画像设置页（画像期望后端自主提取，另排）；与身份按钮无关。
+- **已落地**：
+  - 发送固定 **`routing: "auto"`**；去掉 chat/auto 手动切换。
+  - **`GET /dict/presets`**（`types/dict` + `api/dict` + Radio 拉表）；「普通」本地；`preset?: string`。
+  - antd：列表 Button/Modal/Empty/Alert；消息 Spin/Empty/Alert；工具 **Collapse**；历史图 Button。
+  - **Enter 发送 / Shift+Enter 换行**（`onKeyDown` + `isComposing`）。
+  - 备忘：**`docs/antd-api-notes.md`**（`Alert.title`、`Spin.description`）。
+- **下一步**：**R4b.2** 附件解析联调 → Abort → plan → 语音。
 
 ---
 
 ## 换设备继续（下一步）
 
-1. 拉最新 **`main`**（frontend + backend）。
-2. 从 **展示 + 身份切换** 开工（见 **`frontend-refactor-plan.md`** 新增节）。
-3. 其后按上表 2→5，不插队语音。
+1. 拉最新 **`main`**；按需补做 Network 验收（`auto` / `/dict/presets` / `preset`）。
+2. 开 **R4b.2**（先读 backend 附件解析契约，再改前端）。
+3. 不插队语音。
 
 ---
 

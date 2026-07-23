@@ -26,19 +26,20 @@ alwaysApply: true
 | W5 | 会话列表 | 中 | list / create / delete | ✅ |
 | W6 | 线程 + SSE | 较难 | messages + 流式；**`guide`** + **`chat`/`auto`**；tool 抽屉 | ✅ |
 | W7 | 附件 | 较难 | 上传、粘贴文件、发送挂载、历史预览/下载 | ✅ |
-| W8 | 可选增强 | 中 | 画像 UI、Abort、能力按钮 | ⏳ |
+| W8 | 可选增强 | 中 | 画像 UI、Abort、能力按钮 | ⏳（画像暂缓；Abort 待做） |
+| W8′ | auto + 身份字典 + 展示 | 中 | 固定 auto、`/dict/presets`、antd、Enter 发送 | ✅ |
 
 ---
 
 ## 当前建议（下一步怎么学）
 
 1. **换设备**：先读 **`docs/study-progress.md`**「换设备继续」。
-2. **立刻**：主路径验收，或 **W8**（Abort / 画像）按 ①～④。
+2. **立刻**：**R4b.2** 附件解析联调（先读 backend 契约，再决定前端是否要改）。
 3. 确认约定：单独回复 **`1`**。
-4. 权威后端：**`myproject/backend/readme.md`** 与相关 docs；旧代码只读 **`backup/src/`**。
+4. 权威后端：**`myproject/backend/readme.md`**、**`agent-presets.md`**（**`/dict/presets`**）；旧代码只读 **`backup/src/`**。
 
 ## 与后端近期共识
 
-- **身份**：**`preset` 可选**；已知身份为 **`guide`（导游）**；日常默认**不传**；旧 **`schedule`** / **`schedule_draft`** **不恢复**。
-- **routing**：默认 **`chat`**；**`auto`/`mcp`** 已通；**`plan`** 占位。
-- **附件**：先 **`POST /artifact`**，再 Chat 带 **`attachment_ids`**；messages 回 **`attachments`**。前端可粘贴任意文件；**暂不**处理文字+文件同贴。
+- **身份**：列表 **`GET /dict/presets`**；发送可选 **`preset`**（值为 `value`）；「普通」不传；旧 **`schedule`** **不恢复**；废 **`/agent/presets`**。
+- **routing**：前端日常**显式** **`auto`**；后端省略字段时默认仍是 **`chat`**；**`plan`** 占位。
+- **附件**：先 **`POST /artifact`**，再 Chat 带 **`attachment_ids`**；messages 回 **`attachments`**。前端可粘贴任意文件；**暂不**处理文字+文件同贴。解析见 **R4b.2**。

@@ -17,6 +17,7 @@ alwaysApply: false
 | `docs/changelog.md` | 按日期的变更流水 | 进度表 |
 | `docs/study-progress.md` | 学习摘要、下一步 | API 字段表 |
 | `docs/product-roadmap.md` | 产品构想与排期 | 当前代码真相 |
+| `docs/antd-api-notes.md` | Ant Design 弃用/易混 API（本仓库踩坑） | 完整 antd 官方文档转载 |
 | `docs/collaboration-and-coding-rules.md` | 人类可读摘要 + 指向 `.cursor/rules` | 与 rules 矛盾的硬约束 |
 | `.cursor/rules/*.mdc` | 编码与架构约定（AI/开发约束） | 项目介绍、进度勾选 |
 

@@ -70,19 +70,22 @@
   - **暂不做**：剪贴板「文字+文件」同时保留。  
   - [x] ① DOM → ② CSS → ③ 引用 → ④ 逻辑  
 
-- [ ] **W8′ 展示优化 + 身份切换** ← **当前**  
-  - 聊天区组件/样式可读性（气泡、附件、间距等；先定少量可感知点）。  
-  - **身份显式切换**：普通（不传 `preset`）/ 导游（`preset=guide`）。与用户画像无关。  
+- [x] **W8′ 固定 auto + 身份 + 展示**（**2026-07-23**）  
+  - [x] 去掉 composer **`chat`/`auto` Radio**；发送体**显式** `routing: "auto"`。  
+  - [x] **身份**：本地「普通」+ **`GET /dict/presets`** 拉表；`identity !== "normal"` → `preset = value`。  
+  - [x] **antd 展示**：`ConversationList` Button/Modal/Empty/Alert；`ChatThreadPanel` 状态区 + 历史图 Button + 工具 **Collapse**。  
+  - [x] **Enter 发送 / Shift+Enter 换行**（`onKeyDown`，忽略 IME composing）。  
+  - [x] 契约备忘：**`docs/antd-api-notes.md`**；废 **`/agent/presets`**。  
 
 - [ ] **其后（与 backend 语音前排期对齐）**  
-  - R4b.2 附件解析联调  
+  - [ ] **R4b.2** 附件解析联调（调 MCP） ← **下一步**  
   - **Abort**（停止/中断）  
   - **`routing=plan`** UI/联调（随 backend）  
   - 再后：**语音**  
 
 - [ ] **暂不做**  
   - 用户画像 GET/PUT 设置页（期望后端自主提取 V2）  
-  - 具名能力 → `mcp_tool`（可更后）
+  - composer 暴露 **`chat` / `mcp`**；具名能力 → `mcp_tool`（可更后）
 
 - [ ] **收尾**  
   - `npm run lint`；更新 **`readme`** 功能表、契约 §5、**`changelog`**、checklist。
@@ -92,10 +95,11 @@
 ## 验收（主路径）
 
 1. Health 绿；能建会话、发消息、续聊（落库后列表有标题）。  
-2. Network：日常 **`routing: "chat"`** 且**无** `preset`；切到导游后带 **`preset: "guide"`**（身份按钮落地后验）。  
+2. Network：日常 **`routing: "auto"`** 且**无** `preset`；切导游后有 **`preset`**（值为字典 `value`，如 `guide`）；请求 **`GET /dict/presets`**；**无** chat/auto 切换。  
 3. 消息列表**旧上新下**。  
-4. 上传后发送可见 **`attachments`** 并可下载；**只发附件**时收到 backend 固定「尚未解析」说明。  
-5. 显式或 auto 触发 MCP 时可见 **`tool_call` / `tool_result`**。
+4. 上传后发送可见 **`attachments`** 并可下载；**只发附件**时收到 backend 固定「尚未解析」说明（解析完成前）。  
+5. `auto` 触发 MCP 时可见 **`tool_call` / `tool_result`**（Collapse）。  
+6. Enter 发送；Shift+Enter 换行；IME 组字中 Enter 不误发。
 
 ---
 
@@ -108,4 +112,4 @@
 
 ---
 
-*修订：2026-07-20 — 完整重写 §W。2026-07-22 — 默认无 preset、消息正序；排期改为展示+身份 → 解析 → Abort → plan → 语音。*
+*修订：2026-07-20 — 完整重写 §W。2026-07-22 — 默认无 preset、消息正序。2026-07-23 — 固定 `auto`、通用字典 `/dict/presets`、antd 展示、Enter 发送；下一步 R4b.2。*

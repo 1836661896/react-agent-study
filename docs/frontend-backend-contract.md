@@ -24,12 +24,13 @@
 | `/conversation/delete` | POST | **`{ ids: number[] }`** |
 | `/conversation/{id}/messages` | GET | 每条含 **`attachments`**（可 `[]`）；接口 **`created_at` 降序**；UI 宜再正序 |
 | `/user/profile` | GET/PUT | 用户画像（重写 W8 可选） |
+| `/dict/{dict_key}` | GET | **通用字典**（只读）；`data.records[{ label, value }]`；未知 key → fail。身份列表 = **`/dict/presets`**（`value` → 发送 `preset`；不含「普通」） |
 
 ---
 
 ## 3. 已从后端移除 / 不得再封装
 
-- `/tasks`、`/agent/*`、非流式 **`POST /chat`**、**`GET /events`**
+- `/tasks`、旧 **`/agent/*`**（含曾短暂存在的 **`GET /agent/presets`**，已废，改走 **`/dict/presets`**）、非流式 **`POST /chat`**、**`GET /events`**
 - 旧 **`schedule_draft`** / 以 **`preset=schedule`** 为主身份的产品路径（重建身份为 **`guide`**）
 
 ---
@@ -48,7 +49,9 @@
 
 - **策略**：完整重写进行中（§**W**）。旧代码在 **`backup/src/`**；运行入口为新 **`src/`**。
 - **新 `src` 已有**：壳 / Health / **`request`**；会话 / SSE / 附件 **types+api+UI**；**`ConversationList`**；**`ChatThreadPanel`**（messages **按 id 升序** + SSE；**默认不传 preset**；tool 抽屉；上传/粘贴/`attachment_ids`；历史图/文件名下载；切换会话清理）。
-- **新 `src` 尚未有**：身份切换 UI；Abort；`routing=plan` UI；粘贴「文字+文件」同保留。  
+- **新 `src` 产品口径（2026-07-23）**：日常发送**显式** `routing: "auto"`（省略则后端默认 `chat`）；**去掉** chat/auto 手动切换；仅保留身份（`preset`）手动切换。  
+- **新 `src` 尚未有**：Abort；`routing=plan` UI；粘贴「文字+文件」同保留。  
+- **已对齐（2026-07-23）**：身份列表 **`GET /dict/presets`**（types/api/UI ✅）；「普通」前端本地。  
 - **暂不做**：用户画像设置页（自主提取另排）。  
 - **排期**见 **`docs/study-progress.md`** / backend **`readme` §7**。
 
@@ -59,7 +62,8 @@
 | `/chat/stream` | ✅ types+api+发送 UI + tool 抽屉 | W6 ✅ |
 | `POST /artifact` 上传 | ✅ api + UI | W7 ✅ |
 | `GET /artifact/{id}` 下载 | ✅ api + UI | W7 ✅ |
-| `/user/profile` | ❌ | ⏳ W8 |
+| `/dict/{dict_key}` | ✅ types+api；身份 UI 拉 `presets` | 拉表 ✅ |
+| `/user/profile` | ❌ | ⏳ 暂缓 |
 
 ### 复核记录
 
@@ -69,6 +73,7 @@
 - **2026-07-21**：W6 tool 抽屉 UX 定为持久抽屉；①② 已提交。
 - **2026-07-22**：**W6 ✅**；**W7 ✅**（含粘贴文件、预览打磨）；**W8** 可选未开。
 - **2026-07-22（晚）**：去掉硬编码 **`preset=guide`**；消息 **id 升序**；对齐 backend 纯附件固定回复。
+- **2026-07-23**：**`GET /dict/{dict_key}`** 通用字典；身份 = **`/dict/presets`**；废弃 **`/agent/presets`**。
 ---
 
 ## 6. 环境与 CORS

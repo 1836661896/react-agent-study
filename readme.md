@@ -6,7 +6,8 @@
 > **完整重写清单 §W**：**`docs/frontend-refactor-plan.md`**。  
 > **产品构想**：**`docs/product-roadmap.md`**。  
 > **协作摘要**：**`docs/collaboration-and-coding-rules.md`**。  
-> **后端权威**：**`myproject/backend/docs/chat-stream-api.md`**、**`conversations-api.md`**、**`artifacts-api.md`**、**`agent-presets.md`**。
+> **Ant Design 弃用/易混**：**`docs/antd-api-notes.md`**。  
+> **后端权威**：**`myproject/backend/docs/chat-stream-api.md`**、**`conversations-api.md`**、**`artifacts-api.md`**、**`agent-presets.md`**（含 **`GET /dict/{dict_key}`**）。
 
 **路径说明（规范）**：**`myproject/frontend`**（本仓库）、**`myproject/backend`**；**不在文档中记录本机克隆目录**。
 
@@ -15,9 +16,9 @@
 ## 1. 项目是做什么的
 
 - **定位**：**`myproject/backend`**（Python + FastAPI）的 **Web 界面**；**React + TypeScript + Vite**，**Ant Design**，**TanStack React Query**。
-- **当前阶段（2026-07-22）**：**完整重写**（§**W**）。**W0～W7 ✅**。日常**不传** `preset`；历史 **id 升序**；纯附件靠 backend 固定回复。
-- **下一步**：**展示优化** + **身份显式切换** → 附件解析联调 → Abort → **`routing=plan`** → 语音。详见 **`docs/study-progress.md`**。
-- **非目标（近期）**：用户画像设置页；恢复 **`schedule` / schedule_draft / 旧 A1③`**。
+- **当前阶段（2026-07-23）**：**完整重写**（§**W**）。**W0～W7 ✅**；**W8′ ✅**（固定 `routing=auto`、身份拉 **`/dict/presets`**、antd 展示、Enter 发送）。日常「普通」**不传** `preset`；历史 **id 升序**；纯附件靠 backend 固定回复（解析前）。
+- **下一步**：**R4b.2** 附件解析联调 → Abort → **`routing=plan`** → 语音。详见 **`docs/study-progress.md`**。
+- **非目标（近期）**：用户画像设置页；composer 暴露 `chat`/`mcp`；恢复 **`schedule` / schedule_draft / 旧 A1③`**。
 
 ---
 
@@ -29,15 +30,16 @@
 .
 ├── backup/src/              # 重写前快照（只读对照）
 ├── docs/
-├── src/                     # ← 运行入口（重建中）
+├── src/                     # ← 运行入口
 │   ├── main.tsx             # Router + Query + antd zhCN
 │   ├── App.tsx              # 顶栏 + Routes + HealthBage
 │   ├── components/HealthBage.tsx
 │   ├── api/
 │   │   ├── health.ts
 │   │   ├── conversations.ts # list/create/delete/messages
-│   │   ├── chatStream.ts    # SSE；默认 routing=chat
-│   │   └── artifacts.ts     # upload + download
+│   │   ├── chatStream.ts    # SSE；UI 日常显式 routing=auto
+│   │   ├── artifacts.ts     # upload + download
+│   │   └── dict.ts          # GET /dict/{dict_key}
 │   ├── config/env.ts
 │   ├── constants/routes.ts
 │   ├── pages/
@@ -45,18 +47,18 @@
 │   │   ├── NotFoundPage.tsx
 │   │   └── chat/
 │   │       ├── index.tsx / index.scss
-│   │       ├── ConversationList/   # W5 列表
-│   │       └── ChatThreadPanel/    # W6～W7 消息 + SSE + 附件
+│   │       ├── ConversationList/   # 列表 + antd Button/Modal/Empty/Alert
+│   │       └── ChatThreadPanel/    # 消息 + SSE + 附件 + 身份 + Collapse
 │   ├── styles/
 │   ├── types/
 │   │   ├── common.ts
 │   │   ├── conversations.ts
-│   │   ├── chatStream.ts
-│   │   └── artifacts.ts
+│   │   ├── chatStream.ts    # preset?: string
+│   │   ├── artifacts.ts
+│   │   └── dict.ts          # DictItem / DictListData
 │   └── utils/
 │       ├── url.ts
 │       └── request.ts
-│   # 待做：W8 可选（画像 / Abort）…
 ├── index.html
 ├── vite.config.js
 └── package.json
@@ -74,12 +76,13 @@
 | 环境 / URL | `config/env`、`utils/url` | ✅ | |
 | JSON `request` / Health | `utils/request`、`api/health`、`HealthBage` | ✅ W1 | |
 | 会话 types + api | `types/conversations`、`api/conversations` | ✅ W2 | |
-| SSE 类型 + api | `types/chatStream`、`api/chatStream` | ✅ W2 | 默认 `routing=chat`；`preset` 可选 |
+| SSE 类型 + api | `types/chatStream`、`api/chatStream` | ✅ W2 | `preset?: string`；api 层省略 routing 时仍默认 `chat` |
 | 附件 types + api | `types/artifacts`、`api/artifacts` | ✅ W2 | upload / download |
-| 聊天双栏布局 | `pages/chat` | ✅ W3～W4 | `index.scss` 按展示顺序分区 |
-| 会话列表 UI | `ConversationList` | ✅ W5 | list / create / delete |
-| 线程 + SSE UI | `ChatThreadPanel` | ✅ W6 | messages（**按 id 升序**）/ SSE / tool 抽屉；**默认不传 preset** |
-| 附件 UI | composer + 气泡 | ✅ W7 | 上传 / 粘贴 / 预览 / `attachment_ids` / 下载；可只发附件 |
+| 通用字典 | `types/dict`、`api/dict` | ✅ | `getDict`；身份用 `"presets"` |
+| 聊天双栏布局 | `pages/chat` | ✅ W3～W4 | |
+| 会话列表 UI | `ConversationList` | ✅ W5 + antd | Button / Modal.confirm / Empty / Alert |
+| 线程 + SSE UI | `ChatThreadPanel` | ✅ W6 + W8′ | 固定 `auto`；身份 Radio；Collapse 工具区；Enter 发送 / Shift+Enter 换行 |
+| 附件 UI | composer + 气泡 | ✅ W7 | 上传 / 粘贴 / 预览 / `attachment_ids` / 下载 |
 | 旧业务对照 | `backup/src/` | 🗄 | 不迁回 |
 
 ---
@@ -94,7 +97,9 @@
 
 ## 5. API 约定备忘
 
-- JSON：**`{ code, data, msg }`**；SSE / 附件字段见 **`docs/frontend-backend-contract.md`** 与 backend 文档。
-- **日常发送**：默认 **`routing=chat`**；**不传** `preset`（普通对话无导游身份）。需要导游时再显式传 **`preset=guide`**（UI 入口尚未做）。
-- **消息列表**：接口为 `created_at` **降序**；前端按 **`id` 升序**再渲染（旧上新下）。
-- **纯附件**：可只发 `attachment_ids`；backend 返回固定「尚未解析」说明（不调 LLM），见 backend **`chat-stream-api.md`**。
+- JSON：**`{ code, data, msg }`**；SSE / 附件 / 字典见 **`docs/frontend-backend-contract.md`** 与 backend 文档。
+- **日常发送**：**显式** **`routing=auto`**（勿省略；后端省略默认是 `chat`）；身份选项来自 **`GET /dict/presets`**；「普通」不传 `preset`，导游等传 `records[].value`。
+- **勿再调用**：**`GET /agent/presets`**（已废）。
+- **消息列表**：接口 **`created_at` 降序**；前端按 **`id` 升序**再渲染。
+- **纯附件**：可只发 `attachment_ids`；解析完成前 backend 可固定「尚未解析」说明（见 backend **`chat-stream-api.md`** / R4b.2）。
+- **快捷键**：Enter 发送；Shift+Enter 换行（`onKeyDown`，忽略 IME `isComposing`）。

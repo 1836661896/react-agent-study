@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { Alert, Button, Empty, Modal } from "antd"
 import {
   createConversation,
   deleteConversationItems,
@@ -57,26 +58,33 @@ export default function ConversationList({
     <>
       <div className="chat-page__sidebar-header">
         <span>会话</span>
-        <button
-          type="button"
+        <Button
+          type="primary"
+          size="small"
           disabled={createMutation.isPending}
           onClick={() => createMutation.mutate()}
         >
           {createMutation.isPending ? "创建中…" : "新建"}
-        </button>
+        </Button>
       </div>
       <div className="chat-page__sidebar-list">
         {isLoading && <div>加载中…</div>}
         {isError && (
-          <div>
-            加载失败：{error instanceof Error ? error.message : "未知错误"}
-          </div>
+          <Alert
+            type="error"
+            showIcon
+            title="加载失败"
+            description={error instanceof Error ? error.message : "未知错误"}
+          />
         )}
-        {!isLoading && !isError && items.length === 0 && <div>暂无会话</div>}
+        {!isLoading && !isError && items.length === 0 && (
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无会话" />
+        )}
         {items.map((item) => (
           <div key={item.id} className="chat-page__conv-row">
-            <button
-              type="button"
+            <Button
+              type="text"
+              block
               className={
                 item.id === selectedId
                   ? "chat-page__conv-item chat-page__conv-item--active"
@@ -85,17 +93,25 @@ export default function ConversationList({
               onClick={() => onSelectConversation(item)}
             >
               {item.memory_title || `会话 #${item.id}`}
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              type="link"
+              danger
+              size="small"
               disabled={deleteMutation.isPending}
               onClick={() => {
-                if (!window.confirm(`删除会话 #${item.id}？`)) return
-                deleteMutation.mutate(item.id)
+                Modal.confirm({
+                  title: "删除会话",
+                  content: `确定删除会话 ${item.memory_title ?? item.id}？`,
+                  okText: "删除",
+                  okType: "danger",
+                  cancelText: "取消",
+                  onOk: () => deleteMutation.mutate(item.id),
+                })
               }}
             >
               删除
-            </button>
+            </Button>
           </div>
         ))}
       </div>

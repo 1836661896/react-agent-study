@@ -1,6 +1,3 @@
-/** 重建身份：仅 guide；勿再写 schedule */
-export type AgentPreset = "guide"
-
 /** 日常默认 chat；auto/mcp 已通；plan 占位 */
 export type ChatRouting = "chat" | "auto" | "mcp" | "plan"
 
@@ -10,7 +7,7 @@ export type PostChatStreamBody = {
   conversation_id?: number
   /** 默认不传则后端按 chat；前端日常发送建议显式或省略均可，api 层可默认 chat */
   routing?: ChatRouting
-  preset?: AgentPreset
+  preset?: string
   /** 先 POST /artifact，再把 id 挂上；与 message 不可同时为空 */
   attachment_ids?: string[]
   mcp_tool?: string

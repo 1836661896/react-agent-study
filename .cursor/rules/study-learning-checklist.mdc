@@ -39,7 +39,7 @@ alwaysApply: true
 
 ### 5) TypeScript
 
-- ✅ **对齐重建契约**：`guide`、`attachment_ids`、`attachments`、`updated_at`、`memory_title`（types + api + UI）
+- ✅ **对齐重建契约**：`guide` / **`GET /dict/presets`**、`attachment_ids`、`attachments`、`updated_at`、`memory_title`（types + api + UI）
 - 🔄 **exactOptionalPropertyTypes**（发送 body 有值才赋值）
 - ⏳ 类型收敛（少用 `any`）
 
@@ -47,14 +47,16 @@ alwaysApply: true
 
 ### 6) 后端联调（重建 backend）
 
-> 权威：**`myproject/backend/readme.md`**、**`docs/chat-stream-api.md`**、**`docs/conversations-api.md`**、**`docs/artifacts-api.md`**、**`docs/agent-presets.md`**。
+> 权威：**`myproject/backend/readme.md`**、**`docs/chat-stream-api.md`**、**`docs/conversations-api.md`**、**`docs/artifacts-api.md`**、**`docs/agent-presets.md`**（**`/dict/presets`**）。
 
 - 🗄 **旧 A1**：`preset=schedule`、行程助手文案 — **不再作为主路径**
 - ✅ **GET /health**（W1：`request` + HealthBage）
 - ✅ **会话 list / create / delete / messages**（api + UI）
-- ✅ **POST /chat/stream**（api + 发送 UI；tool 抽屉；`is_error` 样式）
+- ✅ **POST /chat/stream**（api + 发送 UI；固定 **`routing=auto`**；tool Collapse；`is_error` 样式）
 - ✅ **POST /artifact** 上传 + **GET /artifact/{id}** 下载（api + UI；粘贴任意文件；图预览）
-- ⏳ **GET/PUT /user/profile**（W8）
-- ⏳ 流式 **Abort** UI（W8；切换会话仅清 UI，不断开 fetch）
+- ✅ **GET /dict/presets**（通用字典；身份 Radio）
+- ⏳ **R4b.2** 附件解析联调
+- ⏳ 流式 **Abort** UI（切换会话仅清 UI，不断开 fetch）
+- ⏳ **GET/PUT /user/profile**（暂缓）
 
-**重写进度**：**W0～W7 ✅**；**W8 ⏳**。清单：**`docs/frontend-refactor-plan.md`** §**W**；换设备见 **`docs/study-progress.md`**。
+**重写进度**：**W0～W7 ✅**；**W8′ ✅**；**R4b.2 / Abort ⏳**。清单：**`docs/frontend-refactor-plan.md`** §**W**；换设备见 **`docs/study-progress.md`**。

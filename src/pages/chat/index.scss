@@ -120,55 +120,28 @@
     }
   }
 
-  // ---------- 工具调用抽屉（tool_call / tool_result）----------
-  &__tool-drawer {
-    flex-shrink: 0;
-    border-top: 1px solid #e8e8e8;
-    background: #fafafa;
+// ---------- 工具调用（antd Collapse）----------
+&__tool-drawer {
+  flex-shrink: 0;
+  border-top: 1px solid #e8e8e8;
+  background: #fafafa;
 
-    &-toggle {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      width: 100%;
-      padding: 8px 16px;
-      border: none;
-      background: transparent;
-      font-size: 13px;
-      color: #595959;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    &-count {
-      min-width: 1.25em;
-      padding: 0 6px;
-      border-radius: 10px;
-      background: #e6f4ff;
-      color: #1677ff;
-      font-size: 12px;
-    }
-
-    &-chevron {
-      margin-left: auto;
-      transition: transform 0.15s ease;
-    }
-
-    &-panel {
-      display: none;
-      max-height: 40vh;
-      overflow: auto;
-      padding: 0 16px 12px;
-    }
-
-    &.is-open &-panel {
-      display: block;
-    }
-
-    &.is-open &-chevron {
-      transform: rotate(180deg);
-    }
+  &-count {
+    margin-left: 8px;
+    min-width: 1.25em;
+    padding: 0 6px;
+    border-radius: 10px;
+    background: #e6f4ff;
+    color: #1677ff;
+    font-size: 12px;
   }
+
+  // Collapse 展开面板限高滚动
+  .ant-collapse-content-box {
+    max-height: 40vh;
+    overflow: auto;
+  }
+}
 
   &__tool {
     margin-bottom: 8px;
@@ -217,8 +190,8 @@
     border-top: 1px solid #e8e8e8;
     background: #fff;
 
-    // routing：chat / auto
-    &-routing {
+    // 身份：普通 / 导游
+    &-preset {
       display: block;
       margin-bottom: 8px;
     }

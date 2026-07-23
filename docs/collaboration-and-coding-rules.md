@@ -26,6 +26,7 @@
 
 - **改动范围**：优先最小必要改动，避免无关重构。  
 - **风格**：与现有 `src/` 中同目录代码保持一致（命名、分层、组件拆分习惯）。  
+- **Ant Design**：弃用/易混 prop 见 **`docs/antd-api-notes.md`**（遇 `@deprecated` 改完后追加一行）。  
 - **联调**：以前端 **`docs/frontend-backend-contract.md`** 与 **`myproject/backend/readme.md`** 为准。  
 - **提交前**：更新 **`readme.md`**（当前模块状态）、**`docs/changelog.md`**（本条变更）；规划类文档按 **`documentation-index.md`** 分工。
 - **架构与分层**：目录职责见 **`coding-architecture.mdc`**；import 见 **`coding-imports.mdc`**；api/SSE 边界见 **`coding-api-request.mdc`**。
@@ -61,10 +62,11 @@
 | **`coding-pragmatic-structure.mdc`** | 何时拆文件、共享组件、死代码清理 |
 | **`coding-data-investigation.mdc`** | 接口问题先确认再改 |
 
-### 执行清单（`docs/`）
+### 执行清单与专项备忘（`docs/`）
 
 | 文件 | 作用 |
 |------|------|
 | **`docs/frontend-refactor-plan.md`** | 完整重写 **§W** 执行清单（勾选推进） |
+| **`docs/antd-api-notes.md`** | Ant Design 弃用/易混 API（本仓库踩坑表） |
 
-*修订：2026-07-20 增加 `study-rewrite-pedagogy.mdc`；清单切 §W。*
+*修订：2026-07-23 增 `antd-api-notes.md`；2026-07-20 增加 `study-rewrite-pedagogy.mdc`；清单切 §W。*

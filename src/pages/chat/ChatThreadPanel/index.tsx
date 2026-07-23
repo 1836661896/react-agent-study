@@ -1,10 +1,23 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { Button, Image, Input, message, Radio, Tag, Upload } from "antd"
+import {
+  Alert,
+  Button,
+  Collapse,
+  Empty,
+  Image,
+  Input,
+  message,
+  Radio,
+  Spin,
+  Tag,
+  Upload,
+} from "antd"
 import { useEffect, useState } from "react"
 import { downloadArtifact, uploadArtifact } from "@/api/artifacts"
 import { postChatStream } from "@/api/chatStream"
 import { getConversationMessages } from "@/api/conversations"
-import type { ChatRouting, PostChatStreamBody } from "@/types/chatStream"
+import { getDict } from "@/api/dict"
+import type { PostChatStreamBody } from "@/types/chatStream"
 import type { MessageAttachmentItem } from "@/types/conversations"
 import { HttpError } from "@/utils/request"
 import { buildApiUrl } from "@/utils/url"
@@ -35,6 +48,8 @@ type PendingAttachment = {
   previewUrl?: string
 }
 
+type IdentityMode = "normal" | string
+
 const MAX_ARTIFACT_BYTES = 1024 * 1024 * 10
 
 /** 右侧消息区 + 「消息历史 + SSE 发送」 */
@@ -58,17 +73,31 @@ export default function ChatThreadPanel({
     enabled: hasConversation,
   })
 
+  const { data: presetRes } = useQuery({
+    queryKey: ["dict", "presets"],
+    queryFn: () => getDict("presets"),
+  })
+
+  const identityOptions = [
+    { label: "普通", value: "normal" },
+    ...(presetRes?.data.records ?? []).map((r) => ({
+      label: r.label,
+      value: r.value,
+    })),
+  ]
+
   const [draft, setDraft] = useState("") // 草稿
   const [streaming, setStreaming] = useState(false) // 是否正在生成
   const [streamingText, setStreamingText] = useState("") // 正在生成的文本
   const [optimisticUser, setOptimisticUser] = useState<string | null>(null) // 用户发送的消息
-  const [routing, setRouting] = useState<ChatRouting>("chat") // 路由
 
   const [toolItems, setToolItems] = useState<ToolItem[]>([]) // 工具调用/结果项
   const [toolsOpen, setToolsOpen] = useState(false) // 工具抽屉是否打开
 
   const [pending, setPending] = useState<PendingAttachment[]>([]) // 待上传附件
   const [uploading, setUploading] = useState(false) // 是否正在上传
+
+  const [identity, setIdentity] = useState<IdentityMode>("normal") // 身份
 
   /** 切换会话：清空待发 / 工具区，释放预览 URL */
   useEffect(() => {
@@ -157,10 +186,11 @@ export default function ChatThreadPanel({
     try {
       const body: PostChatStreamBody = {
         conversation_id: conversationId,
-        routing,
+        routing: "auto",
       }
       if (text) body.message = text
       if (attachmentIds.length > 0) body.attachment_ids = attachmentIds
+      if (identity !== "normal") body.preset = identity
       // 发送消息
       await postChatStream(body, {
         onDelta: (chunk) => {
@@ -218,15 +248,30 @@ export default function ChatThreadPanel({
   return (
     <>
       <div className="chat-page__messages">
-        {!hasConversation && <div>请先选择或新建会话</div>}
-        {hasConversation && isLoading && <div>消息加载中…</div>}
-        {hasConversation && isError && (
-          <div>
-            加载失败：{error instanceof Error ? error.message : "未知错误"}
+        {!hasConversation && (
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description="请先选择或新建会话"
+          />
+        )}
+        {hasConversation && isLoading && (
+          <div style={{ padding: 24, textAlign: "center" }}>
+            <Spin description="消息加载中…" />
           </div>
         )}
+        {hasConversation && isError && (
+          <Alert
+            type="error"
+            showIcon
+            title="加载失败"
+            description={error instanceof Error ? error.message : "未知错误"}
+          />
+        )}
         {hasConversation && !isLoading && !isError && messages.length === 0 && (
-          <div>暂无消息，可在下方发送</div>
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description="暂无消息，可在下方发送"
+          />
         )}
         {messages.map((m) => (
           <div
@@ -239,9 +284,9 @@ export default function ChatThreadPanel({
               <div className="chat-page__msg-attachments">
                 {m.attachments.map((a) =>
                   a.mime_type.startsWith("image/") ? (
-                    <button
+                    <Button
                       key={a.artifact_id}
-                      type="button"
+                      type="text"
                       className="chat-page__msg-thumb"
                       onClick={() => handleDownloadAttachment(a)}
                     >
@@ -253,7 +298,7 @@ export default function ChatThreadPanel({
                         style={{ objectFit: "cover" }}
                         preview={false}
                       />
-                    </button>
+                    </Button>
                   ) : (
                     <Tag
                       key={a.artifact_id}
@@ -275,49 +320,49 @@ export default function ChatThreadPanel({
           </div>
         )}
         {toolItems.length > 0 && (
-          <div
-            className={`chat-page__tool-drawer${toolsOpen ? " is-open" : ""}`}
-          >
-            <Button
-              type="text"
-              block
-              className="chat-page__tool-drawer-toggle"
-              onClick={() => setToolsOpen((open) => !open)}
-            >
-              <span>工具调用</span>
-              <span className="chat-page__tool-drawer-count">
-                {toolItems.length}
-              </span>
-              <span className="chat-page__tool-drawer-chevron" aria-hidden>
-                ▾
-              </span>
-            </Button>
-            <div className="chat-page__tool-drawer-panel">
-              {toolItems.map((item) =>
-                item.kind === "call" ? (
-                  <div
-                    key={item.id}
-                    className="chat-page__tool chat-page__tool--call"
-                  >
-                    <div className="chat-page__tool-label">tool_call</div>
-                    <div className="chat-page__tool-name">{item.tool}</div>
-                    <pre className="chat-page__tool-body">
-                      {JSON.stringify(item.arguments, null, 2)}
-                    </pre>
-                  </div>
-                ) : (
-                  <div
-                    key={item.id}
-                    className={`chat-page__tool chat-page__tool--result${item.is_error ? " is-error" : ""}`}
-                  >
-                    <div className="chat-page__tool-label">tool_result</div>
-                    <div className="chat-page__tool-name">{item.tool}</div>
-                    <pre className="chat-page__tool-body">{item.text}</pre>
-                  </div>
+          <Collapse
+            className="chat-page__tool-drawer"
+            size="small"
+            activeKey={toolsOpen ? ["tools"] : []}
+            onChange={(keys) => {
+              const list = Array.isArray(keys) ? keys : [keys]
+              setToolsOpen(list.map(String).includes("tools"))
+            }}
+            items={[
+              {
+                key: "tools",
+                label: (
+                  <span>
+                    工具调用
+                    <span className="chat-page__tool-drawer-count"> </span>
+                  </span>
                 ),
-              )}
-            </div>
-          </div>
+                children: toolItems.map((item) =>
+                  item.kind === "call" ? (
+                    <div
+                      key={item.id}
+                      className="chat-page__tool chat-page__tool--call"
+                    >
+                      <div className="chat-page__tool-label">tool_call</div>
+                      <div className="chat-page__tool-name">{item.tool}</div>
+                      <pre className="chat-page__tool-body">
+                        {JSON.stringify(item.arguments, null, 2)}
+                      </pre>
+                    </div>
+                  ) : (
+                    <div
+                      key={item.id}
+                      className={`chat-page__tool chat-page__tool--result${item.is_error ? " is-error" : ""}`}
+                    >
+                      <div className="chat-page__tool-label">tool_result</div>
+                      <div className="chat-page__tool-name">{item.tool}</div>
+                      <pre className="chat-page__tool-body">{item.text}</pre>
+                    </div>
+                  ),
+                ),
+              },
+            ]}
+          />
         )}
         {streaming && streamingText && (
           <div className="chat-page__msg chat-page__msg--assistant">
@@ -327,19 +372,17 @@ export default function ChatThreadPanel({
         )}
       </div>
       <div className="chat-page__composer">
-        <Radio.Group
-          className="chat-page__composer-routing"
-          optionType="button"
-          buttonStyle="solid"
-          size="small"
-          value={routing}
-          disabled={streaming}
-          onChange={(e) => setRouting(e.target.value as ChatRouting)}
-          options={[
-            { label: "chat", value: "chat" },
-            { label: "auto", value: "auto" },
-          ]}
-        />
+        <div className="chat-page__composer-preset">
+          <Radio.Group
+            optionType="button"
+            buttonStyle="solid"
+            size="small"
+            value={identity}
+            disabled={streaming}
+            onChange={(e) => setIdentity(e.target.value as IdentityMode)}
+            options={identityOptions}
+          />
+        </div>
 
         <div className="chat-page__composer-attachments">
           {pending.map((p) =>
@@ -396,6 +439,20 @@ export default function ChatThreadPanel({
             disabled={!hasConversation || streaming}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => {
+              // 阻止中文输入法输入
+              if (e.nativeEvent.isComposing) return
+              // 阻止其他键入
+              if (e.key !== "Enter" || e.shiftKey) return
+              // 阻止默认行为
+              e.preventDefault()
+              // 如果会话不存在、正在生成、正在上传，则不发送
+              if (!hasConversation || streaming || uploading) return
+              // 如果消息内容为空，且没有待上传附件，则不发送
+              if (!draft.trim() && pending.length === 0) return
+              // 发送消息
+              void handleSend()
+            }}
           />
           <div className="chat-page__composer-actions">
             <Upload

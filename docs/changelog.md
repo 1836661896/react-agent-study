@@ -4,6 +4,71 @@
 
 ---
 
+## 2026-07-23（提交 · W8′ 完整收尾）
+
+- **产品**：日常 **`routing=auto`**；身份拉 **`GET /dict/presets`**（废 `/agent/presets`）；「普通」不传 `preset`。  
+- **UI**：antd 列表/状态/Collapse；Enter 发送、Shift+Enter 换行。  
+- **新增**：`types/dict.ts`、`api/dict.ts`、`docs/antd-api-notes.md`。  
+- **文档**：readme / study-progress / refactor-plan / 契约 / changelog 对齐。  
+- **下一步**：**R4b.2** 附件解析联调。
+
+---
+
+## 2026-07-23（前端 · 接 GET /dict/presets）
+
+- **代码（用户自改）**：`types/dict.ts`、`api/dict.ts`；`ChatThreadPanel` 拉 presets + Radio；`preset?: string`。  
+- **下一步**：**R4b.2** 附件解析联调（解析主要在 mcp-server；前端先确认契约再改）。
+
+---
+
+## 2026-07-23（契约修正 · 通用字典 /dict）
+
+- **backend**：废弃 **`GET /agent/presets`**；改为 **`GET /dict/{dict_key}`**；身份列表 **`GET /dict/presets`**（响应仍 `records[{ label, value }]`）。权威：**`python-agent-learning/docs/agent-presets.md`**。  
+- **前端计划**：通用 dict types/api，勿再封装 `/agent/presets`。若已写 `types/agentPresets.ts`，改为 **`types/dict.ts`**。  
+- **下一步**：改 types → `api/dict.ts` → Radio 拉表。
+
+---
+
+## 2026-07-23（契约 · GET /agent/presets）
+
+- **实测（已废）**：曾用 `/agent/presets`；**请改测 `/dict/presets`**。  
+- **文档**：以本节上方「通用字典」为准。
+
+---
+
+## 2026-07-23（W8′ 展示 · antd 替换收尾）
+
+- **代码（用户自改）**：`ConversationList` / `ChatThreadPanel` 原生按钮与状态文案 → antd；工具区 → `Collapse`；抽屉旧 SCSS 清理。  
+- **备忘**：`Alert.title`、`Spin.description`（见 **`antd-api-notes.md`**）。  
+- **验收**：用户晚间再做；编码下一站仍为 **身份 catalog**（R4b.2 前）。
+
+---
+
+## 2026-07-23（文档 · antd 弃用备忘）
+
+- **新增**：**`docs/antd-api-notes.md`** — 本仓库 Ant Design 弃用/易混 API 对照表。  
+  - `Alert.message` → `title`  
+  - `Spin.tip` → `description`（antd 6.3+）  
+- **索引**：`documentation-index.md` 增第 8 条。
+
+---
+
+## 2026-07-23（W8′ 主路径 · 进入 catalog）
+
+- **代码（用户自改）**：`ChatThreadPanel` — 固定 `routing: "auto"`；身份 Radio；`identity !== "normal"` → `preset`。  
+- **下一步**：**身份 catalog 接口**（R4b.2 之前）；先契约对齐，再 types/api/UI。
+
+---
+
+## 2026-07-23（产品 · 仅身份手动切换）
+
+- **口径**：前端日常固定 **`routing: "auto"`**，去掉 chat/auto 切换；用户可见唯一模式开关为 **身份**（普通 / 导游 `preset=guide`）。  
+- **排期补记**：**身份列表 / catalog 接口**（可用身份 label + `preset` 关键字）放在 **开始 R4b.2 附件解析 / 调 MCP 之前**；到位后再动解析联调。  
+- **文档**：readme / study-progress / refactor-plan W8′ / product-roadmap / 契约 §5。  
+- **代码**：W8′ 用户自改 `ChatThreadPanel`（未代改 `src`）。
+
+---
+
 ## 2026-07-22（排期 · 语音前顺序定稿）
 
 - **下一程**：① 展示优化 + 身份切换 → ② R4b.2 解析联调 → ③ Abort → ④ **`routing=plan`** → ⑤ 语音。  

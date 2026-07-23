@@ -16,12 +16,13 @@
 | 5 | **`docs/frontend-backend-contract.md`** | **前后端契约**：现行/已下线接口、JSON 信封与 SSE、与 **`myproject/backend`** 文档的对应关系 | 后端路由变更或前端 `src/api` 调整时 |
 | 6 | **`docs/frontend-refactor-plan.md`** | **完整重写执行清单 §W**：空壳→契约→布局→列表/SSE→附件→可选增强 | 每完成一个 W 阶段或调整范围时 |
 | 7 | **`docs/product-roadmap.md`** | **产品对齐**：聊天为主、快捷入口、左侧栏等**构想与排期**，不替代代码真相 | 产品方向讨论有结论时 |
-| 8 | **`docs/collaboration-and-coding-rules.md`** | **人类可读**的协作与编码约定摘要；**指向** `.cursor/rules` 中权威规则 | 与 **`study-project-goal.mdc`** 同步补充 |
-| 9 | **`.cursor/rules/study-project-goal.mdc`** | 助手行为、**文件修改与操作原则**、项目目标、**现行后端 API 列表** | 规则或后端契约变化时 |
-| 10 | **`.cursor/rules/study-plan.mdc`** | 学习阶段（§W）、当前建议步骤 | 阶段切换时 |
-| 11 | **`.cursor/rules/study-learning-checklist.mdc`** | React 知识点勾选与后端联调摘要 | 清单状态或联调范围变化时 |
-| 12 | **`.cursor/rules/study-rewrite-pedagogy.mdc`** | **完整重写教学节奏**：DOM→CSS→引用→逻辑；禁止一次给整页完整代码 | 教学方式变更时 |
-| 13 | **`.cursor/rules/coding-*.mdc`** | **架构与编码**约定；索引见 **`collaboration-and-coding-rules.md` §4** | 分层、api、样式、质量规范变更时 |
+| 8 | **`docs/antd-api-notes.md`** | **Ant Design 弃用/易混 API**（本仓库踩坑表）；当前 antd 6 | 遇到 `@deprecated` 或组件 API 变更时追加 |
+| 9 | **`docs/collaboration-and-coding-rules.md`** | **人类可读**的协作与编码约定摘要；**指向** `.cursor/rules` 中权威规则 | 与 **`study-project-goal.mdc`** 同步补充 |
+| 10 | **`.cursor/rules/study-project-goal.mdc`** | 助手行为、**文件修改与操作原则**、项目目标、**现行后端 API 列表** | 规则或后端契约变化时 |
+| 11 | **`.cursor/rules/study-plan.mdc`** | 学习阶段（§W）、当前建议步骤 | 阶段切换时 |
+| 12 | **`.cursor/rules/study-learning-checklist.mdc`** | React 知识点勾选与后端联调摘要 | 清单状态或联调范围变化时 |
+| 13 | **`.cursor/rules/study-rewrite-pedagogy.mdc`** | **完整重写教学节奏**：DOM→CSS→引用→逻辑；禁止一次给整页完整代码 | 教学方式变更时 |
+| 14 | **`.cursor/rules/coding-*.mdc`** | **架构与编码**约定；索引见 **`collaboration-and-coding-rules.md` §4** | 分层、api、样式、质量规范变更时 |
 
 ---
 
@@ -43,4 +44,4 @@
 ---
 
 *建立：2026-05-14（与 `myproject/backend` 的 `docs/documentation-index.md` 分工方式对齐）。*  
-*最近：**2026-07-20** 完整重写决策 + **`study-rewrite-pedagogy.mdc`**；清单 §W。*
+*最近：**2026-07-23** 增 **`antd-api-notes.md`**；**2026-07-20** 完整重写 + **`study-rewrite-pedagogy.mdc`**。*
