@@ -16,8 +16,8 @@
 ## 1. 项目是做什么的
 
 - **定位**：**`myproject/backend`**（Python + FastAPI）的 **Web 界面**；**React + TypeScript + Vite**，**Ant Design**，**TanStack React Query**。
-- **当前阶段（2026-07-23）**：**完整重写**（§**W**）。**W0～W7 ✅**；**W8′ ✅**（固定 `routing=auto`、身份拉 **`/dict/presets`**、antd 展示、Enter 发送）。日常「普通」**不传** `preset`；历史 **id 升序**；纯附件靠 backend 固定回复（解析前）。
-- **下一步**：**R4b.2** 附件解析联调 → Abort → **`routing=plan`** → 语音。详见 **`docs/study-progress.md`**。
+- **当前阶段（2026-07-24）**：**完整重写**（§**W**）。**W0～W7 ✅**；**W8′ ✅**。backend **R4b.2 解析已接入**（前端发 `attachment_ids` 即可；气泡仍只显示用户原话）。  
+- **下一步**：backend **失败可见 / Abort** 后再改停止 UI；有 zhipu 时可验附件问答。详见 **`docs/study-progress.md`**。  
 - **非目标（近期）**：用户画像设置页；composer 暴露 `chat`/`mcp`；恢复 **`schedule` / schedule_draft / 旧 A1③`**。
 
 ---

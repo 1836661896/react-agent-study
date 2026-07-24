@@ -4,23 +4,19 @@
 
 ---
 
-## 最近一次学习（2026-07-23 · W8′ 收尾并提交）
+## 最近一次学习（2026-07-24 · 跨仓 R4b.2 文档对齐）
 
-- **已落地**：
-  - 发送固定 **`routing: "auto"`**；去掉 chat/auto 手动切换。
-  - **`GET /dict/presets`**（`types/dict` + `api/dict` + Radio 拉表）；「普通」本地；`preset?: string`。
-  - antd：列表 Button/Modal/Empty/Alert；消息 Spin/Empty/Alert；工具 **Collapse**；历史图 Button。
-  - **Enter 发送 / Shift+Enter 换行**（`onKeyDown` + `isComposing`）。
-  - 备忘：**`docs/antd-api-notes.md`**（`Alert.title`、`Spin.description`）。
-- **下一步**：**R4b.2** 附件解析联调 → Abort → plan → 语音。
+- **backend / mcp**：附件解析已接入 Chat（正文不落库）；本仓 UI 无需改即可发 `attachment_ids`。  
+- **下一步（前端）**：等 backend **失败可见 / Abort** 协议后再改停止按钮等；有 zhipu 时可顺带验「上传+提问」。  
+- 详见 backend **`readme.md` §7**。
 
 ---
 
 ## 换设备继续（下一步）
 
-1. 拉最新 **`main`**；按需补做 Network 验收（`auto` / `/dict/presets` / `preset`）。
-2. 开 **R4b.2**（先读 backend 附件解析契约，再改前端）。
-3. 不插队语音。
+1. 拉最新 **`main`**；按需补做 Network 验收（`auto` / `/dict/presets` / `preset` / 附件上传）。  
+2. 不插队语音；Abort 等后端契约。  
+3. 可选：有 key 时用附件问一句，确认助手能引用文件内容。
 
 ---
 

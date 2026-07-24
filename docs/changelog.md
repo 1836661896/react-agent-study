@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-07-24（文档 · 对齐 backend R4b.2）
+
+- **跨仓**：backend 附件解析已接入；前端发 `attachment_ids` 即可，无需为本步改 UI。  
+- **下一步**：失败可见 / Abort（等后端协议）；可选 zhipu 验附件问答。  
+- **文档**：`readme`、`study-progress`。
+
+---
+
 ## 2026-07-23（提交 · W8′ 完整收尾）
 
 - **产品**：日常 **`routing=auto`**；身份拉 **`GET /dict/presets`**（废 `/agent/presets`）；「普通」不传 `preset`。  
