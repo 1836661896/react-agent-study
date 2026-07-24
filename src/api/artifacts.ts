@@ -82,16 +82,61 @@ export async function downloadArtifact(artifactId: string): Promise<void> {
     })
   }
 
+  const contentDisposition = res.headers.get("content-disposition")
   const contentType = res.headers.get("content-type") ?? ""
+
+  // 有附件头 → 成功文件（含 .json / .jpeg），不要用 Content-Type 判失败
+  if (contentDisposition) {
+    if (!res.ok) {
+      throw new HttpError({
+        message: `HTTP ${res.status}`,
+        status: res.status,
+        kind: "http",
+        userMessage: `下载失败（HTTP ${res.status}）`,
+      })
+    }
+    const blob = await res.blob()
+    const name =
+      filenameFromContentDisposition(contentDisposition) ??
+      `artifact-${artifactId}`
+    const objectUrl = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = objectUrl
+    a.download = name
+    a.rel = "noopener"
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(objectUrl)
+    return
+  }
+
+  // 无附件头：仅当信封带 code 且非 0 才当业务错误
   if (contentType.includes("application/json")) {
-    const body = (await res.json()) as ApiResponse<unknown>
-    throw new HttpError({
-      message: body.msg || "artifact download failed",
-      status: res.status,
-      body,
-      kind: "business",
-      userMessage: body.msg || "文件不存在或无法下载。",
+    const body = (await res.json()) as { code?: number; msg?: string }
+    if (typeof body.code === "number" && body.code !== 0) {
+      throw new HttpError({
+        message: body.msg || "artifact download failed",
+        status: res.status,
+        body,
+        kind: "business",
+        userMessage: body.msg || "文件不存在或无法下载。",
+      })
+    }
+    // 非信封 JSON（或缺 code）：仍触发下载
+    const blob = new Blob([JSON.stringify(body)], {
+      type: "application/json",
     })
+    const objectUrl = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = objectUrl
+    a.download = `artifact-${artifactId}.json`
+    a.rel = "noopener"
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(objectUrl)
+    return
   }
 
   if (!res.ok) {
@@ -104,9 +149,7 @@ export async function downloadArtifact(artifactId: string): Promise<void> {
   }
 
   const blob = await res.blob()
-  const name =
-    filenameFromContentDisposition(res.headers.get("content-disposition")) ??
-    `artifact-${artifactId}`
+  const name = `artifact-${artifactId}`
   const objectUrl = URL.createObjectURL(blob)
   const a = document.createElement("a")
   a.href = objectUrl

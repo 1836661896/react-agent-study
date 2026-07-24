@@ -4,6 +4,15 @@
 
 ---
 
+## 2026-07-24（修复 · JSON 下载误判 + 附件主路径验收）
+
+- **代码**：**`api/artifacts.ts` `downloadArtifact`**：有 **`Content-Disposition`** 则按成功文件下载；无附件头时仅当 JSON 信封 **`code !== 0`** 才报错（避免成功的 `.json` 弹出「文件不存在或无法下载」）。  
+- **联调**：附件 **上传 / 回复 / 下载 / 解析** 已测完（与 mcp JSON 拉取修复对齐）。  
+- **下一步**：等 backend **失败可见 / Abort** 协议后再改停止 UI。  
+- **文档**：`readme`、`study-progress`、`frontend-refactor-plan`、`changelog`。
+
+---
+
 ## 2026-07-24（文档 · 对齐 backend R4b.2）
 
 - **跨仓**：backend 附件解析已接入；前端发 `attachment_ids` 即可，无需为本步改 UI。  
